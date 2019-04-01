@@ -1,0 +1,10 @@
+// 通用组件模型 COM
+ComponentObjectModel = {
+  tag: '', // 标签名
+  name: '', // 属性名，用于绑定 model
+  text: '', // 文本，直接输出到节点间
+  html: '', // html，直接输出到节点间
+  props: {},
+  events: {},
+  items: [{ComponentObjectModel}] // 子节点
+}
