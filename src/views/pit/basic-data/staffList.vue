@@ -113,7 +113,7 @@ export default {
           },
           {
             props: {
-              label: '操作1',
+              label: '操作',
               prop: 'action',
               fixed: 'right',
               align: 'center',
