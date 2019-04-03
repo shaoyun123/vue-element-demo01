@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import * as validator from '@/utils/validate'
+import { isEmpty, isNotEmpty } from '@/utils/validate'
 import { payrollList, payrollUpdateById, payrollUpdateByQuery, enterpriseList } from '@/api/pit'
 import TypographyTableBasic from '@/components/Typography/Table/basic'
 import { buildFlowRecordSimple, getPayrollId, getPayrollSearcher, getPayrollTableItems } from './kit'
@@ -51,7 +51,7 @@ export default {
             events: {
               click: function() {
                 const selectedRows = self.$refs['ref'].selectedRows
-                if (validator.isNotEmpty(selectedRows)) {
+                if (isNotEmpty(selectedRows)) {
                   self.$confirm('是否提交数据 ？', {
                     type: 'warning',
                     confirmButtonClass: 'el-icon-antd-check',
@@ -101,13 +101,13 @@ export default {
             events: {
               click: function() {
                 const selectedRows = self.$refs['ref'].selectedRows
-                if (validator.isNotEmpty(selectedRows)) {
+                if (isNotEmpty(selectedRows)) {
                   self.$prompt('请输入打回原因', '打回', {
                     confirmButtonClass: 'el-icon-antd-check',
                     confirmButtonText: '提交',
                     showCancelButton: false,
                     inputValidator: (value) => {
-                      if (validator.isEmpty(value)) {
+                      if (isEmpty(value)) {
                         return '请输入打回原因'
                       }
                       return true

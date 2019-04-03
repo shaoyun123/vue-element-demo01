@@ -14,7 +14,7 @@
 <script>
 import math from 'mathjs'
 import moment from 'moment'
-import * as validator from '@/utils/validate'
+import { isNotEmpty } from '@/utils/validate'
 import { salarySnapshootSingle, salarySnapshootSave, staffList, salarySingle } from '@/api/pit'
 import { getSalarySnapshootFormItems } from './kit'
 import BasicEdit from '@/views/components/basicEdit'
@@ -47,11 +47,11 @@ export default {
     showDialog(PK) {
       let primaryKey = null
       if (
-        validator.isNotEmpty(PK) &&
-        validator.isNotEmpty(PK.SS_FREQ) &&
-        validator.isNotEmpty(PK.SS_ISSUE) &&
-        validator.isNotEmpty(PK.SS_STAFF_NUMBER) &&
-        validator.isNotEmpty(PK.SS_TYPE)
+        isNotEmpty(PK) &&
+        isNotEmpty(PK.SS_FREQ) &&
+        isNotEmpty(PK.SS_ISSUE) &&
+        isNotEmpty(PK.SS_STAFF_NUMBER) &&
+        isNotEmpty(PK.SS_TYPE)
       ) {
         primaryKey = PK
       }
@@ -85,7 +85,7 @@ export default {
       })
     },
     loadStaffs(operate, model, queryString, callback) {
-      if (validator.isNotEmpty(queryString)) {
+      if (isNotEmpty(queryString)) {
         staffList({ S_NAME: queryString }).then(response => {
           const results = response.data.items
           callback(results)
@@ -100,7 +100,7 @@ export default {
       const SS_TYPE = model.SS_TYPE
       salarySingle({ S_STAFF_NUMBER: SS_STAFF_NUMBER, S_TYPE: SS_TYPE }).then(response => {
         const salary = response.data
-        if (validator.isNotEmpty(salary)) {
+        if (isNotEmpty(salary)) {
           const snapshoot = {}
           Object.keys(salary).forEach(key => {
             snapshoot[`S${key}`] = salary[key]

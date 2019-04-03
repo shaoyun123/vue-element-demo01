@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import * as validator from '@/utils/validate'
+import { isNotEmpty } from '@/utils/validate'
 
 export default {
   name: 'ElTableWrap',
@@ -39,7 +39,7 @@ export default {
       let addSelection = true
       let addIndex = true
       const items = []
-      if (validator.isNotEmpty(this.COM.items)) {
+      if (isNotEmpty(this.COM.items)) {
         this.COM.items.forEach((item, index) => {
           const type = item.type
           if (type) {

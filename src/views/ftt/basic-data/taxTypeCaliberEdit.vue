@@ -14,7 +14,7 @@
 
 <script>
 import moment from 'moment'
-import * as validator from '@/utils/validate'
+import { isNotEmpty } from '@/utils/validate'
 import { taxTypeCaliberSingle, taxTypeCaliberSave } from '@/api/ftt'
 import BasicEdit from '@/views/components/basicEdit'
 
@@ -59,7 +59,7 @@ export default {
   methods: {
     showDialog(PK) {
       let primaryKey = null
-      if (validator.isNotEmpty(PK)) {
+      if (isNotEmpty(PK)) {
         primaryKey = { TTC_ID: PK }
         this.dialogTitle = '修改口径'
       } else {
@@ -112,7 +112,7 @@ export default {
                 const _model = this.$refs['ref'].getModel()
                 const TTC_DATE_START = _model.TTC_DATE_START
                 const TTC_DATE_END = _model.TTC_DATE_END
-                if (validator.isNotEmpty(TTC_DATE_START) && validator.isNotEmpty(TTC_DATE_END)) {
+                if (isNotEmpty(TTC_DATE_START) && isNotEmpty(TTC_DATE_END)) {
                   const dateStart = moment(TTC_DATE_START)
                   const dateEnd = moment(TTC_DATE_END)
                   if (dateStart.isBefore(dateEnd)) {
@@ -134,7 +134,7 @@ export default {
       })
       items.push({ tag: 'el-new-group', title: '计税依据' })
       const basises = model.TTC_BASISES
-      if (validator.isNotEmpty(basises)) {
+      if (isNotEmpty(basises)) {
         basises.forEach((basis, i) => {
           const prefix = `TTC_BASISES.${i}.`
           items.push({
@@ -194,7 +194,7 @@ export default {
       }
       items.push({ tag: 'el-new-group', title: '税率认定' })
       const ratioCalcs = model.TTC_RATIO_CALCS
-      if (validator.isNotEmpty(ratioCalcs)) {
+      if (isNotEmpty(ratioCalcs)) {
         ratioCalcs.forEach((ratioCalc, i) => {
           const prefix = `TTC_RATIO_CALCS.${i}.`
           items.push({
@@ -256,7 +256,7 @@ export default {
     },
     addItem(field, value) {
       const ref = this.$refs['ref']
-      if (validator.isNotEmpty(ref)) {
+      if (isNotEmpty(ref)) {
         const model = ref.getModel()
         model[field].push(value)
         ref.handleDialogInput(model)
@@ -270,7 +270,7 @@ export default {
         showCancelButton: false
       }).then(() => {
         const ref = this.$refs['ref']
-        if (validator.isNotEmpty(ref)) {
+        if (isNotEmpty(ref)) {
           const model = ref.getModel()
           model[field].splice(index, 1)
           ref.handleDialogInput(model)

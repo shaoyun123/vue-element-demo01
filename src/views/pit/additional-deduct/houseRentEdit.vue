@@ -13,7 +13,7 @@
 
 <script>
 import moment from 'moment'
-import * as validator from '@/utils/validate'
+import { isNotEmpty, validateIDNumber, checkSocialCreditCodeOrg, checkTaxpayerId } from '@/utils/validate'
 import { buildFormItemsByDicts } from '@/components/Typography/kit'
 import { houseRentSingle, houseRentSave } from '@/api/pit'
 import BasicEdit from '@/views/components/basicEdit'
@@ -35,7 +35,7 @@ export default {
   methods: {
     showDialog(PK) {
       let primaryKey = null
-      if (validator.isNotEmpty(PK)) {
+      if (isNotEmpty(PK)) {
         primaryKey = { ADHR_ID: PK }
         this.dialogTitle = '修改住房租金'
       } else {
@@ -122,7 +122,7 @@ export default {
               {
                 validator: (rule, value, callback) => {
                   if (model.ADHR_LESSOR_ID_TYPE === '01') {
-                    if (validator.validateIDNumber(value)) {
+                    if (validateIDNumber(value)) {
                       callback()
                     } else {
                       callback(new Error('居民身份证号格式错误'))
@@ -148,7 +148,7 @@ export default {
               { required: true, message: '请输入出租方纳税人识别号', trigger: 'blur' },
               {
                 validator: (rule, value, callback) => {
-                  if (validator.checkSocialCreditCodeOrg(value) || validator.checkTaxpayerId(value)) {
+                  if (checkSocialCreditCodeOrg(value) || checkTaxpayerId(value)) {
                     callback()
                   } else {
                     callback(new Error('纳税人识别号格式错误'))
@@ -193,7 +193,7 @@ export default {
                 const _model = this.$refs['ref'].getModel()
                 const ADHR_LEASE_DATE_START = _model.ADHR_LEASE_DATE_START
                 const ADHR_LEASE_DATE_END = _model.ADHR_LEASE_DATE_END
-                if (validator.isNotEmpty(ADHR_LEASE_DATE_START) && validator.isNotEmpty(ADHR_LEASE_DATE_END)) {
+                if (isNotEmpty(ADHR_LEASE_DATE_START) && isNotEmpty(ADHR_LEASE_DATE_END)) {
                   const startDate = moment(ADHR_LEASE_DATE_START)
                   const endDate = moment(ADHR_LEASE_DATE_END)
                   if (startDate.isBefore(endDate)) {

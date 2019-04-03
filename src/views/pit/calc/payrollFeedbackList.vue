@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import * as validator from '@/utils/validate'
+import { isNotEmpty } from '@/utils/validate'
 import { payrollList, payrollUpdateById, payrollUpdateByQuery, enterpriseList } from '@/api/pit'
 import TypographyTableBasic from '@/components/Typography/Table/basic'
 import { buildFlowRecordSimple, getPayrollId, getPayrollSearcher, getPayrollTableItems } from './kit'
@@ -64,7 +64,7 @@ export default {
             events: {
               click: function() {
                 const selectedRows = self.$refs['ref'].selectedRows
-                if (validator.isNotEmpty(selectedRows)) {
+                if (isNotEmpty(selectedRows)) {
                   self.$confirm('是否将工资单置为已发放 ？', {
                     type: 'warning',
                     confirmButtonClass: 'el-icon-antd-check',

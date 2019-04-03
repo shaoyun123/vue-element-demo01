@@ -1,5 +1,5 @@
 import store from '@/store'
-import * as validator from '@/utils/validate'
+import { isEmpty, isNotEmpty } from '@/utils/validate'
 import { buildFormItems, buildFormItemsByDicts } from '@/components/Typography/kit'
 
 export function buildFlowRecord(
@@ -13,28 +13,28 @@ export function buildFlowRecord(
   FR_OPERATE_SA_TITLE
 ) {
   const flowRecord = {}
-  if (validator.isNotEmpty(FR_BODY_TYPE)) {
+  if (isNotEmpty(FR_BODY_TYPE)) {
     flowRecord.FR_BODY_TYPE = FR_BODY_TYPE
   }
-  if (validator.isNotEmpty(FR_OPERATE_CODE)) {
+  if (isNotEmpty(FR_OPERATE_CODE)) {
     flowRecord.FR_OPERATE_CODE = FR_OPERATE_CODE
   }
-  if (validator.isNotEmpty(FR_OPERATE_TITLE)) {
+  if (isNotEmpty(FR_OPERATE_TITLE)) {
     flowRecord.FR_OPERATE_TITLE = FR_OPERATE_TITLE
   }
-  if (validator.isNotEmpty(FR_OPERATE_DESCR)) {
+  if (isNotEmpty(FR_OPERATE_DESCR)) {
     flowRecord.FR_OPERATE_DESCR = FR_OPERATE_DESCR
   }
-  if (validator.isNotEmpty(FR_OPERATE_SB_CODE)) {
+  if (isNotEmpty(FR_OPERATE_SB_CODE)) {
     flowRecord.FR_OPERATE_SB_CODE = FR_OPERATE_SB_CODE
   }
-  if (validator.isNotEmpty(FR_OPERATE_SB_TITLE)) {
+  if (isNotEmpty(FR_OPERATE_SB_TITLE)) {
     flowRecord.FR_OPERATE_SB_TITLE = FR_OPERATE_SB_TITLE
   }
-  if (validator.isNotEmpty(FR_OPERATE_SA_CODE)) {
+  if (isNotEmpty(FR_OPERATE_SA_CODE)) {
     flowRecord.FR_OPERATE_SA_CODE = FR_OPERATE_SA_CODE
   }
-  if (validator.isNotEmpty(FR_OPERATE_SA_TITLE)) {
+  if (isNotEmpty(FR_OPERATE_SA_TITLE)) {
     flowRecord.FR_OPERATE_SA_TITLE = FR_OPERATE_SA_TITLE
   }
   return flowRecord
@@ -74,7 +74,7 @@ export function getSalarySnapshootId(salarySnapshoot) {
 
 export function getSalarySnapshootSearcher(enterpriseOptions, statusFilter) {
   const items = []
-  if (validator.isNotEmpty(enterpriseOptions)) {
+  if (isNotEmpty(enterpriseOptions)) {
     const getters = store.getters
     items.push({
       props: { label: '期次号', prop: 'SS_ISSUE' },
@@ -117,7 +117,7 @@ export function getSalarySnapshootSearcher(enterpriseOptions, statusFilter) {
       ]
     })
     let statusItems = []
-    if (validator.isEmpty(statusFilter)) {
+    if (isEmpty(statusFilter)) {
       statusItems = buildFormItemsByDicts('S4Y_S7T_SS_STATUS', 'el-option')
     } else {
       let statusOptions = getters.getDicts('S4Y_S7T_SS_STATUS')
@@ -220,7 +220,7 @@ export function getSalarySnapshootTableItems(formatters) {
       width: '125',
       formatter: function(row, column, cellValue, index) {
         const formatter = formatters['SS_STATUS']
-        if (validator.isNotEmpty(formatter)) {
+        if (isNotEmpty(formatter)) {
           const salarySnapshoot = getSalarySnapshootId(row)
           return formatter(salarySnapshoot, row)
         } else {
@@ -323,7 +323,7 @@ export function getSalarySnapshootFormItems(operate, model, configs) {
   // operate add | edit | view
   const items = []
   const { enterpriseOptions, loadStaffs, loadSalary } = configs
-  if (validator.isNotEmpty(enterpriseOptions)) {
+  if (isNotEmpty(enterpriseOptions)) {
     const getters = store.getters
     let readonly_pk = false
     let readonly = false
@@ -362,7 +362,7 @@ export function getSalarySnapshootFormItems(operate, model, configs) {
       })
     })
     const loadSalarySlots = []
-    if (!readonly_pk && validator.isNotEmpty(loadSalary)) {
+    if (!readonly_pk && isNotEmpty(loadSalary)) {
       loadSalarySlots.push({
         slot: 'append',
         COM: {
@@ -413,10 +413,10 @@ export function getSalarySnapshootFormItems(operate, model, configs) {
     const SS_TYPE = model.SS_TYPE
     if (
       (operate === 'add' && !SS_SALARY_LOADED) ||
-      validator.isEmpty(SS_FREQ) ||
-      validator.isEmpty(SS_ISSUE) ||
-      validator.isEmpty(SS_STAFF_NUMBER) ||
-      validator.isEmpty(SS_TYPE)
+      isEmpty(SS_FREQ) ||
+      isEmpty(SS_ISSUE) ||
+      isEmpty(SS_STAFF_NUMBER) ||
+      isEmpty(SS_TYPE)
     ) {
       return items
     }
@@ -607,7 +607,7 @@ export function getPayrollSearcher(statusFilter) {
     ]
   })
   let statusItems = []
-  if (validator.isEmpty(statusFilter)) {
+  if (isEmpty(statusFilter)) {
     statusItems = buildFormItemsByDicts('P5L_P_STATUS', 'el-option')
   } else {
     let statusOptions = getters.getDicts('P5L_P_STATUS')
@@ -700,7 +700,7 @@ export function getPayrollTableItems(formatters) {
       width: '125',
       formatter: function(row, column, cellValue, index) {
         const formatter = formatters['P_STATUS']
-        if (validator.isNotEmpty(formatter)) {
+        if (isNotEmpty(formatter)) {
           const payroll = getPayrollId(row)
           return formatter(payroll, row)
         } else {

@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import * as validator from '@/utils/validate'
+import { isEmpty, isNotEmpty } from '@/utils/validate'
 import { buildFormItemsByDicts } from '@/components/Typography/kit'
 import { adSnapshootList, adSnapshootUpdateById } from '@/api/pit'
 import TypographyTableDialog from '@/components/Typography/Table/dialog'
@@ -170,7 +170,7 @@ export default {
           events: {
             click: function() {
               const selectedRows = self.$refs['ref'].ref().selectedRows
-              if (validator.isNotEmpty(selectedRows)) {
+              if (isNotEmpty(selectedRows)) {
                 self.$confirm('是否调平数据 ？', {
                   type: 'warning',
                   confirmButtonClass: 'el-icon-antd-check',
@@ -219,13 +219,13 @@ export default {
           events: {
             click: function() {
               const selectedRows = self.$refs['ref'].ref().selectedRows
-              if (validator.isNotEmpty(selectedRows)) {
+              if (isNotEmpty(selectedRows)) {
                 self.$prompt('请输入忽略原因', '忽略', {
                   confirmButtonClass: 'el-icon-antd-check',
                   confirmButtonText: '提交',
                   showCancelButton: false,
                   inputValidator: (value) => {
-                    if (validator.isEmpty(value)) {
+                    if (isEmpty(value)) {
                       return '请输入忽略原因'
                     }
                     return true

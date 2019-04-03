@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import * as validator from '@/utils/validate'
+import { isNotEmpty } from '@/utils/validate'
 import {
   salarySnapshootList,
   salarySnapshootDelete,
@@ -102,7 +102,7 @@ export default {
             events: {
               click: function() {
                 const selectedRows = self.$refs['ref'].selectedRows
-                if (validator.isNotEmpty(selectedRows)) {
+                if (isNotEmpty(selectedRows)) {
                   self.$confirm('是否删除数据 ？', {
                     type: 'warning',
                     confirmButtonClass: 'el-icon-antd-check',
@@ -130,7 +130,7 @@ export default {
             events: {
               click: function() {
                 const selectedRows = self.$refs['ref'].selectedRows
-                if (validator.isNotEmpty(selectedRows)) {
+                if (isNotEmpty(selectedRows)) {
                   self.$confirm('是否校验数据 ？', {
                     type: 'warning',
                     confirmButtonClass: 'el-icon-antd-check',
@@ -193,7 +193,7 @@ export default {
             events: {
               click: function() {
                 const selectedRows = self.$refs['ref'].selectedRows
-                if (validator.isNotEmpty(selectedRows)) {
+                if (isNotEmpty(selectedRows)) {
                   self.$confirm('是否提交数据 ？', {
                     type: 'warning',
                     confirmButtonClass: 'el-icon-antd-check',
@@ -273,7 +273,7 @@ export default {
   },
   methods: {
     refresh(config) {
-      if (validator.isNotEmpty(config)) {
+      if (isNotEmpty(config)) {
         if (config.refreshFlag) {
           this.$refs['ref'].doSearch()
         }

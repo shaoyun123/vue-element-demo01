@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import * as validator from '@/utils/validate'
+import { isEmpty } from '@/utils/validate'
 import { buildFormItemsByDicts } from '@/components/Typography/kit'
 import { flowRecordList } from '@/api/pit'
 import TypographyTableDialog from '@/components/Typography/Table/dialog'
@@ -88,7 +88,7 @@ export default {
               width: '500',
               'show-overflow-tooltip': true,
               formatter: function(row, column, cellValue, index) {
-                if (validator.isEmpty(cellValue)) {
+                if (isEmpty(cellValue)) {
                   return <span />
                 } else {
                   return <span>{ cellValue }</span>
@@ -103,7 +103,7 @@ export default {
               width: '250',
               'show-overflow-tooltip': true,
               formatter: function(row, column, cellValue, index) {
-                if (validator.isEmpty(cellValue)) {
+                if (isEmpty(cellValue)) {
                   return <span />
                 } else {
                   return <span>{ cellValue }</span>

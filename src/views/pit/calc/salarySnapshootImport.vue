@@ -9,7 +9,7 @@
 
 <script>
 import moment from 'moment'
-import * as validator from '@/utils/validate'
+import { isNotEmpty } from '@/utils/validate'
 import { salarySnapshootImport } from '@/api/pit'
 import TypographyFormBasic from '@/components/Typography/Form/basic'
 import { buildFormItems, buildFormItemsByDicts } from '@/components/Typography/kit'
@@ -142,7 +142,7 @@ export default {
                     if (size > 10) {
                       messages.push('文件大小应小于 10 M')
                     }
-                    if (validator.isNotEmpty(messages)) {
+                    if (isNotEmpty(messages)) {
                       let message = ''
                       messages.forEach((text, i) => {
                         if (i > 0) {

@@ -54,8 +54,8 @@
 </template>
 
 <script>
-import * as validator from '@/utils/validate'
-import * as kit from '@/components/Typography/kit'
+import { isNotEmpty } from '@/utils/validate'
+import { fillFormItemsDefaultProps } from '@/components/Typography/kit'
 import ElFormItemWrap from '@/components/Typography/Wrap/elFormItemWrap'
 import ElButtonWrap from '@/components/Typography/Wrap/elButtonWrap'
 
@@ -138,14 +138,14 @@ export default {
     groups: function() {
       const groups = []
       const items = this.COM.items
-      if (validator.isNotEmpty(items)) {
-        kit.fillFormItemsDefaultProps(items)
+      if (isNotEmpty(items)) {
+        fillFormItemsDefaultProps(items)
         items.forEach((item, i) => {
           const tag = item.tag
           const title = item.title
           const actions = item.actions
           let showFeature = item.showFeature || false
-          if (validator.isNotEmpty(title)) {
+          if (isNotEmpty(title)) {
             showFeature = true
           }
           if (tag === 'el-new-group') {
@@ -184,7 +184,7 @@ export default {
       const tag = item.tag
       const name = item.name
       let key = tag
-      if (validator.isNotEmpty(name)) {
+      if (isNotEmpty(name)) {
         key += ('-' + name)
       }
       key += index
@@ -260,7 +260,7 @@ export default {
     },
     getModelValue(name) {
       let value = ''
-      if (validator.isNotEmpty(name)) {
+      if (isNotEmpty(name)) {
         value = this.model
         name.split('.').forEach(fragment => {
           value = value[fragment]
@@ -269,7 +269,7 @@ export default {
       return value
     },
     setModelValue(value, name, model) {
-      if (validator.isNotEmpty(name)) {
+      if (isNotEmpty(name)) {
         const fragments = name.split('.')
         const fragmentLen = fragments.length
         if (fragmentLen === 1) {
@@ -287,7 +287,7 @@ export default {
       }
     },
     setModel(model) {
-      if (validator.isNotEmpty(model, true)) {
+      if (isNotEmpty(model, true)) {
         this.model = model
       }
     },
@@ -295,7 +295,7 @@ export default {
       return { ...this.model }
     },
     resetForm() {
-      if (validator.isNotEmpty(this.resetTo)) {
+      if (isNotEmpty(this.resetTo)) {
         this.$emit('input', this.resetTo)
       } else {
         this.$refs.ref.resetFields()

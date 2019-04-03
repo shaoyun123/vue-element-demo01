@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import * as validator from '@/utils/validate'
+import { isEmpty } from '@/utils/validate'
 import { payrollList, payrollUpdateById, enterpriseList } from '@/api/pit'
 import TypographyTableBasic from '@/components/Typography/Table/basic'
 import { buildFlowRecordSimple, getPayrollSearcher, getPayrollTableItems } from './kit'
@@ -99,7 +99,7 @@ export default {
         confirmButtonText: '提交',
         showCancelButton: false,
         inputValidator: (value) => {
-          if (validator.isEmpty(value)) {
+          if (isEmpty(value)) {
             return '请输入质疑原因'
           }
           return true

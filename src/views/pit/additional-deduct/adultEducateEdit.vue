@@ -13,7 +13,7 @@
 
 <script>
 import moment from 'moment'
-import * as validator from '@/utils/validate'
+import { isEmpty, isNotEmpty } from '@/utils/validate'
 import { buildFormItemsByDicts } from '@/components/Typography/kit'
 import { adultEducateSingle, adultEducateSave } from '@/api/pit'
 import BasicEdit from '@/views/components/basicEdit'
@@ -35,7 +35,7 @@ export default {
   methods: {
     showDialog(PK) {
       let primaryKey = null
-      if (validator.isNotEmpty(PK)) {
+      if (isNotEmpty(PK)) {
         primaryKey = { ADAE_ID: PK }
         this.dialogTitle = '修改继续教育'
       } else {
@@ -50,7 +50,7 @@ export default {
       this.$emit('after-save', model)
     },
     handleModel(operate, model) {
-      if (validator.isEmpty(model.ADAE_CERTIFICATE_DATE)) {
+      if (isEmpty(model.ADAE_CERTIFICATE_DATE)) {
         model.ADAE_CERTIFICATE_NAME = ''
         model.ADAE_CERTIFICATE_ID = ''
         model.ADAE_CERTIFICATE_ISSUER = ''
@@ -83,7 +83,7 @@ export default {
                 const _model = this.$refs['ref'].getModel()
                 const ADAE_STAGE_START = _model.ADAE_STAGE_START
                 const ADAE_STAGE_END = _model.ADAE_STAGE_END
-                if (validator.isNotEmpty(ADAE_STAGE_START) && validator.isNotEmpty(ADAE_STAGE_END)) {
+                if (isNotEmpty(ADAE_STAGE_START) && isNotEmpty(ADAE_STAGE_END)) {
                   const startDate = moment(ADAE_STAGE_START)
                   const endDate = moment(ADAE_STAGE_END)
                   if (startDate.isBefore(endDate)) {
@@ -130,7 +130,7 @@ export default {
           { tag: 'el-date-picker', name: 'ADAE_CERTIFICATE_DATE', linkage: true }
         ]
       })
-      if (validator.isNotEmpty(model.ADAE_CERTIFICATE_DATE)) {
+      if (isNotEmpty(model.ADAE_CERTIFICATE_DATE)) {
         items.push({
           props: {
             label: '证书名称',

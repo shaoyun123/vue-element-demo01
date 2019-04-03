@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import * as validator from '@/utils/validate'
+import { isNotEmpty, validateIDNumber } from '@/utils/validate'
 import { buildFormItemsByDicts } from '@/components/Typography/kit'
 import { medicalSingle, medicalSave } from '@/api/pit'
 import BasicEdit from '@/views/components/basicEdit'
@@ -35,7 +35,7 @@ export default {
   methods: {
     showDialog(PK) {
       let primaryKey = null
-      if (validator.isNotEmpty(PK)) {
+      if (isNotEmpty(PK)) {
         primaryKey = { ADM_ID: PK }
         this.dialogTitle = '修改大病医疗'
       } else {
@@ -89,7 +89,7 @@ export default {
             {
               validator: (rule, value, callback) => {
                 if (model.ADM_ID_TYPE === '01') {
-                  if (validator.validateIDNumber(value)) {
+                  if (validateIDNumber(value)) {
                     callback()
                   } else {
                     callback(new Error('居民身份证号格式错误'))

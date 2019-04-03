@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import * as validator from '@/utils/validate'
+import { isEmpty, isNotEmpty } from '@/utils/validate'
 import ElComponentWrap from '@/components/Typography/Wrap/elComponentWrap'
 
 export default {
@@ -56,7 +56,7 @@ export default {
       const tag = item.tag
       const name = item.name
       let key = 'el-autocomplete-wrap-' + tag
-      if (validator.isNotEmpty(name)) {
+      if (isNotEmpty(name)) {
         key += ('-' + name)
       }
       key += index
@@ -64,7 +64,7 @@ export default {
     },
     fragmentTitle(prop, item) {
       let title = item[prop]
-      if (validator.isEmpty(title)) {
+      if (isEmpty(title)) {
         title = prop
       }
       return title

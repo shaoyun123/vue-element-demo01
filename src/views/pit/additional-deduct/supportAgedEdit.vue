@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import * as validator from '@/utils/validate'
+import { isNotEmpty, validateIDNumber } from '@/utils/validate'
 import { buildFormItemsByDicts } from '@/components/Typography/kit'
 import { supportAgedSingle, supportAgedSave } from '@/api/pit'
 import BasicEdit from '@/views/components/basicEdit'
@@ -36,7 +36,7 @@ export default {
   methods: {
     showDialog(PK) {
       let primaryKey = null
-      if (validator.isNotEmpty(PK)) {
+      if (isNotEmpty(PK)) {
         primaryKey = { ADSA_ID: PK }
         this.dialogTitle = '修改赡养老人'
       } else {
@@ -120,7 +120,7 @@ export default {
             {
               validator: (rule, value, callback) => {
                 if (model.ADSA_ID_TYPE === '01') {
-                  if (validator.validateIDNumber(value)) {
+                  if (validateIDNumber(value)) {
                     callback()
                   } else {
                     callback(new Error('居民身份证号格式错误'))
@@ -212,7 +212,7 @@ export default {
               {
                 validator: (rule, value, callback) => {
                   if (model.ADSA_PARTNER_ID_TYPE === '01') {
-                    if (validator.validateIDNumber(value)) {
+                    if (validateIDNumber(value)) {
                       callback()
                     } else {
                       callback(new Error('居民身份证号格式错误'))

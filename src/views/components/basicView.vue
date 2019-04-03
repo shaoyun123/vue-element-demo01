@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import * as validator from '@/utils/validate'
+import { isNotEmpty } from '@/utils/validate'
 import TypographyFormBasic from '@/components/Typography/Form/basic'
 
 export default {
@@ -58,7 +58,7 @@ export default {
     },
     controller: function() {
       let items = []
-      if (validator.isNotEmpty(this.actions)) {
+      if (isNotEmpty(this.actions)) {
         items = items.concat(this.actions)
       }
       return { showReset: false, items }
@@ -71,7 +71,7 @@ export default {
     },
     init(primaryKey) {
       this.loading = true
-      if (validator.isNotEmpty(primaryKey)) {
+      if (isNotEmpty(primaryKey)) {
         this.getEntity(primaryKey).then(response => {
           this.model = response.data
           this.initItems()

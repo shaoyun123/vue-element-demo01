@@ -13,7 +13,7 @@
 
 <script>
 import moment from 'moment'
-import * as validator from '@/utils/validate'
+import { isNotEmpty } from '@/utils/validate'
 import { buildFormItemsByDicts } from '@/components/Typography/kit'
 import { taxStairSingle, taxStairSave } from '@/api/pit'
 import BasicEdit from '@/views/components/basicEdit'
@@ -45,7 +45,7 @@ export default {
   methods: {
     showDialog(PK) {
       let primaryKey = null
-      if (validator.isNotEmpty(PK)) {
+      if (isNotEmpty(PK)) {
         primaryKey = { TSC_ID: PK }
         this.dialogTitle = '修改所得税预扣率'
       } else {
@@ -87,7 +87,7 @@ export default {
                 const _model = this.$refs['ref'].getModel()
                 const TSC_EFFECTIVE_DATE = _model.TSC_EFFECTIVE_DATE
                 const TSC_EXPIRY_DATE = _model.TSC_EXPIRY_DATE
-                if (validator.isNotEmpty(TSC_EFFECTIVE_DATE) && validator.isNotEmpty(TSC_EXPIRY_DATE)) {
+                if (isNotEmpty(TSC_EFFECTIVE_DATE) && isNotEmpty(TSC_EXPIRY_DATE)) {
                   const effectiveDate = moment(TSC_EFFECTIVE_DATE)
                   const expiryDate = moment(TSC_EXPIRY_DATE)
                   if (effectiveDate.isBefore(expiryDate)) {

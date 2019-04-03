@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import * as validator from '@/utils/validate'
+import { isNotEmpty } from '@/utils/validate'
 import { payFiducialSingle, payFiducialSave } from '@/api/pit'
 import BasicEdit from '@/views/components/basicEdit'
 
@@ -48,9 +48,9 @@ export default {
     showDialog(PK) {
       let primaryKey = null
       if (
-        validator.isNotEmpty(PK) &&
-        validator.isNotEmpty(PK.PFC_PAY_SITE) &&
-        validator.isNotEmpty(PK.PFC_YEAR)
+        isNotEmpty(PK) &&
+        isNotEmpty(PK.PFC_PAY_SITE) &&
+        isNotEmpty(PK.PFC_YEAR)
       ) {
         primaryKey = PK
         this.dialogTitle = '修改缴纳基数'

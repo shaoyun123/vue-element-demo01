@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import * as validator from '@/utils/validate'
+import { isNotEmpty } from '@/utils/validate'
 import { buildFormItemsByDicts } from '@/components/Typography/kit'
 import { taxTypeSingle, taxTypeSave } from '@/api/ftt'
 import BasicEdit from '@/views/components/basicEdit'
@@ -33,7 +33,7 @@ export default {
   methods: {
     showDialog(PK) {
       let primaryKey = null
-      if (validator.isNotEmpty(PK)) {
+      if (isNotEmpty(PK)) {
         primaryKey = { TT_ID: PK }
         this.dialogTitle = '修改税种信息'
       } else {

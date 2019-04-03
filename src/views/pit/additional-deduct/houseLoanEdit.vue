@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import * as validator from '@/utils/validate'
+import { isNotEmpty } from '@/utils/validate'
 import { buildFormItemsByDicts } from '@/components/Typography/kit'
 import { houseLoanSingle, houseLoanSave } from '@/api/pit'
 import BasicEdit from '@/views/components/basicEdit'
@@ -36,7 +36,7 @@ export default {
   methods: {
     showDialog(PK) {
       let primaryKey = null
-      if (validator.isNotEmpty(PK)) {
+      if (isNotEmpty(PK)) {
         primaryKey = { ADHL_ID: PK }
         this.dialogTitle = '修改住房贷款利息'
       } else {

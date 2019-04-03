@@ -1,4 +1,4 @@
-import * as validator from '@/utils/validate'
+import { isEmpty, isNotEmpty } from '@/utils/validate'
 import { dictList, districtList } from '@/api/globalData'
 
 function getDictKey(type, value) {
@@ -6,7 +6,7 @@ function getDictKey(type, value) {
 }
 
 function recursionDistrict(districtMapper, districts) {
-  if (validator.isNotEmpty(districts)) {
+  if (isNotEmpty(districts)) {
     districts.forEach(district => {
       const value = district.value
       const title = district.label
@@ -29,7 +29,7 @@ const globalData = {
       const dictList = payload.data
       const dictMapper = {}
       const dictStorer = {}
-      if (validator.isNotEmpty(dictList)) {
+      if (isNotEmpty(dictList)) {
         dictList.forEach(dict => {
           const type = dict.type
           const value = dict.value
@@ -79,14 +79,14 @@ export const dictKit = {
   getDictTitle: function(state, type, value) {
     const key = getDictKey(type, value)
     let title = state.globalData.dictMapper[key]
-    if (validator.isEmpty(title)) {
+    if (isEmpty(title)) {
       title = value
     }
     return title
   },
   getDicts: function(state, type) {
     let dicts = state.globalData.dictStorer[type]
-    if (validator.isEmpty(dicts)) {
+    if (isEmpty(dicts)) {
       dicts = []
     }
     return dicts
@@ -96,7 +96,7 @@ export const dictKit = {
 export const districtKit = {
   getDistrictTitle: function(state, value) {
     let title = state.globalData.districtMapper[value]
-    if (validator.isEmpty(title)) {
+    if (isEmpty(title)) {
       title = value
     }
     return title

@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import * as validator from '@/utils/validate'
+import { isEmpty, isNotEmpty } from '@/utils/validate'
 import { buildFormItemsByDicts } from '@/components/Typography/kit'
 import { staffList, staffDelete, loginIdSave } from '@/api/pit'
 import TypographyTableBasic from '@/components/Typography/Table/basic'
@@ -44,7 +44,7 @@ export default {
             events: {
               click: function() {
                 const selectedRows = self.$refs['ref'].selectedRows
-                if (validator.isNotEmpty(selectedRows)) {
+                if (isNotEmpty(selectedRows)) {
                   self.$confirm('是否删除数据 ？', {
                     type: 'warning',
                     confirmButtonClass: 'el-icon-antd-check',
@@ -115,7 +115,7 @@ export default {
               fixed: 'left',
               width: '150',
               formatter: function(row, column, cellValue, index) {
-                if (validator.isEmpty(cellValue)) {
+                if (isEmpty(cellValue)) {
                   const jsxData = {
                     on: { 'click': () => self.bindLoginId(row.S_NUMBER) }
                   }
@@ -227,7 +227,7 @@ export default {
         confirmButtonText: '提交',
         showCancelButton: false,
         inputValidator: (value) => {
-          if (validator.isEmpty(value)) {
+          if (isEmpty(value)) {
             return '请输入登录名'
           }
           return true

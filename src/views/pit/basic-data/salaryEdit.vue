@@ -14,7 +14,7 @@
 <script>
 import { parallel } from '@/utils/request'
 import { trim } from '@/utils'
-import * as validator from '@/utils/validate'
+import { isNotEmpty } from '@/utils/validate'
 import { buildFormItems, buildFormItemsByDicts } from '@/components/Typography/kit'
 import { salarySingle, salarySave, enterpriseList, payFiducialList, payRatioList } from '@/api/pit'
 import BasicEdit from '@/views/components/basicEdit'
@@ -91,7 +91,7 @@ export default {
     },
     initPayFiducialRanges(payFiducialList, model) {
       let payFiducial = null
-      if (validator.isNotEmpty(payFiducialList)) {
+      if (isNotEmpty(payFiducialList)) {
         payFiducial = payFiducialList[0]
       }
       this.buildPayFiducialRanges(payFiducial, 'PENSION', model)
@@ -103,14 +103,14 @@ export default {
       this.buildPayFiducialRanges(payFiducial, 'CR_FUND_S', model)
     },
     buildPayFiducialRanges(payFiducial, type, model) {
-      if (validator.isNotEmpty(payFiducial)) {
+      if (isNotEmpty(payFiducial)) {
         const max = payFiducial[`PFC_${type}_MAX`]
         const min = payFiducial[`PFC_${type}_MIN`]
         this.payFiducialRanges[`S_FIDUCIAL_${type}`] = [min, max]
-        if (validator.isNotEmpty(model)) {
+        if (isNotEmpty(model)) {
           model[`S_FIDUCIAL_${type}`] = min
         }
-      } else if (validator.isNotEmpty(model)) {
+      } else if (isNotEmpty(model)) {
         model[`S_FIDUCIAL_${type}`] = 0
       }
     },
@@ -118,7 +118,7 @@ export default {
       let tip = ''
       const props = {}
       const ranges = this.payFiducialRanges[name]
-      if (validator.isNotEmpty(ranges)) {
+      if (isNotEmpty(ranges)) {
         const min = ranges[0]
         const max = ranges[1]
         tip = `取值范围 [${min} - ${max}]`
@@ -139,7 +139,7 @@ export default {
     },
     initPayRatioOptions(payRatioList, model) {
       let payRatio = null
-      if (validator.isNotEmpty(payRatioList)) {
+      if (isNotEmpty(payRatioList)) {
         payRatio = payRatioList[0]
       }
       this.buildPayRatioOptions(payRatio, 'PENSION_P', model)
@@ -168,9 +168,9 @@ export default {
       this.buildPayRatioOptions(payRatio, 'CR_FUND_ES', model)
     },
     buildPayRatioOptions(payRatio, type, model) {
-      if (validator.isNotEmpty(payRatio)) {
+      if (isNotEmpty(payRatio)) {
         const range = payRatio[`PRC_${type}`]
-        if (validator.isNotEmpty(range)) {
+        if (isNotEmpty(range)) {
           const options = []
           const values = range.split(',')
           values.forEach(value => {
@@ -179,17 +179,17 @@ export default {
             options.push({ value, title })
           })
           this.payRatioOptions[`S_RATIO_${type}`] = options
-          if (validator.isNotEmpty(model)) {
+          if (isNotEmpty(model)) {
             model[`S_RATIO_${type}`] = options[0].value
           }
         }
-      } else if (validator.isNotEmpty(model)) {
+      } else if (isNotEmpty(model)) {
         model[`S_RATIO_${type}`] = 0
       }
     },
     buildPayRatioItem(name, label) {
       const options = this.payRatioOptions[name]
-      if (validator.isNotEmpty(options)) {
+      if (isNotEmpty(options)) {
         return {
           props: {
             label,
@@ -242,7 +242,7 @@ export default {
       return salarySingle(primaryKey).then((response) => {
         const model = response.data
         let S_PAY_SITE = self.defaultModel.S_PAY_SITE
-        if (validator.isNotEmpty(model)) {
+        if (isNotEmpty(model)) {
           S_PAY_SITE = model.S_PAY_SITE
         }
         return parallel([
@@ -260,9 +260,9 @@ export default {
     showDialog(PK) {
       let primaryKey = null
       if (
-        validator.isNotEmpty(PK) &&
-        validator.isNotEmpty(PK.S_STAFF_NUMBER) &&
-        validator.isNotEmpty(PK.S_TYPE)
+        isNotEmpty(PK) &&
+        isNotEmpty(PK.S_STAFF_NUMBER) &&
+        isNotEmpty(PK.S_TYPE)
       ) {
         primaryKey = PK
         this.dialogTitle = this.$store.getters.getDictTitle('S4Y_S_TYPE', PK.S_TYPE)

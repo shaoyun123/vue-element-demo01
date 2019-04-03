@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import * as validator from '@/utils/validate'
+import { isNotEmpty, checkSocialCreditCodeOrg, checkTaxpayerId } from '@/utils/validate'
 import { buildFormItemsByDicts } from '@/components/Typography/kit'
 import { enterpriseSingle, enterpriseSave } from '@/api/pit'
 import BasicEdit from '@/views/components/basicEdit'
@@ -33,7 +33,7 @@ export default {
   methods: {
     showDialog(PK) {
       let primaryKey = null
-      if (validator.isNotEmpty(PK)) {
+      if (isNotEmpty(PK)) {
         primaryKey = { E_ID: PK }
         this.dialogTitle = '修改企业信息'
       } else {
@@ -72,7 +72,7 @@ export default {
             { required: true, message: '请输入纳税人识别号', trigger: 'blur' },
             {
               validator: (rule, value, callback) => {
-                if (validator.checkSocialCreditCodeOrg(value) || validator.checkTaxpayerId(value)) {
+                if (checkSocialCreditCodeOrg(value) || checkTaxpayerId(value)) {
                   callback()
                 } else {
                   callback(new Error('纳税人识别号格式错误'))

@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import * as validator from '@/utils/validate'
+import { isNotEmpty } from '@/utils/validate'
 import { payrollSingle } from '@/api/pit'
 import { getPayrollFormItems } from './kit'
 import BasicView from '@/views/components/basicView'
@@ -66,11 +66,11 @@ export default {
     showDialog(PK) {
       let primaryKey = null
       if (
-        validator.isNotEmpty(PK) &&
-        validator.isNotEmpty(PK.P_FREQ) &&
-        validator.isNotEmpty(PK.P_ISSUE) &&
-        validator.isNotEmpty(PK.P_STAFF_NUMBER) &&
-        validator.isNotEmpty(PK.P_TYPE)
+        isNotEmpty(PK) &&
+        isNotEmpty(PK.P_FREQ) &&
+        isNotEmpty(PK.P_ISSUE) &&
+        isNotEmpty(PK.P_STAFF_NUMBER) &&
+        isNotEmpty(PK.P_TYPE)
       ) {
         primaryKey = PK
         this.primaryKey = primaryKey
@@ -83,10 +83,10 @@ export default {
     showSalarySnapshoot() {
       let primaryKey = null
       if (
-        validator.isNotEmpty(this.primaryKey.P_FREQ) &&
-        validator.isNotEmpty(this.primaryKey.P_ISSUE) &&
-        validator.isNotEmpty(this.primaryKey.P_STAFF_NUMBER) &&
-        validator.isNotEmpty(this.primaryKey.P_TYPE)
+        isNotEmpty(this.primaryKey.P_FREQ) &&
+        isNotEmpty(this.primaryKey.P_ISSUE) &&
+        isNotEmpty(this.primaryKey.P_STAFF_NUMBER) &&
+        isNotEmpty(this.primaryKey.P_TYPE)
       ) {
         primaryKey = {
           SS_FREQ: this.primaryKey.P_FREQ,
@@ -100,10 +100,10 @@ export default {
     showADSnapshoots() {
       let primaryKey = null
       if (
-        validator.isNotEmpty(this.primaryKey.P_FREQ) &&
-        validator.isNotEmpty(this.primaryKey.P_ISSUE) &&
-        validator.isNotEmpty(this.primaryKey.P_STAFF_NUMBER) &&
-        validator.isNotEmpty(this.primaryKey.P_TYPE)
+        isNotEmpty(this.primaryKey.P_FREQ) &&
+        isNotEmpty(this.primaryKey.P_ISSUE) &&
+        isNotEmpty(this.primaryKey.P_STAFF_NUMBER) &&
+        isNotEmpty(this.primaryKey.P_TYPE)
       ) {
         primaryKey = {
           ADS_FREQ: this.primaryKey.P_FREQ,

@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import * as validator from '@/utils/validate'
+import { isNotEmpty } from '@/utils/validate'
 import TypographyTableBasic from '@/components/Typography/Table/basic'
 import TypographyButtonStatus from '@/components/Typography/Button/status'
 
@@ -99,19 +99,19 @@ export default {
     },
     clearSearcher() {
       const ref = this.$refs.ref
-      if (validator.isNotEmpty(ref)) {
+      if (isNotEmpty(ref)) {
         ref.clearSearcher()
       }
     },
     doSearch() {
       const ref = this.$refs.ref
-      if (validator.isNotEmpty(ref)) {
+      if (isNotEmpty(ref)) {
         ref.doSearch()
       }
     },
     getQuerier() {
       const ref = this.$refs.ref
-      if (validator.isNotEmpty(ref)) {
+      if (isNotEmpty(ref)) {
         ref.getQuerier()
       }
     },

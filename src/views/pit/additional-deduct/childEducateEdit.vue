@@ -13,7 +13,7 @@
 
 <script>
 import moment from 'moment'
-import * as validator from '@/utils/validate'
+import { isNotEmpty, validateIDNumber } from '@/utils/validate'
 import { buildFormItemsByDicts } from '@/components/Typography/kit'
 import { childEducateSingle, childEducateSave } from '@/api/pit'
 import BasicEdit from '@/views/components/basicEdit'
@@ -38,7 +38,7 @@ export default {
   methods: {
     showDialog(PK) {
       let primaryKey = null
-      if (validator.isNotEmpty(PK)) {
+      if (isNotEmpty(PK)) {
         primaryKey = { ADCE_ID: PK }
         this.dialogTitle = '修改子女教育'
       } else {
@@ -111,7 +111,7 @@ export default {
             {
               validator: (rule, value, callback) => {
                 if (model.ADCE_ID_TYPE === '01') {
-                  if (validator.validateIDNumber(value)) {
+                  if (validateIDNumber(value)) {
                     callback()
                   } else {
                     callback(new Error('居民身份证号格式错误'))
@@ -152,7 +152,7 @@ export default {
                 const _model = this.$refs['ref'].getModel()
                 const ADCE_STAGE_START = _model.ADCE_STAGE_START
                 const ADCE_STAGE_END = _model.ADCE_STAGE_END
-                if (validator.isNotEmpty(ADCE_STAGE_START) && validator.isNotEmpty(ADCE_STAGE_END)) {
+                if (isNotEmpty(ADCE_STAGE_START) && isNotEmpty(ADCE_STAGE_END)) {
                   const startDate = moment(ADCE_STAGE_START)
                   const endDate = moment(ADCE_STAGE_END)
                   if (startDate.isBefore(endDate)) {
@@ -183,7 +183,7 @@ export default {
                 const _model = this.$refs['ref'].getModel()
                 const ADCE_STAGE_START = _model.ADCE_STAGE_START
                 const ADCE_EDUCATE_STOP = _model.ADCE_EDUCATE_STOP
-                if (validator.isNotEmpty(ADCE_STAGE_START) && validator.isNotEmpty(ADCE_EDUCATE_STOP)) {
+                if (isNotEmpty(ADCE_STAGE_START) && isNotEmpty(ADCE_EDUCATE_STOP)) {
                   const startDate = moment(ADCE_STAGE_START)
                   const educateDate = moment(ADCE_EDUCATE_STOP)
                   if (startDate.isBefore(educateDate)) {

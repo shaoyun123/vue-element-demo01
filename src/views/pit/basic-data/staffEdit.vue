@@ -13,7 +13,7 @@
 
 <script>
 import moment from 'moment'
-import * as validator from '@/utils/validate'
+import { isNotEmpty, validateIDNumber, validateBankCard } from '@/utils/validate'
 import { buildFormItems, buildFormItemsByDicts } from '@/components/Typography/kit'
 import { staffSingle, staffSave, enterpriseList } from '@/api/pit'
 import BasicEdit from '@/views/components/basicEdit'
@@ -49,7 +49,7 @@ export default {
   methods: {
     showDialog(PK) {
       let primaryKey = null
-      if (validator.isNotEmpty(PK)) {
+      if (isNotEmpty(PK)) {
         primaryKey = { S_NUMBER: PK }
         this.dialogTitle = '修改员工信息'
       } else {
@@ -190,7 +190,7 @@ export default {
             {
               validator: (rule, value, callback) => {
                 if (model.S_ID_TYPE === '01') {
-                  if (validator.validateIDNumber(value)) {
+                  if (validateIDNumber(value)) {
                     callback()
                   } else {
                     callback(new Error('居民身份证号格式错误'))
@@ -272,7 +272,7 @@ export default {
                 const _model = this.$refs['ref'].getModel()
                 const S_HIRE_DATE = _model.S_HIRE_DATE
                 const S_TERM_DATE = _model.S_TERM_DATE
-                if (validator.isNotEmpty(S_HIRE_DATE) && validator.isNotEmpty(S_TERM_DATE)) {
+                if (isNotEmpty(S_HIRE_DATE) && isNotEmpty(S_TERM_DATE)) {
                   const hierDate = moment(S_HIRE_DATE)
                   const termDate = moment(S_TERM_DATE)
                   if (hierDate.isBefore(termDate)) {
@@ -317,7 +317,7 @@ export default {
               validator: (rule, value, callback) => {
                 const _model = this.$refs['ref'].getModel()
                 const S_DEPOSIT_BANK = _model.S_DEPOSIT_BANK
-                if (validator.isNotEmpty(S_DEPOSIT_BANK) && !validator.validateBankCard(value)) {
+                if (isNotEmpty(S_DEPOSIT_BANK) && !validateBankCard(value)) {
                   callback(new Error('请输入正确的银行账号'))
                 } else {
                   callback()
@@ -375,7 +375,7 @@ export default {
               {
                 validator: (rule, value, callback) => {
                   if (model.S_SPOUSE_ID_TYPE === '01') {
-                    if (validator.validateIDNumber(value)) {
+                    if (validateIDNumber(value)) {
                       callback()
                     } else {
                       callback(new Error('居民身份证号格式错误'))

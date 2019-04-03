@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import * as validator from '@/utils/validate'
+import { isEmpty, isNotEmpty } from '@/utils/validate'
 import { payrollList, payrollUpdateById, enterpriseList } from '@/api/pit'
 import TypographyTableBasic from '@/components/Typography/Table/basic'
 import { buildFlowRecordSimple, getPayrollId, getPayrollSearcher, getPayrollTableItems } from './kit'
@@ -52,13 +52,13 @@ export default {
             events: {
               click: function() {
                 const selectedRows = self.$refs['ref'].selectedRows
-                if (validator.isNotEmpty(selectedRows)) {
+                if (isNotEmpty(selectedRows)) {
                   self.$prompt('请输入不调整原因', '质疑处理', {
                     confirmButtonClass: 'el-icon-antd-check',
                     confirmButtonText: '提交',
                     showCancelButton: false,
                     inputValidator: (value) => {
-                      if (validator.isEmpty(value)) {
+                      if (isEmpty(value)) {
                         return '请输入不调整原因'
                       }
                       return true
@@ -92,13 +92,13 @@ export default {
             events: {
               click: function() {
                 const selectedRows = self.$refs['ref'].selectedRows
-                if (validator.isNotEmpty(selectedRows)) {
+                if (isNotEmpty(selectedRows)) {
                   self.$prompt('请输入调整原因', '质疑处理', {
                     confirmButtonClass: 'el-icon-antd-check',
                     confirmButtonText: '提交',
                     showCancelButton: false,
                     inputValidator: (value) => {
-                      if (validator.isEmpty(value)) {
+                      if (isEmpty(value)) {
                         return '请输入调整原因'
                       }
                       return true

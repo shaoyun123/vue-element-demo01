@@ -10,7 +10,7 @@
 
 <script>
 import { getDataType } from '@/utils'
-import * as validator from '@/utils/validate'
+import { isNotEmpty } from '@/utils/validate'
 import TypographyFormBasic from '@/components/Typography/Form/basic'
 
 export default {
@@ -87,7 +87,7 @@ export default {
     controller: function() {
       const self = this
       let items = []
-      if (validator.isNotEmpty(this.actions)) {
+      if (isNotEmpty(this.actions)) {
         items = items.concat(this.actions)
       }
       items.push({
@@ -107,7 +107,7 @@ export default {
   },
   methods: {
     showDialog(primaryKey) {
-      if (validator.isNotEmpty(primaryKey)) {
+      if (isNotEmpty(primaryKey)) {
         this.operate = 'edit'
         this.adding = false
         this.editing = true
@@ -129,7 +129,7 @@ export default {
       } else if (this.editing) {
         this.getEntity(primaryKey).then(response => {
           const model = response.data
-          if (validator.isNotEmpty(model)) {
+          if (isNotEmpty(model)) {
             this.model = model
             this.resetTo = model
           } else {

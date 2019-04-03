@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import * as validator from '@/utils/validate'
+import { isNotEmpty } from '@/utils/validate'
 import { salarySnapshootSingle } from '@/api/pit'
 import { getSalarySnapshootFormItems } from './kit'
 import BasicView from '@/views/components/basicView'
@@ -33,11 +33,11 @@ export default {
     showDialog(PK) {
       let primaryKey = null
       if (
-        validator.isNotEmpty(PK) &&
-        validator.isNotEmpty(PK.SS_FREQ) &&
-        validator.isNotEmpty(PK.SS_ISSUE) &&
-        validator.isNotEmpty(PK.SS_STAFF_NUMBER) &&
-        validator.isNotEmpty(PK.SS_TYPE)
+        isNotEmpty(PK) &&
+        isNotEmpty(PK.SS_FREQ) &&
+        isNotEmpty(PK.SS_ISSUE) &&
+        isNotEmpty(PK.SS_STAFF_NUMBER) &&
+        isNotEmpty(PK.SS_TYPE)
       ) {
         primaryKey = PK
       }

@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import * as validator from '@/utils/validate'
+import { isNotEmpty } from '@/utils/validate'
 
 export default {
   name: 'ElComponentWrap',
@@ -32,7 +32,7 @@ export default {
       const tag = item.tag
       const name = item.name
       let key = this.COM.tag + '-' + tag
-      if (validator.isNotEmpty(name)) {
+      if (isNotEmpty(name)) {
         key += ('-' + name)
       }
       key += index

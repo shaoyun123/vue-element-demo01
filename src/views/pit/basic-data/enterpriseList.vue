@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import * as validator from '@/utils/validate'
+import { isNotEmpty } from '@/utils/validate'
 import { buildFormItemsByDicts } from '@/components/Typography/kit'
 import { enterpriseList, enterpriseDelete } from '@/api/pit'
 import TypographyTableBasic from '@/components/Typography/Table/basic'
@@ -42,7 +42,7 @@ export default {
             events: {
               click: function() {
                 const selectedRows = self.$refs['ref'].selectedRows
-                if (validator.isNotEmpty(selectedRows)) {
+                if (isNotEmpty(selectedRows)) {
                   self.$confirm('是否删除数据 ？', {
                     type: 'warning',
                     confirmButtonClass: 'el-icon-antd-check',

@@ -1,21 +1,21 @@
 import store from '@/store'
-import * as validator from '@/utils/validate'
+import { isNotEmpty } from '@/utils/validate'
 
 export function buildFormItems(options, valueField, titleTield, tag, name, config) {
   const items = []
-  if (validator.isNotEmpty(options)) {
+  if (isNotEmpty(options)) {
     let props = {}
-    if (validator.isNotEmpty(config)) {
+    if (isNotEmpty(config)) {
       props = { ...config.props }
     }
     options.forEach(option => {
       const value = option[valueField]
       const title = option[titleTield]
       const item = {}
-      if (validator.isNotEmpty(tag)) {
+      if (isNotEmpty(tag)) {
         item.tag = tag
       }
-      if (validator.isNotEmpty(name)) {
+      if (isNotEmpty(name)) {
         item.name = name
       }
       Object.assign(item, config)
@@ -38,7 +38,7 @@ export function buildFormItemsByDicts(dictType, tag, name, config) {
 
 export function fillFormItemDefaultProps(entity) {
   const { tag, items } = entity
-  if (validator.isNotEmpty(items)) {
+  if (isNotEmpty(items)) {
     items.forEach(item => {
       fillFormItemDefaultProps(item)
     })
@@ -77,7 +77,7 @@ export function fillFormItemDefaultProps(entity) {
 export function fillFormItemsDefaultProps(formItems) {
   formItems.forEach(item => {
     const items = item.items
-    if (validator.isNotEmpty(items)) {
+    if (isNotEmpty(items)) {
       items.forEach(entity => {
         fillFormItemDefaultProps(entity)
       })

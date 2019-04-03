@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import * as validator from '@/utils/validate'
+import { isNotEmpty } from '@/utils/validate'
 import ElButtonWrap from '@/components/Typography/Wrap/elButtonWrap'
 import ElDropdownWrap from '@/components/Typography/Wrap/elDropdownWrap'
 import TypographyDivider from '@/components/Typography/Divider'
@@ -42,7 +42,7 @@ export default {
     actionPool() {
       const leftActions = []
       const rightActions = []
-      if (validator.isNotEmpty(this.controller.items)) {
+      if (isNotEmpty(this.controller.items)) {
         this.controller.items.forEach((action, index) => {
           const float = action.float
           const divided = action.divided

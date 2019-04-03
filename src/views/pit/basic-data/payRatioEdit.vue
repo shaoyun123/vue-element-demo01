@@ -13,7 +13,7 @@
 
 <script>
 import moment from 'moment'
-import * as validator from '@/utils/validate'
+import { isNotEmpty } from '@/utils/validate'
 import { payRatioSingle, payRatioSave } from '@/api/pit'
 import BasicEdit from '@/views/components/basicEdit'
 
@@ -34,10 +34,10 @@ export default {
     showDialog(PK) {
       let primaryKey = null
       if (
-        validator.isNotEmpty(PK) &&
-        validator.isNotEmpty(PK.PRC_PAY_SITE) &&
-        validator.isNotEmpty(PK.PRC_EFFECTIVE_DATE) &&
-        validator.isNotEmpty(PK.PRC_EXPIRY_DATE)
+        isNotEmpty(PK) &&
+        isNotEmpty(PK.PRC_PAY_SITE) &&
+        isNotEmpty(PK.PRC_EFFECTIVE_DATE) &&
+        isNotEmpty(PK.PRC_EXPIRY_DATE)
       ) {
         primaryKey = PK
         this.dialogTitle = '修改缴纳比例'
@@ -90,7 +90,7 @@ export default {
                 const _model = this.$refs['ref'].getModel()
                 const PRC_EFFECTIVE_DATE = _model.PRC_EFFECTIVE_DATE
                 const PRC_EXPIRY_DATE = _model.PRC_EXPIRY_DATE
-                if (validator.isNotEmpty(PRC_EFFECTIVE_DATE) && validator.isNotEmpty(PRC_EXPIRY_DATE)) {
+                if (isNotEmpty(PRC_EFFECTIVE_DATE) && isNotEmpty(PRC_EXPIRY_DATE)) {
                   const effectiveDate = moment(PRC_EFFECTIVE_DATE)
                   const expiryDate = moment(PRC_EXPIRY_DATE)
                   if (effectiveDate.isBefore(expiryDate)) {

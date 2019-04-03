@@ -3,18 +3,18 @@
     <el-scrollbar :style="scrollbarStyle" wrap-class="el-scrollbar-wrap" view-class="el-scrollbar-view">
       <el-form-wrap ref="ref-form" :c-o-m="form" :reset-to="form.resetTo" :loading="loading" @input="handleFormInput($event)" />
     </el-scrollbar>
-    <typography-form-controller v-if="payloadController.items.length" :controller="payloadController" />
+    <typography-button-controller v-if="payloadController.items.length" :controller="payloadController" />
   </el-dialog>
 </template>
 
 <script>
-import * as validator from '@/utils/validate'
+import { isNotEmpty } from '@/utils/validate'
 import ElFormWrap from '@/components/Typography/Wrap/elFormWrap'
-import TypographyFormController from '@/components/Typography/Form/controller'
+import TypographyButtonController from '@/components/Typography/Button/controller'
 
 export default {
   name: 'TypographyFormBasic',
-  components: { ElFormWrap, TypographyFormController },
+  components: { ElFormWrap, TypographyButtonController },
   props: {
     dialog: {
       type: Object,
@@ -108,27 +108,27 @@ export default {
     getModel() {
       let model = {}
       const ref = this.$refs['ref-form']
-      if (validator.isNotEmpty(ref)) {
+      if (isNotEmpty(ref)) {
         model = ref.getModel()
       }
       return model
     },
     clearForm() {
       const refForm = this.$refs['ref-form']
-      if (validator.isNotEmpty(refForm)) {
+      if (isNotEmpty(refForm)) {
         refForm.ref().resetFields()
       }
     },
     clearValidate() {
       const refForm = this.$refs['ref-form']
-      if (validator.isNotEmpty(refForm)) {
+      if (isNotEmpty(refForm)) {
         refForm.ref().clearValidate()
       }
     },
     validateForm() {
       this.clearValidate()
       const refForm = this.$refs['ref-form']
-      if (validator.isNotEmpty(refForm)) {
+      if (isNotEmpty(refForm)) {
         return refForm.ref().validate()
       } else {
         return false

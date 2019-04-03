@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="controller">
-      <typography-form-controller :controller="payloadController" />
+      <typography-button-controller :controller="payloadController" />
       <typography-form-basic ref="ref-searcher" :dialog="payloadDialog" :form="payloadForm" :controller="payloadFormController" @input="handleDialogInput($event)" />
     </div>
     <el-table-wrap :c-o-m="payloadTable" :loading="loading" />
@@ -10,15 +10,15 @@
 </template>
 
 <script>
-import * as validator from '@/utils/validate'
+import { isEmpty, isNotEmpty } from '@/utils/validate'
 import ElTableWrap from '@/components/Typography/Wrap/elTableWrap'
-import TypographyFormController from '@/components/Typography/Form/controller'
+import TypographyButtonController from '@/components/Typography/Button/controller'
 import TypographyFormBasic from '@/components/Typography/Form/basic'
 import Pagination from '@/components/Pagination'
 
 export default {
   name: 'TypographyTableBasic',
-  components: { ElTableWrap, TypographyFormController, TypographyFormBasic, Pagination },
+  components: { ElTableWrap, TypographyButtonController, TypographyFormBasic, Pagination },
   props: {
     controller: {
       type: Object,
@@ -66,7 +66,7 @@ export default {
     payloadController: function() {
       const self = this
       const items = []
-      if (validator.isNotEmpty(self.controller.items)) {
+      if (isNotEmpty(self.controller.items)) {
         self.controller.items.forEach((item, index) => {
           if (item.selectedRowVisible) {
             if (this.selectedRowVisible()) {
@@ -77,7 +77,7 @@ export default {
           }
         })
       }
-      if (validator.isNotEmpty(this.searcher.items)) {
+      if (isNotEmpty(this.searcher.items)) {
         items.push({
           float: 'right',
           text: '搜索器',
@@ -150,7 +150,7 @@ export default {
   watch: {
     extraParams: function(newVal, oldVal) {
       if (
-        (validator.isNotEmpty(newVal) || validator.isNotEmpty(oldVal)) &&
+        (isNotEmpty(newVal) || isNotEmpty(oldVal)) &&
         JSON.stringify(newVal) !== JSON.stringify(oldVal)
       ) {
         this.doSearch()
@@ -159,7 +159,7 @@ export default {
   },
   created() {
     const extraParams = this.searcher.extraParams
-    if (validator.isEmpty(extraParams)) {
+    if (isEmpty(extraParams)) {
       this.doSearch()
     }
   },
@@ -175,7 +175,7 @@ export default {
     },
     clearSearcher() {
       const ref = this.$refs['ref-searcher']
-      if (validator.isNotEmpty(ref)) {
+      if (isNotEmpty(ref)) {
         ref.clearForm()
       }
     },
@@ -183,7 +183,7 @@ export default {
       this.querier.page = 1
       this.getResults()
       const ref = this.$refs['ref-searcher']
-      if (validator.isNotEmpty(ref)) {
+      if (isNotEmpty(ref)) {
         ref.hideDialog()
       }
     },
@@ -191,13 +191,13 @@ export default {
       const { page, limit } = this.querier
       let model = {}
       const ref = this.$refs['ref-searcher']
-      if (validator.isNotEmpty(ref)) {
+      if (isNotEmpty(ref)) {
         model = ref.getModel()
       }
       model = Object.assign({}, this.model, model, { page, limit })
       Object.keys(model).forEach(key => {
         const value = model[key]
-        if (validator.isEmpty(value)) {
+        if (isEmpty(value)) {
           delete model[key]
         }
       })
