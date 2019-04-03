@@ -1,5 +1,5 @@
 <template>
-  <typography-form-basic
+  <ty-form-basic
     ref="ref"
     :dialog="dialog"
     :form="form"
@@ -9,11 +9,11 @@
 
 <script>
 import moment from 'moment'
-import TypographyFormBasic from '@/components/Typography/Form/basic'
+import TyFormBasic from '@/components/Typography/Form/basic'
 
 export default {
   name: 'PayrollExport',
-  components: { TypographyFormBasic },
+  components: { TyFormBasic },
   data() {
     const self = this
     return {
@@ -28,8 +28,7 @@ export default {
             text: '导  出',
             props: {
               icon: 'el-icon-antd-export',
-              type: 'primary',
-              plain: true
+              type: 'primary'
             },
             events: {
               click: self.export

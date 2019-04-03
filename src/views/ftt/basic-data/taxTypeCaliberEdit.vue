@@ -36,8 +36,7 @@ export default {
         {
           tip: '添加计税依据项',
           props: {
-            icon: 'el-icon-antd-filesearch',
-            plain: true
+            icon: 'el-icon-antd-filesearch'
           },
           events: {
             click: self.addBasis
@@ -46,8 +45,7 @@ export default {
         {
           tip: '添加税率认定项',
           props: {
-            icon: 'el-icon-antd-percentage',
-            plain: true
+            icon: 'el-icon-antd-percentage'
           },
           events: {
             click: self.addRatio

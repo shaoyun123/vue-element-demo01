@@ -1,6 +1,6 @@
 <template>
   <div>
-    <typography-table-basic ref="ref" :controller="controller" :searcher="searcher" :table="table" :pagination-method="paginationMethod" />
+    <ty-table-basic ref="ref" :controller="controller" :searcher="searcher" :table="table" :pagination-method="paginationMethod" />
     <salary-snapshoot-view ref="ref-salary-snapshoot-view" :enterprise-options="enterpriseOptions" />
     <verify-result-list ref="ref-verify-result-list" operate="view" />
     <a-d-snapshoot-list ref="ref-a-d-snapshoot-list" operate="view" />
@@ -11,7 +11,7 @@
 <script>
 import { isEmpty, isNotEmpty } from '@/utils/validate'
 import { salarySnapshootList, salarySnapshootUpdateById, salarySnapshootUpdateByQuery, enterpriseList } from '@/api/pit'
-import TypographyTableBasic from '@/components/Typography/Table/basic'
+import TyTableBasic from '@/components/Typography/Table/basic'
 import { buildFlowRecordSimple, getSalarySnapshootId, getSalarySnapshootSearcher, getSalarySnapshootTableItems } from './kit'
 import SalarySnapshootView from './salarySnapshootView'
 import VerifyResultList from './verifyResultList'
@@ -20,7 +20,7 @@ import FlowRecordList from './flowRecordList'
 
 export default {
   name: 'SalaryConfirmList',
-  components: { TypographyTableBasic, SalarySnapshootView, VerifyResultList, ADSnapshootList, FlowRecordList },
+  components: { TyTableBasic, SalarySnapshootView, VerifyResultList, ADSnapshootList, FlowRecordList },
   data() {
     const self = this
     const tableItems = getSalarySnapshootTableItems({
@@ -63,8 +63,7 @@ export default {
             text: '确认',
             props: {
               icon: 'el-icon-antd-verticalleft',
-              type: 'success',
-              plain: true
+              type: 'success'
             },
             events: {
               click: function() {
@@ -113,8 +112,7 @@ export default {
             text: '打回',
             props: {
               icon: 'el-icon-antd-verticalright',
-              type: 'danger',
-              plain: true
+              type: 'danger'
             },
             events: {
               click: function() {

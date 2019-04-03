@@ -4,7 +4,7 @@
 
 <script>
 export default {
-  name: 'TypographyDivider',
+  name: 'TyDivider',
   props: {
     COM: {
       type: Object,

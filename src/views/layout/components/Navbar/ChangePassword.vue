@@ -1,7 +1,7 @@
 <template>
   <el-dialog :visible.sync="dialogVisible" title="修改密码">
     <el-form-wrap ref="ref-form" :c-o-m="form" :loading="loading" />
-    <typography-button-controller :controller="controller" />
+    <ty-button-controller :controller="controller" />
   </el-dialog>
 </template>
 
@@ -9,11 +9,11 @@
 import { isNotEmpty } from '@/utils/validate'
 import { showMessage } from '@/utils/element'
 import ElFormWrap from '@/components/Typography/Wrap/elFormWrap'
-import TypographyButtonController from '@/components/Typography/Button/controller'
+import TyButtonController from '@/components/Typography/Button/controller'
 
 export default {
   name: 'ChangePassword',
-  components: { ElFormWrap, TypographyButtonController },
+  components: { ElFormWrap, TyButtonController },
   data() {
     const self = this
     return {

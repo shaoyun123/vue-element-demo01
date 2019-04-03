@@ -1,6 +1,6 @@
 <template>
   <div>
-    <typography-table-basic ref="ref" :controller="controller" :searcher="searcher" :table="table" :pagination-method="paginationMethod" />
+    <ty-table-basic ref="ref" :controller="controller" :searcher="searcher" :table="table" :pagination-method="paginationMethod" />
     <payroll-export ref="ref-payroll-export" />
     <payroll-view ref="ref-payroll-view" :enterprise-options="enterpriseOptions" />
     <flow-record-list ref="ref-flow-record-list" />
@@ -10,7 +10,7 @@
 <script>
 import { isNotEmpty } from '@/utils/validate'
 import { payrollList, payrollUpdateById, payrollUpdateByQuery, enterpriseList } from '@/api/pit'
-import TypographyTableBasic from '@/components/Typography/Table/basic'
+import TyTableBasic from '@/components/Typography/Table/basic'
 import { buildFlowRecordSimple, getPayrollId, getPayrollSearcher, getPayrollTableItems } from './kit'
 import PayrollExport from './payrollExport'
 import PayrollView from './payrollView'
@@ -18,7 +18,7 @@ import FlowRecordList from './flowRecordList'
 
 export default {
   name: 'SalaryConfirmList',
-  components: { TypographyTableBasic, PayrollExport, PayrollView, FlowRecordList },
+  components: { TyTableBasic, PayrollExport, PayrollView, FlowRecordList },
   data() {
     const self = this
     const tableItems = getPayrollTableItems({
@@ -58,8 +58,7 @@ export default {
             text: '已发放',
             props: {
               icon: 'el-icon-antd-carryout',
-              type: 'success',
-              plain: true
+              type: 'success'
             },
             events: {
               click: function() {

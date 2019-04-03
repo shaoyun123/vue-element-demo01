@@ -1,6 +1,6 @@
 <template>
   <div>
-    <typography-table-basic ref="ref" :controller="controller" :searcher="searcher" :table="table" :pagination-method="paginationMethod" />
+    <ty-table-basic ref="ref" :controller="controller" :searcher="searcher" :table="table" :pagination-method="paginationMethod" />
     <adult-educate-edit ref="ref-adult-educate-edit" @after-save="refresh" />
   </div>
 </template>
@@ -8,12 +8,12 @@
 <script>
 import { isNotEmpty } from '@/utils/validate'
 import { adultEducateList, adultEducateDelete } from '@/api/pit'
-import TypographyTableBasic from '@/components/Typography/Table/basic'
+import TyTableBasic from '@/components/Typography/Table/basic'
 import AdultEducateEdit from './adultEducateEdit'
 
 export default {
   name: 'AdultEducateList',
-  components: { TypographyTableBasic, AdultEducateEdit },
+  components: { TyTableBasic, AdultEducateEdit },
   data() {
     const self = this
     return {
@@ -35,8 +35,7 @@ export default {
             text: '删除',
             props: {
               icon: 'el-icon-antd-delete',
-              type: 'danger',
-              plain: true
+              type: 'danger'
             },
             events: {
               click: function() {

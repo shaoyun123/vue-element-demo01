@@ -1,8 +1,8 @@
 <template>
   <div class="app-container">
     <div class="controller">
-      <typography-button-controller :controller="payloadController" />
-      <typography-form-basic ref="ref-searcher" :dialog="payloadDialog" :form="payloadForm" :controller="payloadFormController" @input="handleDialogInput($event)" />
+      <ty-button-controller :controller="payloadController" />
+      <ty-form-basic ref="ref-searcher" :dialog="payloadDialog" :form="payloadForm" :controller="payloadFormController" @input="handleDialogInput($event)" />
     </div>
     <el-table-wrap :c-o-m="payloadTable" :loading="loading" />
     <pagination v-show="total > 0" :total="total" :page.sync="querier.page" :limit.sync="querier.limit" @pagination="getResults" />
@@ -12,13 +12,13 @@
 <script>
 import { isEmpty, isNotEmpty } from '@/utils/validate'
 import ElTableWrap from '@/components/Typography/Wrap/elTableWrap'
-import TypographyButtonController from '@/components/Typography/Button/controller'
-import TypographyFormBasic from '@/components/Typography/Form/basic'
+import TyButtonController from '@/components/Typography/Button/controller'
+import TyFormBasic from '@/components/Typography/Form/basic'
 import Pagination from '@/components/Pagination'
 
 export default {
-  name: 'TypographyTableBasic',
-  components: { ElTableWrap, TypographyButtonController, TypographyFormBasic, Pagination },
+  name: 'TyTableBasic',
+  components: { ElTableWrap, TyButtonController, TyFormBasic, Pagination },
   props: {
     controller: {
       type: Object,
@@ -83,8 +83,7 @@ export default {
           text: '搜索器',
           props: {
             icon: 'el-icon-antd-search',
-            type: 'primary',
-            plain: true
+            type: 'primary'
           },
           events: {
             click: self.showSearcher
@@ -118,8 +117,7 @@ export default {
             text: '查  询',
             props: {
               icon: 'el-icon-antd-search',
-              type: 'primary',
-              plain: true
+              type: 'primary'
             },
             events: {
               click: self.doSearch

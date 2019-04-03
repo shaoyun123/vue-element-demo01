@@ -1,6 +1,6 @@
 <template>
   <div>
-    <typography-table-basic ref="ref" :controller="controller" :searcher="searcher" :table="table" :pagination-method="paginationMethod" />
+    <ty-table-basic ref="ref" :controller="controller" :searcher="searcher" :table="table" :pagination-method="paginationMethod" />
     <salary-snapshoot-edit ref="ref-salary-snapshoot-edit" :enterprise-options="enterpriseOptions" @after-save="refresh" />
     <salary-snapshoot-import ref="ref-salary-snapshoot-import" @after-save="refresh" />
     <verify-result-list ref="ref-verify-result-list" operate="edit" @after-close="refresh" />
@@ -20,7 +20,7 @@ import {
   salarySnapshootUpdateByQuery,
   enterpriseList
 } from '@/api/pit'
-import TypographyTableBasic from '@/components/Typography/Table/basic'
+import TyTableBasic from '@/components/Typography/Table/basic'
 import { buildFlowRecordSimple, getSalarySnapshootId, getSalarySnapshootSearcher, getSalarySnapshootTableItems } from './kit'
 import SalarySnapshootEdit from './salarySnapshootEdit'
 import SalarySnapshootImport from './salarySnapshootImport'
@@ -30,7 +30,7 @@ import FlowRecordList from './flowRecordList'
 
 export default {
   name: 'SalaryGatherList',
-  components: { TypographyTableBasic, SalarySnapshootEdit, SalarySnapshootImport, VerifyResultList, ADSnapshootList, FlowRecordList },
+  components: { TyTableBasic, SalarySnapshootEdit, SalarySnapshootImport, VerifyResultList, ADSnapshootList, FlowRecordList },
   data() {
     const self = this
     const tableItems = getSalarySnapshootTableItems({
@@ -96,8 +96,7 @@ export default {
             text: '删除',
             props: {
               icon: 'el-icon-antd-delete',
-              type: 'danger',
-              plain: true
+              type: 'danger'
             },
             events: {
               click: function() {
@@ -124,8 +123,7 @@ export default {
             text: '校验',
             props: {
               icon: 'el-icon-antd-error',
-              type: 'warning',
-              plain: true
+              type: 'warning'
             },
             events: {
               click: function() {
@@ -187,8 +185,7 @@ export default {
             text: '提交',
             props: {
               icon: 'el-icon-antd-verticalleft',
-              type: 'success',
-              plain: true
+              type: 'success'
             },
             events: {
               click: function() {

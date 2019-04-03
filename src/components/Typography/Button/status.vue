@@ -7,7 +7,7 @@
 
 <script>
 export default {
-  name: 'TypographyButtonStatus',
+  name: 'TyButtonStatus',
   props: {
     value: {
       type: Boolean,

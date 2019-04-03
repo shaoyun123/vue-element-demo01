@@ -1,6 +1,6 @@
 <template>
   <div>
-    <typography-table-basic ref="ref" :controller="controller" :searcher="searcher" :table="table" :pagination-method="paginationMethod" />
+    <ty-table-basic ref="ref" :controller="controller" :searcher="searcher" :table="table" :pagination-method="paginationMethod" />
     <tax-type-edit ref="ref-tax-type-edit" @after-save="refresh" />
     <tax-type-caliber-list ref="ref-tax-type-caliber-list" @after-close="refresh" />
   </div>
@@ -10,13 +10,13 @@
 import { isNotEmpty } from '@/utils/validate'
 import { buildFormItemsByDicts } from '@/components/Typography/kit'
 import { taxTypeList, taxTypeDelete } from '@/api/ftt'
-import TypographyTableBasic from '@/components/Typography/Table/basic'
+import TyTableBasic from '@/components/Typography/Table/basic'
 import TaxTypeEdit from './taxTypeEdit'
 import TaxTypeCaliberList from './taxTypeCaliberList'
 
 export default {
   name: 'TaxTypeList',
-  components: { TypographyTableBasic, TaxTypeEdit, TaxTypeCaliberList },
+  components: { TyTableBasic, TaxTypeEdit, TaxTypeCaliberList },
   data() {
     const self = this
     return {
@@ -38,8 +38,7 @@ export default {
             text: '删除',
             props: {
               icon: 'el-icon-antd-delete',
-              type: 'danger',
-              plain: true
+              type: 'danger'
             },
             events: {
               click: function() {

@@ -1,20 +1,20 @@
 <template>
   <el-dialog :visible.sync="dialogVisible" v-bind="dialogProps" @closed="afterClose" v-on="dialogEvents">
     <div class="flagbar">
-      <typography-button-status :value.sync="refreshFlag" tip="关闭时向父窗口返回刷新指令" size="mini" icon="el-icon-antd-sync" circle />
+      <ty-button-status :value.sync="refreshFlag" tip="关闭时向父窗口返回刷新指令" size="mini" icon="el-icon-antd-sync" circle />
     </div>
-    <typography-table-basic ref="ref" :controller="controller" :searcher="searcher" :table="payloadTable" :pagination-method="paginationMethod" />
+    <ty-table-basic ref="ref" :controller="controller" :searcher="searcher" :table="payloadTable" :pagination-method="paginationMethod" />
   </el-dialog>
 </template>
 
 <script>
 import { isNotEmpty } from '@/utils/validate'
-import TypographyTableBasic from '@/components/Typography/Table/basic'
-import TypographyButtonStatus from '@/components/Typography/Button/status'
+import TyTableBasic from '@/components/Typography/Table/basic'
+import TyButtonStatus from '@/components/Typography/Button/status'
 
 export default {
-  name: 'TypographyTableDialog',
-  components: { TypographyTableBasic, TypographyButtonStatus },
+  name: 'TyTableDialog',
+  components: { TyTableBasic, TyButtonStatus },
   props: {
     dialog: {
       type: Object,

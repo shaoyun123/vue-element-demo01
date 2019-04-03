@@ -11,7 +11,9 @@ export const buildResourceKey = (type, id) => `${type}_${id}`
 /**
  * 基于角色或资源检查权限
  * @param {String} mode [subsystem | role | resource]
- * @param {String | Array} value [mode = role 数组元素为角色列表 | mode = resource 数组第 1 个元素为 type [MENU]，第 2 个元素为 id]
+ * @param {String | Array} value [
+ *  mode = subsystem 要求为字符串 | mode = role 数组元素为角色列表 | mode = resource 数组第 1 个元素为 type [MENU]，第 2 个元素为 id
+ * ]
  * @returns {Boolean} true 为检查通过
  * @example see @/views/permission/directive.vue
  */

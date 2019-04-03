@@ -1,6 +1,6 @@
 <template>
   <div>
-    <typography-table-basic ref="ref" :controller="controller" :searcher="searcher" :table="table" :pagination-method="paginationMethod" />
+    <ty-table-basic ref="ref" :controller="controller" :searcher="searcher" :table="table" :pagination-method="paginationMethod" />
     <payroll-view ref="ref-payroll-view" :enterprise-options="enterpriseOptions" />
     <flow-record-list ref="ref-flow-record-list" />
   </div>
@@ -9,14 +9,14 @@
 <script>
 import { isEmpty } from '@/utils/validate'
 import { payrollList, payrollUpdateById, enterpriseList } from '@/api/pit'
-import TypographyTableBasic from '@/components/Typography/Table/basic'
+import TyTableBasic from '@/components/Typography/Table/basic'
 import { buildFlowRecordSimple, getPayrollSearcher, getPayrollTableItems } from './kit'
 import PayrollView from './payrollView'
 import FlowRecordList from './flowRecordList'
 
 export default {
   name: 'SalaryConfirmList',
-  components: { TypographyTableBasic, PayrollView, FlowRecordList },
+  components: { TyTableBasic, PayrollView, FlowRecordList },
   data() {
     const self = this
     const tableItems = getPayrollTableItems({

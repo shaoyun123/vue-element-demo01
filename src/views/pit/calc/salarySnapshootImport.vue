@@ -1,5 +1,5 @@
 <template>
-  <typography-form-basic
+  <ty-form-basic
     ref="ref"
     :dialog="dialog"
     :form="form"
@@ -11,12 +11,12 @@
 import moment from 'moment'
 import { isNotEmpty } from '@/utils/validate'
 import { salarySnapshootImport } from '@/api/pit'
-import TypographyFormBasic from '@/components/Typography/Form/basic'
+import TyFormBasic from '@/components/Typography/Form/basic'
 import { buildFormItems, buildFormItemsByDicts } from '@/components/Typography/kit'
 
 export default {
   name: 'SalarySnapshootImport',
-  components: { TypographyFormBasic },
+  components: { TyFormBasic },
   data() {
     const self = this
     return {
@@ -30,8 +30,7 @@ export default {
             float: 'left',
             text: '下载模板',
             props: {
-              icon: 'el-icon-antd-table',
-              plain: true
+              icon: 'el-icon-antd-table'
             },
             events: {
               click: self.downloadTemplate
@@ -42,8 +41,7 @@ export default {
             text: '导  入',
             props: {
               icon: 'el-icon-antd-Import',
-              type: 'primary',
-              plain: true
+              type: 'primary'
             },
             events: {
               click: self.import

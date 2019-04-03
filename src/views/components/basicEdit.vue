@@ -1,5 +1,5 @@
 <template>
-  <typography-form-basic
+  <ty-form-basic
     ref="ref"
     :dialog="dialog"
     :form="form"
@@ -11,11 +11,11 @@
 <script>
 import { getDataType } from '@/utils'
 import { isNotEmpty } from '@/utils/validate'
-import TypographyFormBasic from '@/components/Typography/Form/basic'
+import TyFormBasic from '@/components/Typography/Form/basic'
 
 export default {
   name: 'BasicEdit',
-  components: { TypographyFormBasic },
+  components: { TyFormBasic },
   props: {
     dialogTitle: {
       type: String,
@@ -95,8 +95,7 @@ export default {
         text: '保  存',
         props: {
           icon: 'el-icon-antd-save',
-          type: 'primary',
-          plain: true
+          type: 'primary'
         },
         events: {
           click: self.save

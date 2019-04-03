@@ -1,5 +1,5 @@
 <template>
-  <typography-table-dialog
+  <ty-table-dialog
     ref="ref"
     :dialog="dialog"
     :controller="controller"
@@ -12,11 +12,11 @@
 import { isEmpty } from '@/utils/validate'
 import { buildFormItemsByDicts } from '@/components/Typography/kit'
 import { flowRecordList } from '@/api/pit'
-import TypographyTableDialog from '@/components/Typography/Table/dialog'
+import TyTableDialog from '@/components/Typography/Table/dialog'
 
 export default {
   name: 'FlowRecordList',
-  components: { TypographyTableDialog },
+  components: { TyTableDialog },
   data() {
     // const self = this
     return {

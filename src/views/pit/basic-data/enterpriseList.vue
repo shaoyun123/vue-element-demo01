@@ -1,6 +1,6 @@
 <template>
   <div>
-    <typography-table-basic ref="ref" :controller="controller" :searcher="searcher" :table="table" :pagination-method="paginationMethod" />
+    <ty-table-basic ref="ref" :controller="controller" :searcher="searcher" :table="table" :pagination-method="paginationMethod" />
     <enterprise-edit ref="ref-enterprise-edit" @after-save="refresh" />
   </div>
 </template>
@@ -9,12 +9,12 @@
 import { isNotEmpty } from '@/utils/validate'
 import { buildFormItemsByDicts } from '@/components/Typography/kit'
 import { enterpriseList, enterpriseDelete } from '@/api/pit'
-import TypographyTableBasic from '@/components/Typography/Table/basic'
+import TyTableBasic from '@/components/Typography/Table/basic'
 import EnterpriseEdit from './enterpriseEdit'
 
 export default {
   name: 'EnterpriseList',
-  components: { TypographyTableBasic, EnterpriseEdit },
+  components: { TyTableBasic, EnterpriseEdit },
   data() {
     const self = this
     return {
@@ -36,8 +36,7 @@ export default {
             text: '删除',
             props: {
               icon: 'el-icon-antd-delete',
-              type: 'danger',
-              plain: true
+              type: 'danger'
             },
             events: {
               click: function() {

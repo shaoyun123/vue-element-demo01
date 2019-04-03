@@ -1,6 +1,6 @@
 <template>
   <div>
-    <typography-table-basic ref="ref" :controller="controller" :searcher="searcher" :table="table" :pagination-method="paginationMethod" />
+    <ty-table-basic ref="ref" :controller="controller" :searcher="searcher" :table="table" :pagination-method="paginationMethod" />
     <staff-edit ref="ref-staff-edit" @after-save="refresh" />
     <salary-edit ref="ref-salary-edit" />
   </div>
@@ -10,13 +10,13 @@
 import { isEmpty, isNotEmpty } from '@/utils/validate'
 import { buildFormItemsByDicts } from '@/components/Typography/kit'
 import { staffList, staffDelete, loginIdSave } from '@/api/pit'
-import TypographyTableBasic from '@/components/Typography/Table/basic'
+import TyTableBasic from '@/components/Typography/Table/basic'
 import StaffEdit from './staffEdit'
 import SalaryEdit from './salaryEdit'
 
 export default {
   name: 'StaffList',
-  components: { TypographyTableBasic, StaffEdit, SalaryEdit },
+  components: { TyTableBasic, StaffEdit, SalaryEdit },
   data() {
     const self = this
     return {
@@ -38,8 +38,7 @@ export default {
             text: '删除',
             props: {
               icon: 'el-icon-antd-delete',
-              type: 'danger',
-              plain: true
+              type: 'danger'
             },
             events: {
               click: function() {

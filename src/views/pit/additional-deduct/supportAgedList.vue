@@ -1,6 +1,6 @@
 <template>
   <div>
-    <typography-table-basic ref="ref" :controller="controller" :searcher="searcher" :table="table" :pagination-method="paginationMethod" />
+    <ty-table-basic ref="ref" :controller="controller" :searcher="searcher" :table="table" :pagination-method="paginationMethod" />
     <support-aged-edit ref="ref-support-aged-edit" @after-save="refresh" />
   </div>
 </template>
@@ -8,12 +8,12 @@
 <script>
 import { isNotEmpty } from '@/utils/validate'
 import { supportAgedList, supportAgedDelete } from '@/api/pit'
-import TypographyTableBasic from '@/components/Typography/Table/basic'
+import TyTableBasic from '@/components/Typography/Table/basic'
 import SupportAgedEdit from './supportAgedEdit'
 
 export default {
   name: 'SupportAgedList',
-  components: { TypographyTableBasic, SupportAgedEdit },
+  components: { TyTableBasic, SupportAgedEdit },
   data() {
     const self = this
     return {
@@ -35,8 +35,7 @@ export default {
             text: '删除',
             props: {
               icon: 'el-icon-antd-delete',
-              type: 'danger',
-              plain: true
+              type: 'danger'
             },
             events: {
               click: function() {

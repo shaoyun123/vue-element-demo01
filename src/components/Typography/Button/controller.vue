@@ -3,6 +3,7 @@
     <el-container>
       <el-container>
         <component v-for="(action, i) in actionPool.leftActions" :key="'cl' + i" :is="action.tag" :c-o-m="action" />
+        <ty-flow-action />
       </el-container>
       <component v-for="(action, i) in actionPool.rightActions" :key="'cr' + i" :is="action.tag" :c-o-m="action" />
     </el-container>
@@ -13,11 +14,12 @@
 import { isNotEmpty } from '@/utils/validate'
 import ElButtonWrap from '@/components/Typography/Wrap/elButtonWrap'
 import ElDropdownWrap from '@/components/Typography/Wrap/elDropdownWrap'
-import TypographyDivider from '@/components/Typography/Divider'
+import TyDivider from '@/components/Typography/Divider'
+import TyFlowAction from '@/components/Typography/Flow/action'
 
 export default {
-  name: 'TypographyTableController',
-  components: { TypographyDivider, ElButtonWrap, ElDropdownWrap },
+  name: 'TyTableController',
+  components: { ElButtonWrap, ElDropdownWrap, TyDivider, TyFlowAction },
   props: {
     controller: {
       type: Object,
@@ -54,10 +56,10 @@ export default {
             actions = leftActions
           }
           if (divided === true) {
-            actions.push({ tag: 'typography-divider' })
+            actions.push({ tag: 'ty-divider' })
           } else {
             actions.push({
-              tag: 'typography-divider',
+              tag: 'ty-divider',
               props: {
                 line: 'none'
               }

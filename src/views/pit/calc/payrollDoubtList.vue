@@ -1,6 +1,6 @@
 <template>
   <div>
-    <typography-table-basic ref="ref" :controller="controller" :searcher="searcher" :table="table" :pagination-method="paginationMethod" />
+    <ty-table-basic ref="ref" :controller="controller" :searcher="searcher" :table="table" :pagination-method="paginationMethod" />
     <payroll-view ref="ref-payroll-view" :enterprise-options="enterpriseOptions" />
     <flow-record-list ref="ref-flow-record-list" />
   </div>
@@ -9,14 +9,14 @@
 <script>
 import { isEmpty, isNotEmpty } from '@/utils/validate'
 import { payrollList, payrollUpdateById, enterpriseList } from '@/api/pit'
-import TypographyTableBasic from '@/components/Typography/Table/basic'
+import TyTableBasic from '@/components/Typography/Table/basic'
 import { buildFlowRecordSimple, getPayrollId, getPayrollSearcher, getPayrollTableItems } from './kit'
 import PayrollView from './payrollView'
 import FlowRecordList from './flowRecordList'
 
 export default {
   name: 'SalaryConfirmList',
-  components: { TypographyTableBasic, PayrollView, FlowRecordList },
+  components: { TyTableBasic, PayrollView, FlowRecordList },
   data() {
     const self = this
     const tableItems = getPayrollTableItems({
@@ -46,8 +46,7 @@ export default {
             text: '不调整',
             props: {
               icon: 'el-icon-antd-stop',
-              type: 'success',
-              plain: true
+              type: 'success'
             },
             events: {
               click: function() {
@@ -86,8 +85,7 @@ export default {
             text: '调整',
             props: {
               icon: 'el-icon-antd-control',
-              type: 'danger',
-              plain: true
+              type: 'danger'
             },
             events: {
               click: function() {

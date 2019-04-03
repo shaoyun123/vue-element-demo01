@@ -1,5 +1,5 @@
 <template>
-  <typography-form-basic
+  <ty-form-basic
     ref="ref"
     :dialog="dialog"
     :form="form"
@@ -9,11 +9,11 @@
 
 <script>
 import { isNotEmpty } from '@/utils/validate'
-import TypographyFormBasic from '@/components/Typography/Form/basic'
+import TyFormBasic from '@/components/Typography/Form/basic'
 
 export default {
   name: 'BasicView',
-  components: { TypographyFormBasic },
+  components: { TyFormBasic },
   props: {
     dialogTitle: {
       type: String,

@@ -1,5 +1,5 @@
 <template>
-  <typography-table-dialog
+  <ty-table-dialog
     ref="ref"
     :dialog="dialog"
     :controller="controller"
@@ -13,11 +13,11 @@
 import { isEmpty, isNotEmpty } from '@/utils/validate'
 import { buildFormItemsByDicts } from '@/components/Typography/kit'
 import { adSnapshootList, adSnapshootUpdateById } from '@/api/pit'
-import TypographyTableDialog from '@/components/Typography/Table/dialog'
+import TyTableDialog from '@/components/Typography/Table/dialog'
 
 export default {
   name: 'ADSnapshootList',
-  components: { TypographyTableDialog },
+  components: { TyTableDialog },
   props: {
     operate: {
       type: String,
@@ -164,8 +164,7 @@ export default {
           text: '调平',
           props: {
             icon: 'el-icon-antd-control',
-            type: 'warning',
-            plain: true
+            type: 'warning'
           },
           events: {
             click: function() {
@@ -213,8 +212,7 @@ export default {
           text: '忽略',
           props: {
             icon: 'el-icon-antd-stop',
-            type: 'warning',
-            plain: true
+            type: 'warning'
           },
           events: {
             click: function() {

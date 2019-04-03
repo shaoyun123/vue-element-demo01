@@ -3,18 +3,18 @@
     <el-scrollbar :style="scrollbarStyle" wrap-class="el-scrollbar-wrap" view-class="el-scrollbar-view">
       <el-form-wrap ref="ref-form" :c-o-m="form" :reset-to="form.resetTo" :loading="loading" @input="handleFormInput($event)" />
     </el-scrollbar>
-    <typography-button-controller v-if="payloadController.items.length" :controller="payloadController" />
+    <ty-button-controller v-if="payloadController.items.length" :controller="payloadController" />
   </el-dialog>
 </template>
 
 <script>
 import { isNotEmpty } from '@/utils/validate'
 import ElFormWrap from '@/components/Typography/Wrap/elFormWrap'
-import TypographyButtonController from '@/components/Typography/Button/controller'
+import TyButtonController from '@/components/Typography/Button/controller'
 
 export default {
-  name: 'TypographyFormBasic',
-  components: { ElFormWrap, TypographyButtonController },
+  name: 'TyFormBasic',
+  components: { ElFormWrap, TyButtonController },
   props: {
     dialog: {
       type: Object,

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <typography-table-basic ref="ref" :controller="controller" :searcher="searcher" :table="table" :pagination-method="paginationMethod" />
+    <ty-table-basic ref="ref" :controller="controller" :searcher="searcher" :table="table" :pagination-method="paginationMethod" />
     <tax-stair-edit ref="ref-tax-stair-edit" @after-save="refresh" />
   </div>
 </template>
@@ -9,12 +9,12 @@
 import { isNotEmpty } from '@/utils/validate'
 import { buildFormItemsByDicts } from '@/components/Typography/kit'
 import { taxStairList, taxStairDelete } from '@/api/pit'
-import TypographyTableBasic from '@/components/Typography/Table/basic'
+import TyTableBasic from '@/components/Typography/Table/basic'
 import TaxStairEdit from './taxStairEdit'
 
 export default {
   name: 'TaxStairList',
-  components: { TypographyTableBasic, TaxStairEdit },
+  components: { TyTableBasic, TaxStairEdit },
   data() {
     const self = this
     return {
@@ -36,8 +36,7 @@ export default {
             text: '删除',
             props: {
               icon: 'el-icon-antd-delete',
-              type: 'danger',
-              plain: true
+              type: 'danger'
             },
             events: {
               click: function() {

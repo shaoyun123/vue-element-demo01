@@ -41,8 +41,7 @@ export default {
           float: 'right',
           text: '薪资明细',
           props: {
-            icon: 'el-icon-antd-Dollar',
-            plain: true
+            icon: 'el-icon-antd-Dollar'
           },
           events: {
             click: self.showSalarySnapshoot
@@ -52,8 +51,7 @@ export default {
           float: 'right',
           text: '附加扣除',
           props: {
-            icon: 'el-icon-antd-piechart',
-            plain: true
+            icon: 'el-icon-antd-piechart'
           },
           events: {
             click: self.showADSnapshoots

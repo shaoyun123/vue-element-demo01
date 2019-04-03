@@ -30,7 +30,10 @@ export default {
       return this.COM.text
     },
     props: function() {
-      return this.COM.props
+      return {
+        plain: true,
+        ...this.COM.props
+      }
     },
     events: function() {
       return this.COM.events

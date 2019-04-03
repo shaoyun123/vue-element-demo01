@@ -1,6 +1,6 @@
 <template>
   <div>
-    <typography-table-dialog
+    <ty-table-dialog
       ref="ref"
       :dialog="dialog"
       :controller="controller"
@@ -14,12 +14,12 @@
 
 <script>
 import { taxTypeCaliberList } from '@/api/ftt'
-import TypographyTableDialog from '@/components/Typography/Table/dialog'
+import TyTableDialog from '@/components/Typography/Table/dialog'
 import TaxTypeCaliberEdit from './taxTypeCaliberEdit'
 
 export default {
   name: 'TaxTypeCaliberList',
-  components: { TypographyTableDialog, TaxTypeCaliberEdit },
+  components: { TyTableDialog, TaxTypeCaliberEdit },
   data() {
     const self = this
     return {
