@@ -153,6 +153,67 @@ const pitRouters = [
     children: [
       {
         path: 'salary-gather/list',
+        component: () => import('@/views/typography/flow/list-basic'),
+        name: 'PIT-SalaryGather',
+        meta: {
+          subsystem: 'PIT',
+          title: '薪酬信息采集',
+          icon: 'moneycollect'
+        }
+      },
+      {
+        path: 'salary-confirm/list',
+        component: () => import('@/views/typography/flow/list-basic'),
+        name: 'PIT-SalaryConfirm',
+        meta: {
+          subsystem: 'PIT',
+          title: '薪酬信息确认',
+          icon: 'propertysafety'
+        }
+      },
+      {
+        path: 'payroll-confirm/list',
+        component: () => import('@/views/typography/flow/list-basic'),
+        name: 'PIT-PayrollConfirm',
+        meta: {
+          subsystem: 'PIT',
+          title: '确认工资单',
+          icon: 'accountbook'
+        }
+      },
+      {
+        path: 'payroll-doubt/list',
+        component: () => import('@/views/typography/flow/list-basic'),
+        name: 'PIT-PayrollDoubt',
+        meta: {
+          subsystem: 'PIT',
+          title: '工资单质疑处理',
+          icon: 'alert'
+        }
+      },
+      {
+        path: 'payroll-submit/list',
+        component: () => import('@/views/typography/flow/list-basic'),
+        name: 'PIT-PayrollSubmit',
+        meta: {
+          subsystem: 'PIT',
+          title: '提交工资单',
+          icon: 'carryout'
+        }
+      },
+      {
+        path: 'payroll-feedback/list',
+        component: () => import('@/views/typography/flow/list-basic'),
+        name: 'PIT-PayrollFeedback',
+        meta: {
+          subsystem: 'PIT',
+          title: '工资单发放反馈',
+          icon: 'cloud-sync'
+        }
+      }
+      /*
+      {
+        path: 'salary-gather/list',
         component: () => import('@/views/pit/calc/salaryGatherList'),
         name: 'PIT-SalaryGather',
         meta: {
@@ -211,6 +272,7 @@ const pitRouters = [
           icon: 'cloud-sync'
         }
       }
+      */
     ]
   }
 ]

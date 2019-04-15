@@ -139,7 +139,7 @@ export default {
               this.hideDialog()
             }).catch(messages => {
               this.loading = false
-              showMessage({ data: messages, type: 'error' })
+              showMessage({ content: messages, type: 'error' })
             })
           } else {
             return false

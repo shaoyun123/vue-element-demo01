@@ -13,6 +13,7 @@ const getters = {
   getDicts: state => (type) => dictKit.getDicts(state, type),
   getDistricts: state => state.globalData.districtStorer,
   getDistrictTitle: state => (value) => districtKit.getDistrictTitle(state, value),
+  flowInitializing: state => state.flow.initializing,
   token: state => state.user.token,
   id: state => state.user.id,
   name: state => state.user.name,

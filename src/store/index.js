@@ -4,6 +4,7 @@ import app from './modules/app'
 import tagsView from './modules/tagsView'
 import errorLog from './modules/errorLog'
 import globalData from './modules/globalData'
+import flow from './modules/flow'
 import user from './modules/user'
 import permission from './modules/permission'
 import getters from './getters'
@@ -16,6 +17,7 @@ const store = new Vuex.Store({
     tagsView,
     errorLog,
     globalData,
+    flow,
     user,
     permission
   },

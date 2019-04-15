@@ -30,7 +30,7 @@ router.beforeEach((to, from, next) => {
           })
         }).catch(error => {
           store.dispatch('silentLogout').then(() => {
-            showMessage({ data: error, type: 'error' })
+            showMessage({ content: error, type: 'error' })
             next({ path: '/' })
           })
         })

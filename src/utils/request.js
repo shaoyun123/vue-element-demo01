@@ -27,7 +27,7 @@ service.interceptors.request.use(
   },
   error => {
     console.log(error)
-    showMessage({ data: error, type: 'error' })
+    showMessage({ content: error, type: 'error' })
     return errorFlag
   }
 )
@@ -39,7 +39,7 @@ service.interceptors.response.use(
       getDataType(code) === 'number' &&
       (code === 10001 || code === 10002 || code === 10003)
     ) {
-      showAlert({ data: tokenMessage[code], title: '登出', type: 'warning' }).then(() => {
+      showAlert({ content: tokenMessage[code], title: '登出', type: 'warning' }).then(() => {
         store.dispatch('silentLogout').then(() => {
           location.reload() // 重新实例化 vue-router 对象，避免 bug
         })
@@ -51,7 +51,7 @@ service.interceptors.response.use(
   },
   error => {
     console.log(error)
-    showMessage({ data: error, type: 'error' })
+    showMessage({ content: error, type: 'error' })
     return errorFlag
   }
 )
@@ -60,6 +60,9 @@ export default service
 export function passable(response) {
   return errorFlag !== response && isNotEmpty(response)
 }
+/**
+ * 串行
+ */
 export function serial(requests) {
   const datas = []
   let promise = Promise.resolve()
@@ -71,6 +74,9 @@ export function serial(requests) {
   })
   return promise
 }
+/**
+ * 并行
+ */
 export function parallel(requests) {
   return Promise.all(requests)
 }

@@ -115,7 +115,7 @@ export default {
                       const payroll = getPayrollId(selectedRow)
                       const P_STATUS = selectedRow.P_STATUS
                       Object.assign(payroll, {
-                        P_STATUS: '05',
+                        P_STATUS: '03',
                         FLOW_RECORD: buildFlowRecordSimple('02', '02', value, P_STATUS, '03')
                       })
                       return payroll

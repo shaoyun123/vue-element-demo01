@@ -23,6 +23,16 @@ export default {
       */
       type: String,
       default: 'button'
+    },
+    group: {
+      /*
+      按钮组，可以在一个页面中定义多个组
+      约定的内置组有：
+      C（controller）控制区，如：表单下部的控制器、列表上部的控制器
+      TA（table-action）列表操作区
+      */
+      type: String,
+      default: 'C'
     }
   },
   computed: {

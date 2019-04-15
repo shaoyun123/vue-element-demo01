@@ -251,9 +251,6 @@ export default {
       const model = { ...this.model }
       this.setModelValue(value, name, model)
       this.setModel(model)
-      /*
-      this.setModel(Object.assign({}, this.model, { [name]: value }))
-      */
       if (linkage) {
         this.$emit('input', this.model)
       }
