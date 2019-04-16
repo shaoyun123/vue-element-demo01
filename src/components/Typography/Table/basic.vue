@@ -1,19 +1,19 @@
 <template>
-  <div class="app-container">
+  <el-main>
     <div class="controller">
       <ty-button-controller :controller="payloadController" />
       <ty-form-basic ref="ref-searcher" :dialog="payloadDialog" :form="payloadForm" :controller="payloadFormController" @input="handleDialogInput($event)" />
     </div>
     <el-table-wrap :c-o-m="payloadTable" :loading="loading" />
     <pagination v-show="total > 0" :total="total" :page.sync="querier.page" :limit.sync="querier.limit" @pagination="getResults" />
-  </div>
+  </el-main>
 </template>
 
 <script>
 import { isEmpty, isNotEmpty } from '@/utils/validate'
-import ElTableWrap from '@/components/Typography/Wrap/elTableWrap'
-import TyButtonController from '@/components/Typography/Button/controller'
-import TyFormBasic from '@/components/Typography/Form/basic'
+import ElTableWrap from '@/components/Typography/Wrap/ElTableWrap'
+import TyButtonController from '@/components/Typography/Button/Controller'
+import TyFormBasic from '@/components/Typography/Form/Basic'
 import Pagination from '@/components/Pagination'
 
 export default {
@@ -49,6 +49,15 @@ export default {
     paginationMethod: {
       type: Function,
       default: function() {}
+    },
+    paginationConfig: {
+      type: Object,
+      default: function() {
+        return {
+          itemsField: 'items',
+          totalField: 'total'
+        }
+      }
     }
   },
   data() {
@@ -69,7 +78,7 @@ export default {
       if (isNotEmpty(self.controller.items)) {
         self.controller.items.forEach((item, index) => {
           if (item.selectedRowVisible) {
-            if (this.selectedRowVisible()) {
+            if (self.selectedRowVisible()) {
               items.push(item)
             }
           } else {
@@ -77,7 +86,7 @@ export default {
           }
         })
       }
-      if (isNotEmpty(this.searcher.items)) {
+      if (isNotEmpty(self.searcher.items)) {
         items.push({
           float: 'right',
           text: '搜索器',
@@ -161,9 +170,6 @@ export default {
       this.doSearch()
     }
   },
-  beforeMount() {
-    window.addEventListener('resize', this.handleResize)
-  },
   methods: {
     setExtraParams(extraParams) {
       this.extraParams = extraParams || {}
@@ -209,8 +215,8 @@ export default {
       this.loading = true
       this.initQuerier()
       this.paginationMethod(this.querier).then(response => {
-        this.results = response.data.items
-        this.total = response.data.total
+        this.results = response.data[this.paginationConfig.itemsField]
+        this.total = response.data[this.paginationConfig.totalField]
         this.loading = false
       })
     },

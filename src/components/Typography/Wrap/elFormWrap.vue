@@ -1,35 +1,24 @@
 <template>
   <el-form v-loading="loading" ref="ref" v-bind="props" :model="model" v-on="events">
-    <component
-      v-for="(group, i) in groups"
-      :key="'group_' + i"
-      :is="group.showFeature ? 'el-card' : 'div'"
-      :class="addGroupClass(group.showFeature)"
-      shadow="never">
+    <component v-for="(group, i) in groups" :key="'group_' + i" :is="group.showFeature ? 'el-card' : 'div'" v-bind="buildGroupProps(group)">
       <div v-if="group.showFeature" slot="header" class="group-title">
         <i class="el-icon-antd-appstore" />
         {{ group.title }}
         <div v-if="group.actions && group.actions.length" class="group-action">
-          <el-button-wrap v-for="(action, ai) in group.actions" :key="'cr' + ai" :c-o-m="getActionCOM(action)" />
+          <el-button-wrap v-for="(action, ai) in group.actions" :key="'ga_' + ai" :c-o-m="buildActionCOM(action)" />
         </div>
       </div>
       <el-row v-for="(row, j) in group.rows" :key="'row_' + j" :gutter="18">
-        <div v-if="row.showFeature" :class="addRowTitleClass(group.showFeature)">
+        <div v-if="row.showFeature" v-bind="buildRowTitleProps(row)">
           <i class="el-icon-antd-detail" />
           {{ row.title }}
-          <div v-if="row.actions && row.actions.length" class="row-action">
-            <el-button-wrap v-for="(action, ai) in row.actions" :key="'cr' + ai" :c-o-m="getActionCOM(action)" />
-          </div>
+          <span v-if="row.actions && row.actions.length" class="row-action">
+            &lt;
+            <el-button-wrap v-for="(action, ai) in row.actions" :key="'ra_' + ai" :c-o-m="buildActionCOM(action)" />
+            &gt;
+          </span>
         </div>
-        <el-col
-          v-for="(item, k) in row.items"
-          :key="item.props.prop"
-          :xs="xs"
-          :sm="sm"
-          :md="md"
-          :lg="lg"
-          :xl="xl"
-          :class="addItemClass(row.showFeature, j, k, row.items.length)">
+        <el-col v-for="(item, k) in row.items" :key="item.props.prop" v-bind="buildColProps(row, j, item, k)">
           <el-form-item v-bind="item.props" v-on="item.events">
             <template v-if="item.tip && item.tip.length" slot="label">
               {{ item.props.label }}
@@ -44,7 +33,7 @@
               :value="getModelValue(entity.name)"
               :c-o-m="entity"
               v-bind="entity.props"
-              @[inputEvent(entity)]="handleInput($event, entity.name, entity.linkage)"
+              @[inputEvent(entity)]="handleInput($event, entity)"
               v-on="entity.events" />
           </el-form-item>
         </el-col>
@@ -56,8 +45,8 @@
 <script>
 import { isNotEmpty } from '@/utils/validate'
 import { fillFormItemsDefaultProps } from '@/components/Typography/kit'
-import ElFormItemWrap from '@/components/Typography/Wrap/elFormItemWrap'
-import ElButtonWrap from '@/components/Typography/Wrap/elButtonWrap'
+import ElFormItemWrap from '@/components/Typography/Wrap/ElFormItemWrap'
+import ElButtonWrap from '@/components/Typography/Wrap/ElButtonWrap'
 
 export default {
   name: 'ElFormWrap',
@@ -68,6 +57,7 @@ export default {
       default: function() {
         /*
         item 基于 ComponentObjectModel 扩展
+          span: 24，指定列占用栅格数，未指定则启用响应式配置
           tip: '提示内容'，为 label 添加提示信息
           linkage: [true | false] 是否为联动组件，为了减少重复渲染，不会实时的将 model 变化 @input 父组件，但是某些组件的值变更会导致 items 变化，这些组件便称为联动组件
         组 item：{
@@ -171,9 +161,6 @@ export default {
       return groups
     }
   },
-  beforeMount() {
-    window.addEventListener('resize', this.handleResize)
-  },
   mounted() {
     this.init()
   },
@@ -190,7 +177,7 @@ export default {
       key += index
       return key
     },
-    getActionCOM(action) {
+    buildActionCOM(action) {
       const { tip = '', icon, click = () => {} } = action
       return {
         tip,
@@ -198,46 +185,66 @@ export default {
         events: { click }
       }
     },
-    addGroupClass: function(groupFeature) {
+    buildGroupProps: function(group) {
+      const props = { shadow: 'never' }
+      const showFeature = group.showFeature
       const classes = []
-      if (groupFeature) {
+      if (showFeature) {
         classes.push('form-group')
       }
-      return classes
+      props.class = classes
+      return props
     },
-    addRowTitleClass: function(groupFeature) {
+    buildRowTitleProps: function(row) {
+      const props = {}
+      const showFeature = row.showFeature
       const classes = ['row-title']
-      if (!groupFeature) {
+      if (!showFeature) {
         classes.push('row-title-pl')
       }
-      return classes
+      props.class = classes
+      return props
     },
-    firstRowColCount: function(itemCount) {
-      let colCount = 0
-      const diviceWidth = this.$store.getters.deviceSize.width
-      if (diviceWidth >= 1920) {
-        colCount = 24 / this.xl
-      } else if (diviceWidth >= 1200) {
-        colCount = 24 / this.lg
-      } else if (diviceWidth >= 992) {
-        colCount = 24 / this.md
-      } else if (diviceWidth >= 768) {
-        colCount = 24 / this.sm
-      } else if (diviceWidth < 768) {
-        colCount = 24 / this.xs
-      }
-      if (itemCount > colCount) {
-        return colCount
+    buildColProps: function(row, rowIndex, col, colIndex) {
+      const props = {}
+      const span = col.span
+      if (isNotEmpty(span)) {
+        props.span = span
       } else {
-        return itemCount
+        // 未指定 span 则启用响应式配置
+        props.xs = this.xs
+        props.sm = this.sm
+        props.md = this.md
+        props.lg = this.lg
+        props.xl = this.xl
       }
-    },
-    addItemClass: function(showFeature, rowIndex, itemIndex, itemCount) {
-      const classes = []
-      if ((!showFeature && rowIndex > 0) || itemIndex >= this.firstRowColCount(itemCount)) {
+      const classes = [] // 样式 form-item 在组件上部增加虚线
+      const showFeature = row.showFeature
+      if (!showFeature && rowIndex > 0) {
         classes.push('form-item')
+      } else {
+        // 计算每行最多可放置的组件数量
+        let colCount = 0
+        const diviceWidth = this.$store.getters.deviceSize.width
+        if (diviceWidth >= 1920) {
+          colCount = 24 / this.xl
+        } else if (diviceWidth >= 1200) {
+          colCount = 24 / this.lg
+        } else if (diviceWidth >= 992) {
+          colCount = 24 / this.md
+        } else if (diviceWidth >= 768) {
+          colCount = 24 / this.sm
+        } else if (diviceWidth < 768) {
+          colCount = 24 / this.xs
+        }
+        // 当 colIndex 大于 colCount 时则说明到达第二行，需要添加样式 form-item
+        if (colIndex >= colCount) {
+          // colIndex 下标从 0 开始，因此使用 >=
+          classes.push('form-item')
+        }
       }
-      return classes
+      props.class = classes
+      return props
     },
     inputEvent(entity) {
       let event = 'input'
@@ -247,7 +254,8 @@ export default {
       }
       return event
     },
-    handleInput(value, name, linkage) {
+    handleInput(value, entity) {
+      const { name, linkage } = entity
       const model = { ...this.model }
       this.setModelValue(value, name, model)
       this.setModel(model)
@@ -332,8 +340,6 @@ export default {
 }
 
 .row-action {
-  float: right;
-  margin-top: -1px;
   .el-button--text {
     padding: 0px;
   }

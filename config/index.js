@@ -11,9 +11,10 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/jesa': {
-        target: 'http://localhost:8080/',
+        target: 'http://localhost:8080',
+        // pathRewrite: { '^/jesa': '' },
+        // secure: false,
         changeOrigin: true
-        // pathRewrite: { '^/jesa': '' }
       }
     },
 
@@ -66,7 +67,7 @@ module.exports = {
      * then assetsPublicPath should be set to "/bar/".
      * In most cases please use '/' !!!
      */
-    assetsPublicPath: '/pit/',
+    assetsPublicPath: '/',
 
     /**
      * Source Maps

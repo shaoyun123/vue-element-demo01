@@ -1,6 +1,6 @@
 <template>
   <div>
-    <ty-table-basic ref="ref" :controller="controller" :searcher="searcher" :table="table" :pagination-method="paginationMethod" />
+    <ty-table-category ref="ref" :controller="controller" :searcher="searcher" :table="table" :pagination-method="paginationMethod" />
     <tax-type-edit ref="ref-tax-type-edit" @after-save="refresh" />
     <tax-type-caliber-list ref="ref-tax-type-caliber-list" @after-close="refresh" />
   </div>
@@ -10,13 +10,13 @@
 import { isNotEmpty } from '@/utils/validate'
 import { buildFormItemsByDicts } from '@/components/Typography/kit'
 import { taxTypeList, taxTypeDelete } from '@/api/ftt'
-import TyTableBasic from '@/components/Typography/Table/basic'
+import TyTableCategory from '@/components/Typography/Table/Category'
 import TaxTypeEdit from './taxTypeEdit'
 import TaxTypeCaliberList from './taxTypeCaliberList'
 
 export default {
   name: 'TaxTypeList',
-  components: { TyTableBasic, TaxTypeEdit, TaxTypeCaliberList },
+  components: { TyTableCategory, TaxTypeEdit, TaxTypeCaliberList },
   data() {
     const self = this
     return {

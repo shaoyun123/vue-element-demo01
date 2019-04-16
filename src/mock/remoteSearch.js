@@ -11,7 +11,7 @@ for (let i = 0; i < count; i++) {
 }
 NameList.push({ name: 'mockPan' })
 
-export default {
+const remoteSearchAPI = {
   searchUser: config => {
     const { name } = param2Obj(config.url)
     const mockNameList = NameList.filter(item => {
@@ -22,3 +22,6 @@ export default {
     return { items: mockNameList }
   }
 }
+
+// 搜索相关
+Mock.mock(/\/search\/user/, 'get', remoteSearchAPI.searchUser)

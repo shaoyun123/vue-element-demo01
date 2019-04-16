@@ -8,7 +8,7 @@
 <script>
 import { isNotEmpty } from '@/utils/validate'
 import { payRatioList, payRatioDelete } from '@/api/pit'
-import TyTableBasic from '@/components/Typography/Table/basic'
+import TyTableBasic from '@/components/Typography/Table/Basic'
 import PayRatioEdit from './payRatioEdit'
 
 export default {

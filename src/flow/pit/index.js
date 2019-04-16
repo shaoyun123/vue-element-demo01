@@ -24,7 +24,7 @@ import {
   payrollUpdateById,
   payrollUpdateByQuery
 } from '@/api/pit'
-import * as sskit from './salarySnapshoot'
+import * as sskit from './salary-snapshoot'
 import * as pkit from './payroll'
 
 function buildFlowRecord(vm, FR_BODY_TYPE, FR_OPERATE_CODE, FR_OPERATE_DESCR, FR_OPERATE_SB_CODE, FR_OPERATE_SA_CODE) {
@@ -243,44 +243,44 @@ const SM_SSL2t = () => {
       const components = []
       if (routerName === 'PIT-SalaryGather') {
         components.push({
-          name: 'SalarySnapshootEdit', component: () => import(`@/views/typography/flow/edit-basic`),
+          name: 'SalarySnapshootEdit', component: () => import(`@/components/Typography/Flow/EditBasic`),
           props: { scope: 'SalarySnapshootEdit' },
           events: { 'after-save': () => vm.refresh() }
         })
         components.push({
-          name: 'SalarySnapshootImport', component: () => import(`@/views/typography/flow/dialog-form`),
+          name: 'SalarySnapshootImport', component: () => import(`@/components/Typography/Flow/DialogForm`),
           props: { scope: 'SalarySnapshootImport' },
           events: { 'after-save': () => vm.refresh() }
         })
         components.push({
-          name: 'VerifyResultListEdit', component: () => import(`@/views/typography/flow/dialog-list`),
+          name: 'VerifyResultListEdit', component: () => import(`@/components/Typography/Flow/DialogList`),
           props: { scope: 'VerifyResultListEdit' },
           events: { 'after-close': (data) => data.refreshFlag && vm.refresh() }
         })
         components.push({
-          name: 'ADSnapshootListEdit', component: () => import(`@/views/typography/flow/dialog-list`),
+          name: 'ADSnapshootListEdit', component: () => import(`@/components/Typography/Flow/DialogList`),
           props: { scope: 'ADSnapshootListEdit' },
           events: { 'after-close': (data) => data.refreshFlag && vm.refresh() }
         })
         components.push({
-          name: 'FlowRecordList', component: () => import(`@/views/typography/flow/dialog-list`),
+          name: 'FlowRecordList', component: () => import(`@/components/Typography/Flow/DialogList`),
           props: { scope: 'FlowRecordList' }
         })
       } else if (routerName === 'PIT-SalaryConfirm') {
         components.push({
-          name: 'SalarySnapshootView', component: () => import(`@/views/typography/flow/view-basic`),
+          name: 'SalarySnapshootView', component: () => import(`@/components/Typography/Flow/ViewBasic`),
           props: { scope: 'SalarySnapshootView' }
         })
         components.push({
-          name: 'VerifyResultListView', component: () => import(`@/views/typography/flow/dialog-list`),
+          name: 'VerifyResultListView', component: () => import(`@/components/Typography/Flow/DialogList`),
           props: { scope: 'VerifyResultListView' }
         })
         components.push({
-          name: 'ADSnapshootListView', component: () => import(`@/views/typography/flow/dialog-list`),
+          name: 'ADSnapshootListView', component: () => import(`@/components/Typography/Flow/DialogList`),
           props: { scope: 'ADSnapshootListView' }
         })
         components.push({
-          name: 'FlowRecordList', component: () => import(`@/views/typography/flow/dialog-list`),
+          name: 'FlowRecordList', component: () => import(`@/components/Typography/Flow/DialogList`),
           props: { scope: 'FlowRecordList' }
         })
       }
@@ -322,24 +322,24 @@ const SM_SSL2t = () => {
     },
     controller: function(vm, scopeMeta) {
       const { routerName } = scopeMeta
-      const actions = []
+      const items = []
       if (routerName === 'PIT-SalaryGather') {
-        actions.push({
+        items.push({
           text: '新增', props: { icon: 'el-icon-antd-plus' }, events: { click: () => vm.ref('SalarySnapshootEdit').showDialog({}) }
         })
-        actions.push({
+        items.push({
           text: '导入', props: { icon: 'el-icon-antd-Import' }, events: { click: () => vm.ref('SalarySnapshootImport').showDialog() }
         })
-        actions.push({
+        items.push({
           selectedRowVisible: true, text: '删除', props: { icon: 'el-icon-antd-delete', type: 'danger' }, events: { click: () => deleteSalarySnapshoot(vm) }
         })
-        actions.push({
+        items.push({
           text: '校验', props: { icon: 'el-icon-antd-error', type: 'warning' }, events: { click: () => verify(vm) }
         })
       } else if (routerName === 'PIT-SalaryConfirm') {
         // empty
       }
-      return actions
+      return { items }
     },
     searcher: function(vm, scopeMeta) {
       return sskit.getSearcher(vm, scopeMeta, { enterpriseOptions })
@@ -832,16 +832,24 @@ const SM_FRL2t = () => {
 const SM_PL2t = () => {
   return {
     components: function(vm, scopeMeta) {
-      return [
+      const { routerName } = scopeMeta
+      const components = [
         {
-          name: 'PayrollView', component: () => import(`@/views/typography/flow/view-basic`),
+          name: 'PayrollView', component: () => import(`@/components/Typography/Flow/ViewBasic`),
           props: { scope: 'PayrollView' }
         },
         {
-          name: 'FlowRecordList', component: () => import(`@/views/typography/flow/dialog-list`),
+          name: 'FlowRecordList', component: () => import(`@/components/Typography/Flow/DialogList`),
           props: { scope: 'FlowRecordList' }
         }
       ]
+      if (routerName === 'PIT-PayrollFeedback') {
+        components.push({
+          name: 'PayrollExport', component: () => import(`@/components/Typography/Flow/DialogForm`),
+          props: { scope: 'PayrollExport' }
+        })
+      }
+      return components
     },
     flowActions: function(vm, scopeMeta) {
       const { routerName } = scopeMeta
@@ -898,15 +906,18 @@ const SM_PL2t = () => {
       return flowActions
     },
     controller: function(vm, scopeMeta) {
+      const { routerName } = scopeMeta
       const items = []
-      items.push({
-        text: '导出发放单', props: { icon: 'el-icon-antd-export' },
-        events: {
-          click: function() {
-            alert(1)
+      if (routerName === 'PIT-PayrollFeedback') {
+        items.push({
+          text: '导出发放单', props: { icon: 'el-icon-antd-export' },
+          events: {
+            click: function() {
+              vm.ref('PayrollExport').showDialog()
+            }
           }
-        }
-      })
+        })
+      }
       return { items }
     },
     searcher: function(vm, scopeMeta) {
@@ -925,11 +936,11 @@ const SM_PV2w = () => {
     components: function(vm, scopeMeta) {
       return [
         {
-          name: 'SalarySnapshootView', component: () => import(`@/views/typography/flow/view-basic`),
+          name: 'SalarySnapshootView', component: () => import(`@/components/Typography/Flow/ViewBasic`),
           props: { scope: 'SalarySnapshootView' }
         },
         {
-          name: 'ADSnapshootListView', component: () => import(`@/views/typography/flow/dialog-list`),
+          name: 'ADSnapshootListView', component: () => import(`@/components/Typography/Flow/DialogList`),
           props: { scope: 'ADSnapshootListView' }
         }
       ]
@@ -971,14 +982,70 @@ const SM_PV2w = () => {
     }
   }
 }
-const M_P5l = (routerName) => {
+const SM_PE4t = () => {
   return {
+    dialogTitle: function(vm, scopeMeta) {
+      return '导出发放单'
+    },
+    controller: function(vm, scopeMeta) {
+      return {
+        showReset: false,
+        items: [
+          {
+            float: 'right', text: '导  出', props: { icon: 'el-icon-antd-export', type: 'primary' },
+            events: {
+              click: () => {
+                vm.ref().validateForm().then(valid => {
+                  if (valid) {
+                    const model = vm.ref().getModel()
+                    alert(model.P_ISSUE)
+                    vm.hideDialog()
+                  }
+                })
+              }
+            }
+          }
+        ]
+      }
+    },
+    defaultModel: function(vm, scopeMeta) {
+      return {
+        P_ISSUE: moment().subtract(1, 'months').format('YYYY-MM')
+      }
+    },
+    handleItems: function(vm, scopeMeta) {
+      return (operate, model) => {
+        return [
+          {
+            props: {
+              label: '期次号', prop: 'P_ISSUE',
+              rules: [
+                { required: true, message: '请选择期次号', trigger: 'blur' }
+              ]
+            },
+            items: [
+              {
+                tag: 'el-date-picker', name: 'P_ISSUE', props: { type: 'month' }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}
+const M_P5l = (routerName) => {
+  const meta = {
     [routerName]: SM_PL2t(),
     'PayrollView': SM_PV2w(),
     'SalarySnapshootView': SM_SSV2w(),
     'ADSnapshootListView': SM_ADSL2t('view'),
     'FlowRecordList': SM_FRL2t()
   }
+  if (routerName === 'PIT-PayrollFeedback') {
+    meta['PayrollExport'] = SM_PE4t()
+  }
+  return meta
 }
 
 let enterpriseOptions = []

@@ -8,7 +8,7 @@
 <script>
 import { isNotEmpty } from '@/utils/validate'
 import { houseLoanList, houseLoanDelete } from '@/api/pit'
-import TyTableBasic from '@/components/Typography/Table/basic'
+import TyTableBasic from '@/components/Typography/Table/Basic'
 import HouseLoanEdit from './houseLoanEdit'
 
 export default {

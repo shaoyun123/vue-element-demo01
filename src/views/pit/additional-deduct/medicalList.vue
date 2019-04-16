@@ -8,7 +8,7 @@
 <script>
 import { isNotEmpty } from '@/utils/validate'
 import { medicalList, medicalDelete } from '@/api/pit'
-import TyTableBasic from '@/components/Typography/Table/basic'
+import TyTableBasic from '@/components/Typography/Table/Basic'
 import MedicalEdit from './medicalEdit'
 
 export default {

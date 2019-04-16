@@ -21,11 +21,15 @@
 import router from '@/router'
 import flow from '@/flow'
 import { getDataType } from '@/utils'
-import { isEmpty, isNotEmpty } from '@/utils/validate'
-import TyFormBasic from '@/components/Typography/Form/basic'
+import { isEmpty } from '@/utils/validate'
+import TyFormBasic from '@/components/Typography/Form/Basic'
 
+/**
+ * Flow 页面模板
+ * 表单对话框模板
+ */
 export default {
-  name: 'TyFlowEditBasic',
+  name: 'TyFlowDialogForm',
   components: { TyFormBasic },
   props: {
     scope: {
@@ -39,10 +43,6 @@ export default {
     return {
       scopeMeta: {},
       components: [],
-      operate: 'add', // add edit
-      adding: true,
-      editing: false,
-      resetTo: {},
       model: {},
       items: [],
       loading: false
@@ -63,25 +63,7 @@ export default {
       }
     },
     controller: function() {
-      const self = this
-      const entry = flow.getMetaEntry(self, this.scopeMeta, 'controller')
-      let items = entry.items
-      if (isEmpty(items)) {
-        items = []
-      }
-      items.push({
-        float: 'right',
-        text: '保  存',
-        props: {
-          icon: 'el-icon-antd-save',
-          type: 'primary'
-        },
-        events: {
-          click: self.save
-        }
-      })
-      entry.items = items
-      return entry
+      return flow.getMetaEntry(this, this.scopeMeta, 'controller')
     },
     defaultModel: function() {
       return flow.getMetaEntry(this, this.scopeMeta, 'defaultModel')
@@ -91,18 +73,6 @@ export default {
     },
     handleItems: function() {
       return flow.getMetaEntry(this, this.scopeMeta, 'handleItems')
-    },
-    getMethod: function() {
-      return flow.getMetaEntry(this, this.scopeMeta, 'getMethod')
-    },
-    saveMethod: function() {
-      return flow.getMetaEntry(this, this.scopeMeta, 'saveMethod')
-    },
-    beforeSave: function() {
-      return flow.getMetaEntry(this, this.scopeMeta, 'beforeSave')
-    },
-    afterSave: function() {
-      return flow.getMetaEntry(this, this.scopeMeta, 'afterSave')
     }
   },
   watch: {
@@ -120,7 +90,7 @@ export default {
       return flow.ref(this, componentName)
     },
     getTemplateName() {
-      return 'edit-basic'
+      return 'DialogForm'
     },
     getFlowActionData() {
       return [this.getModel()]
@@ -139,66 +109,16 @@ export default {
       this.scopeMeta = scopeMeta
       this.components = flow.getMetaEntry(this, this.scopeMeta, 'components')
     },
-    showDialog(primaryKey) {
-      if (isNotEmpty(primaryKey)) {
-        this.operate = 'edit'
-        this.adding = false
-        this.editing = true
-      } else {
-        this.operate = 'add'
-        this.adding = true
-        this.editing = false
-      }
+    showDialog() {
       this.ref().showDialog()
       this.loading = true
-      if (this.adding) {
-        this.model = this.defaultModel
-        this.resetTo = this.defaultModel
-        this.items = this.handleItems(this.operate, this.model)
-        this.loading = false
-      } else if (this.editing) {
-        this.getMethod(primaryKey).then(response => {
-          const model = response.data
-          if (isNotEmpty(model)) {
-            this.model = model
-            this.resetTo = model
-          } else {
-            const defaultModel = Object.assign({}, this.defaultModel, primaryKey)
-            this.model = defaultModel
-            this.resetTo = defaultModel
-          }
-          this.items = this.handleItems(this.operate, this.model)
-          this.loading = false
-        })
-      }
+      this.model = this.defaultModel
+      this.resetTo = this.defaultModel
+      this.items = this.handleItems(this.operate, this.model)
+      this.loading = false
     },
     hideDialog() {
       this.ref().hideDialog()
-    },
-    save() {
-      this.ref().validateForm().then(valid => {
-        if (valid) {
-          let model = this.getModel()
-          let beforeBool = true
-          if (isNotEmpty(this.beforeSave)) {
-            beforeBool = this.beforeSave(this.operate, model)
-            if (beforeBool === undefined) {
-              beforeBool = true
-            }
-          }
-          if (beforeBool) {
-            this.saveMethod(model).then(response => {
-              model = response.data
-              this.model = model
-              this.resetTo = model
-              this.ref().hideDialog()
-              if (isNotEmpty(this.afterSave)) {
-                this.afterSave(this.operate, model)
-              }
-            })
-          }
-        }
-      })
     },
     getModel() {
       return this.ref().getModel()

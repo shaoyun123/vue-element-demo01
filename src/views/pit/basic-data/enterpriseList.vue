@@ -9,7 +9,7 @@
 import { isNotEmpty } from '@/utils/validate'
 import { buildFormItemsByDicts } from '@/components/Typography/kit'
 import { enterpriseList, enterpriseDelete } from '@/api/pit'
-import TyTableBasic from '@/components/Typography/Table/basic'
+import TyTableBasic from '@/components/Typography/Table/Basic'
 import EnterpriseEdit from './enterpriseEdit'
 
 export default {

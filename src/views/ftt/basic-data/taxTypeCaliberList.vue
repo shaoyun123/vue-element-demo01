@@ -14,7 +14,7 @@
 
 <script>
 import { taxTypeCaliberList } from '@/api/ftt'
-import TyTableDialog from '@/components/Typography/Table/dialog'
+import TyTableDialog from '@/components/Typography/Table/Dialog'
 import TaxTypeCaliberEdit from './taxTypeCaliberEdit'
 
 export default {

@@ -9,7 +9,7 @@
 
 <script>
 import { isNotEmpty } from '@/utils/validate'
-import TyFormBasic from '@/components/Typography/Form/basic'
+import TyFormBasic from '@/components/Typography/Form/Basic'
 
 export default {
   name: 'BasicView',

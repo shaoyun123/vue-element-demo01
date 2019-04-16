@@ -8,8 +8,8 @@
 <script>
 import { isNotEmpty } from '@/utils/validate'
 import { showMessage } from '@/utils/element'
-import ElFormWrap from '@/components/Typography/Wrap/elFormWrap'
-import TyButtonController from '@/components/Typography/Button/controller'
+import ElFormWrap from '@/components/Typography/Wrap/ElFormWrap'
+import TyButtonController from '@/components/Typography/Button/Controller'
 
 export default {
   name: 'ChangePassword',

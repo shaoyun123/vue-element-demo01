@@ -36,10 +36,8 @@ const demoRouters = [
     path: '/permission',
     component: Layout,
     redirect: '/permission/index',
-    name: 'M001_config_M001_systemConfig', // null
     alwaysShow: true, // will always show the root menu
     meta: {
-      subsystem: 'BSYS', // null
       title: 'permission',
       icon: 'lock',
       roles: ['admin', 'editor'] // you can set roles in root nav
@@ -48,9 +46,8 @@ const demoRouters = [
       {
         path: 'page',
         component: () => import('@/views/permission/page'),
-        name: 'M001_config_M002_systemsConfig', // Page
+        name: 'Page',
         meta: {
-          subsystem: 'BSYS', // null
           title: 'pagePermission',
           roles: ['admin'] // or you can only set roles in sub nav
         }
@@ -58,9 +55,8 @@ const demoRouters = [
       {
         path: 'directive',
         component: () => import('@/views/permission/directive'),
-        name: 'M001_config_M004', // Directive
+        name: 'Directive',
         meta: {
-          subsystem: 'BSYS', // null
           title: 'directivePermission'
           // if do not set roles, means: this page does not require permission
         }

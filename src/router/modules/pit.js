@@ -153,7 +153,7 @@ const pitRouters = [
     children: [
       {
         path: 'salary-gather/list',
-        component: () => import('@/views/typography/flow/list-basic'),
+        component: () => import('@/components/Typography/Flow/ListBasic'),
         name: 'PIT-SalaryGather',
         meta: {
           subsystem: 'PIT',
@@ -163,7 +163,7 @@ const pitRouters = [
       },
       {
         path: 'salary-confirm/list',
-        component: () => import('@/views/typography/flow/list-basic'),
+        component: () => import('@/components/Typography/Flow/ListBasic'),
         name: 'PIT-SalaryConfirm',
         meta: {
           subsystem: 'PIT',
@@ -173,7 +173,7 @@ const pitRouters = [
       },
       {
         path: 'payroll-confirm/list',
-        component: () => import('@/views/typography/flow/list-basic'),
+        component: () => import('@/components/Typography/Flow/ListBasic'),
         name: 'PIT-PayrollConfirm',
         meta: {
           subsystem: 'PIT',
@@ -183,7 +183,7 @@ const pitRouters = [
       },
       {
         path: 'payroll-doubt/list',
-        component: () => import('@/views/typography/flow/list-basic'),
+        component: () => import('@/components/Typography/Flow/ListBasic'),
         name: 'PIT-PayrollDoubt',
         meta: {
           subsystem: 'PIT',
@@ -193,7 +193,7 @@ const pitRouters = [
       },
       {
         path: 'payroll-submit/list',
-        component: () => import('@/views/typography/flow/list-basic'),
+        component: () => import('@/components/Typography/Flow/ListBasic'),
         name: 'PIT-PayrollSubmit',
         meta: {
           subsystem: 'PIT',
@@ -203,7 +203,7 @@ const pitRouters = [
       },
       {
         path: 'payroll-feedback/list',
-        component: () => import('@/views/typography/flow/list-basic'),
+        component: () => import('@/components/Typography/Flow/ListBasic'),
         name: 'PIT-PayrollFeedback',
         meta: {
           subsystem: 'PIT',

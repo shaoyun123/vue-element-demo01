@@ -8,7 +8,7 @@
 <script>
 import { isNotEmpty } from '@/utils/validate'
 import { adultEducateList, adultEducateDelete } from '@/api/pit'
-import TyTableBasic from '@/components/Typography/Table/basic'
+import TyTableBasic from '@/components/Typography/Table/Basic'
 import AdultEducateEdit from './adultEducateEdit'
 
 export default {

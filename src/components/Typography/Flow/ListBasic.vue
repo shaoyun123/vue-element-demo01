@@ -1,13 +1,11 @@
 <template>
   <div>
-    <ty-table-dialog
+    <ty-table-basic
       ref="ref"
-      :dialog="dialog"
       :controller="controller"
       :searcher="searcher"
       :table="table"
-      :pagination-method="paginationMethod"
-      @after-close="afterClose" />
+      :pagination-method="paginationMethod" />
     <component
       v-for="item in components"
       :key="'sc_' + item.name"
@@ -22,11 +20,15 @@
 import router from '@/router'
 import flow from '@/flow'
 import { isEmpty } from '@/utils/validate'
-import TyTableDialog from '@/components/Typography/Table/dialog'
+import TyTableBasic from '@/components/Typography/Table/Basic'
 
+/**
+ * Flow 页面模板
+ * 基础的数据列表模板
+ */
 export default {
-  name: 'TyFlowDialogList',
-  components: { TyTableDialog },
+  name: 'TyFlowListBasic',
+  components: { TyTableBasic },
   props: {
     scope: {
       type: String,
@@ -38,32 +40,21 @@ export default {
   data() {
     return {
       scopeMeta: {},
-      components: [],
-      extraParams: {}
+      components: []
     }
   },
   computed: {
-    dialog: function() {
-      const title = flow.getMetaEntry(this, this.scopeMeta, 'dialogTitle')
-      return {
-        props: { title }
-      }
-    },
     controller: function() {
       return flow.getMetaEntry(this, this.scopeMeta, 'controller')
     },
     searcher: function() {
-      const searcher = flow.getMetaEntry(this, this.scopeMeta, 'searcher')
-      return Object.assign({}, searcher, { extraParams: this.extraParams })
+      return flow.getMetaEntry(this, this.scopeMeta, 'searcher')
     },
     table: function() {
       return flow.getMetaEntry(this, this.scopeMeta, 'table')
     },
     paginationMethod: function() {
       return flow.getMetaEntry(this, this.scopeMeta, 'paginationMethod')
-    },
-    afterClose: function() {
-      return flow.getMetaEntry(this, this.scopeMeta, 'afterClose')
     }
   },
   watch: {
@@ -73,7 +64,7 @@ export default {
       }
     }
   },
-  created: function() {
+  created() {
     this.init()
   },
   methods: {
@@ -81,10 +72,10 @@ export default {
       return flow.ref(this, componentName)
     },
     getTemplateName() {
-      return 'dialog-list'
+      return 'ListBasic'
     },
     getFlowActionData() {
-      return this.ref().ref().selectedRows
+      return this.ref().selectedRows
     },
     refresh() {
       this.ref().doSearch()
@@ -99,16 +90,6 @@ export default {
       const scopeMeta = flow.getScopeMeta(routerName, scope)
       this.scopeMeta = scopeMeta
       this.components = flow.getMetaEntry(this, this.scopeMeta, 'components')
-    },
-    showDialog(primaryKey) {
-      this.ref().showDialog()
-      if (JSON.stringify(primaryKey) !== JSON.stringify(this.extraParams)) {
-        this.extraParams = primaryKey
-        this.ref().clearSearcher()
-      }
-    },
-    hideDialog() {
-      this.ref().hideDialog()
     }
   }
 }

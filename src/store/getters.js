@@ -1,4 +1,4 @@
-import { dictKit, districtKit } from './modules/globalData'
+import { dictKit, districtKit } from './modules/global-data'
 
 const getters = {
   device: state => state.app.device,

@@ -21,8 +21,12 @@
 import router from '@/router'
 import flow from '@/flow'
 import { isEmpty, isNotEmpty } from '@/utils/validate'
-import TyFormBasic from '@/components/Typography/Form/basic'
+import TyFormBasic from '@/components/Typography/Form/Basic'
 
+/**
+ * Flow 页面模板
+ * 基础的查看数据模板
+ */
 export default {
   name: 'TyFlowViewBasic',
   components: { TyFormBasic },
@@ -90,7 +94,7 @@ export default {
       return flow.ref(this, componentName)
     },
     getTemplateName() {
-      return 'view-basic'
+      return 'ViewBasic'
     },
     getFlowActionData() {
       return [this.getModel()]

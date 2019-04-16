@@ -1,12 +1,13 @@
 <template>
   <div>
-    <ty-form-basic
+    <ty-table-dialog
       ref="ref"
       :dialog="dialog"
-      :form="form"
-      :loading="loading"
       :controller="controller"
-      @input="handleDialogInput($event)" />
+      :searcher="searcher"
+      :table="table"
+      :pagination-method="paginationMethod"
+      @after-close="afterClose" />
     <component
       v-for="item in components"
       :key="'sc_' + item.name"
@@ -20,13 +21,16 @@
 <script>
 import router from '@/router'
 import flow from '@/flow'
-import { getDataType } from '@/utils'
 import { isEmpty } from '@/utils/validate'
-import TyFormBasic from '@/components/Typography/Form/basic'
+import TyTableDialog from '@/components/Typography/Table/Dialog'
 
+/**
+ * Flow 页面模板
+ * 列表对话框模板
+ */
 export default {
-  name: 'TyFlowDialogForm',
-  components: { TyFormBasic },
+  name: 'TyFlowDialogList',
+  components: { TyTableDialog },
   props: {
     scope: {
       type: String,
@@ -39,9 +43,7 @@ export default {
     return {
       scopeMeta: {},
       components: [],
-      model: {},
-      items: [],
-      loading: false
+      extraParams: {}
     }
   },
   computed: {
@@ -51,24 +53,21 @@ export default {
         props: { title }
       }
     },
-    form: function() {
-      return {
-        resetTo: this.resetTo,
-        props: { model: this.model },
-        items: this.items
-      }
-    },
     controller: function() {
       return flow.getMetaEntry(this, this.scopeMeta, 'controller')
     },
-    defaultModel: function() {
-      return flow.getMetaEntry(this, this.scopeMeta, 'defaultModel')
+    searcher: function() {
+      const searcher = flow.getMetaEntry(this, this.scopeMeta, 'searcher')
+      return Object.assign({}, searcher, { extraParams: this.extraParams })
     },
-    handleModel: function() {
-      return flow.getMetaEntry(this, this.scopeMeta, 'handleModel')
+    table: function() {
+      return flow.getMetaEntry(this, this.scopeMeta, 'table')
     },
-    handleItems: function() {
-      return flow.getMetaEntry(this, this.scopeMeta, 'handleItems')
+    paginationMethod: function() {
+      return flow.getMetaEntry(this, this.scopeMeta, 'paginationMethod')
+    },
+    afterClose: function() {
+      return flow.getMetaEntry(this, this.scopeMeta, 'afterClose')
     }
   },
   watch: {
@@ -86,13 +85,13 @@ export default {
       return flow.ref(this, componentName)
     },
     getTemplateName() {
-      return 'dialog-form'
+      return 'DialogList'
     },
     getFlowActionData() {
-      return [this.getModel()]
+      return this.ref().ref().selectedRows
     },
     refresh() {
-      // 空实现
+      this.ref().doSearch()
     },
     init() {
       const currentRoute = router.currentRoute
@@ -105,32 +104,15 @@ export default {
       this.scopeMeta = scopeMeta
       this.components = flow.getMetaEntry(this, this.scopeMeta, 'components')
     },
-    showDialog() {
+    showDialog(primaryKey) {
       this.ref().showDialog()
-      this.loading = true
-      this.model = this.defaultModel
-      this.resetTo = this.defaultModel
-      this.items = this.handleItems(this.operate, this.model)
-      this.loading = false
+      if (JSON.stringify(primaryKey) !== JSON.stringify(this.extraParams)) {
+        this.extraParams = primaryKey
+        this.ref().clearSearcher()
+      }
     },
     hideDialog() {
       this.ref().hideDialog()
-    },
-    getModel() {
-      return this.ref().getModel()
-    },
-    handleDialogInput(model) {
-      const self = this
-      const result = self.handleModel(self.operate, model)
-      if (getDataType(result) === 'promise') {
-        result.then(function(data) {
-          self.model = data
-          self.items = this.handleItems(this.operate, this.model)
-        })
-      } else {
-        self.model = result
-        self.items = this.handleItems(this.operate, this.model)
-      }
     }
   }
 }

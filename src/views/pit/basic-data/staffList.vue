@@ -10,7 +10,7 @@
 import { isEmpty, isNotEmpty } from '@/utils/validate'
 import { buildFormItemsByDicts } from '@/components/Typography/kit'
 import { staffList, staffDelete, loginIdSave } from '@/api/pit'
-import TyTableBasic from '@/components/Typography/Table/basic'
+import TyTableBasic from '@/components/Typography/Table/Basic'
 import StaffEdit from './staffEdit'
 import SalaryEdit from './salaryEdit'
 

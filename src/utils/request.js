@@ -13,6 +13,7 @@ const tokenMessage = {
 }
 const service = axios.create({
   baseURL: process.env.BASE_API, // api 的 base_url
+  headers: { 'Content-Type': 'application/json;charset=UTF-8' },
   timeout: 5000 // request timeout
 })
 // request interceptor
@@ -57,6 +58,9 @@ service.interceptors.response.use(
 )
 
 export default service
+/**
+ * 是否是有效的响应
+ */
 export function passable(response) {
   return errorFlag !== response && isNotEmpty(response)
 }

@@ -9,8 +9,8 @@
 
 <script>
 import { isNotEmpty } from '@/utils/validate'
-import TyTableBasic from '@/components/Typography/Table/basic'
-import TyButtonStatus from '@/components/Typography/Button/status'
+import TyTableBasic from '@/components/Typography/Table/Basic'
+import TyButtonStatus from '@/components/Typography/Button/Status'
 
 export default {
   name: 'TyTableDialog',
@@ -81,9 +81,6 @@ export default {
         items: this.table.items
       }
     }
-  },
-  beforeMount() {
-    window.addEventListener('resize', this.handleResize)
   },
   methods: {
     showDialog() {

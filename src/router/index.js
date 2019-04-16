@@ -27,8 +27,7 @@ export const dynamicSubsystems = [
       { id: 'FTT_VAT', name: '增值税', icon: 'el-icon-antd-container' },
       { id: 'FTT_CIT', name: '企业所得税', icon: 'el-icon-antd-bank' }
     ]
-  },
-  { id: 'BSYS', name: '系统管理', icon: 'el-icon-antd-setting' }
+  }
 ]
 
 /** note: Submenu only appear when children.length>=1

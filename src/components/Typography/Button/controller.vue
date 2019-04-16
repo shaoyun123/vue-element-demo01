@@ -2,22 +2,23 @@
   <el-card v-bind="props">
     <el-container>
       <el-container>
-        <component v-for="(action, i) in actionPool.leftActions" :key="'cl' + i" :is="action.tag" :c-o-m="action" />
+        <component v-for="(action, i) in actionPool.leftActions" :key="'cl' + i" :is="action.tag" :c-o-m="action" @input="handleInput($event)" />
       </el-container>
-      <component v-for="(action, i) in actionPool.rightActions" :key="'cr' + i" :is="action.tag" :c-o-m="action" />
+      <component v-for="(action, i) in actionPool.rightActions" :key="'cr' + i" :is="action.tag" :c-o-m="action" @input="handleInput($event)" />
     </el-container>
   </el-card>
 </template>
 
 <script>
 import { isNotEmpty } from '@/utils/validate'
-import ElButtonWrap from '@/components/Typography/Wrap/elButtonWrap'
-import ElDropdownWrap from '@/components/Typography/Wrap/elDropdownWrap'
+import ElButtonWrap from '@/components/Typography/Wrap/ElButtonWrap'
+import ElDropdownWrap from '@/components/Typography/Wrap/ElDropdownWrap'
+import ElPopoverWrap from '@/components/Typography/Wrap/ElPopoverWrap'
 import TyDivider from '@/components/Typography/Divider'
 
 export default {
   name: 'TyTableController',
-  components: { ElButtonWrap, ElDropdownWrap, TyDivider },
+  components: { ElButtonWrap, ElDropdownWrap, ElPopoverWrap, TyDivider },
   props: {
     controller: {
       type: Object,
@@ -46,6 +47,7 @@ export default {
         this.controller.items.forEach((action, index) => {
           const float = action.float
           const divided = action.divided
+          let tag = action.tag
           const items = action.items
           let actions = null
           if (float === 'right') {
@@ -63,8 +65,9 @@ export default {
               }
             })
           }
-          let tag = ''
-          if (items && items.length) {
+          if (isNotEmpty(tag)) {
+            // 保留原 tag
+          } else if (items && items.length) {
             tag = 'el-dropdown-wrap'
           } else {
             tag = 'el-button-wrap'
@@ -74,6 +77,11 @@ export default {
         })
       }
       return { leftActions, rightActions }
+    }
+  },
+  methods: {
+    handleInput(value) {
+      this.$emit('input', value)
     }
   }
 }

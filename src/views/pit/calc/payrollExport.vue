@@ -9,7 +9,7 @@
 
 <script>
 import moment from 'moment'
-import TyFormBasic from '@/components/Typography/Form/basic'
+import TyFormBasic from '@/components/Typography/Form/Basic'
 
 export default {
   name: 'PayrollExport',

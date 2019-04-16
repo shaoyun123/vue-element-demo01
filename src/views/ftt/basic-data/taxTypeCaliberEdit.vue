@@ -225,11 +225,12 @@ export default {
             ]
           })
           items.push({
+            span: 24,
             props: {
-              label: '物理表字段',
+              label: '认定公式',
               prop: prefix + 'SCRIPT',
               rules: [
-                { required: true, message: '请输入物理表字段', trigger: 'blur' }
+                { required: true, message: '请输入认定公式', trigger: 'blur' }
               ]
             },
             items: [

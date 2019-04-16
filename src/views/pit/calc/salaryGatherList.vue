@@ -20,7 +20,7 @@ import {
   salarySnapshootUpdateByQuery,
   enterpriseList
 } from '@/api/pit'
-import TyTableBasic from '@/components/Typography/Table/basic'
+import TyTableBasic from '@/components/Typography/Table/Basic'
 import { buildFlowRecordSimple, getSalarySnapshootId, getSalarySnapshootSearcher, getSalarySnapshootTableItems } from './kit'
 import SalarySnapshootEdit from './salarySnapshootEdit'
 import SalarySnapshootImport from './salarySnapshootImport'

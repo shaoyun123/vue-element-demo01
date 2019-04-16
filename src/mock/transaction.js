@@ -13,7 +13,7 @@ for (let i = 0; i < count; i++) {
   }))
 }
 
-export default {
+const transactionAPI = {
   getList: () => {
     return {
       total: List.length,
@@ -21,3 +21,6 @@ export default {
     }
   }
 }
+
+// 账单相关
+Mock.mock(/\/transaction\/list/, 'get', transactionAPI.getList)

@@ -71,10 +71,11 @@ getFlowActionData(): return [] // 获取流程控制主体数据
 refresh() // 刷新数据
 */
 
+import router from '@/router'
 import store from '@/store'
 import { getDataType } from '@/utils'
 import { parallel } from '@/utils/request'
-import { isNotEmpty } from '@/utils/validate'
+import { isEmpty, isNotEmpty } from '@/utils/validate'
 import { showMessage, showConfirm, showPrompt } from '@/utils/element'
 import pitFlows from '@/flow/pit'
 
@@ -122,9 +123,32 @@ init()
 function getFlow(flowId) {
   return flowStorer[flowId]
 }
+
 function getPage(routerName) {
   return pageStorer[routerName]
 }
+
+/**
+ * 获取路由指定作用域的元信息
+ * @param {String} routerName 路由名称（唯一）
+ * @param {String} scope 作用域
+ */
+function getScopeMeta(routerName, scope) {
+  let scopeMeta = {}
+  const page = getPage(routerName)
+  if (isNotEmpty(page)) {
+    const flowId = page.flowId
+    const meta = page.meta
+    if (isNotEmpty(meta)) {
+      scopeMeta = meta[scope] || {}
+      scopeMeta['flowId'] = flowId
+      scopeMeta['routerName'] = routerName
+      scopeMeta['scope'] = scope
+    }
+  }
+  return scopeMeta
+}
+
 /**
  * 获取页面元属性
  * @param {Object} vm 当前 vue 对象，既 this
@@ -142,18 +166,19 @@ function getMetaEntry(vm, scopeMeta, entryName, defaultValue) {
   if (entryName === 'flowActions') {
     entry = buildFlowActions(vm, scopeMeta, entry)
   } else if (entryName === 'controller') {
-    const flowItems = getMetaEntry(vm, scopeMeta, 'flowActions')
-    if (isNotEmpty(flowItems)) {
+    const flowActions = getMetaEntry(vm, scopeMeta, 'flowActions')
+    if (isNotEmpty(flowActions)) {
       const items = entry.items
       if (isNotEmpty(items)) {
-        entry.items = items.concat(flowItems)
+        entry.items = items.concat(flowActions)
       } else {
-        entry.items = flowItems
+        entry.items = flowActions
       }
     }
   }
   return entry
 }
+
 /**
  * 获取页面元属性的默认值
  * @param {Object} vm 当前 vue 对象，既 this
@@ -212,6 +237,7 @@ function getMetaEntryDefaultValue(vm, entryName) {
   }
   return defaultValue
 }
+
 /**
  * 构建流程按钮
  * @param {Object} vm 当前 vue 对象，既 this
@@ -232,7 +258,7 @@ function buildFlowActions(vm, scopeMeta, flowActions) {
     const to = action['status-to']
     const remark = action.remark
     const click = action.click
-    if (templateName === 'edit-basic') {
+    if (templateName === 'EditBasic') {
       allin = undefined
     }
     const button = { float: 'right', text: title }
@@ -295,6 +321,7 @@ function buildFlowActions(vm, scopeMeta, flowActions) {
   })
   return buttons
 }
+
 /**
  * 构建流程流转记录
  * @param {Object} scopeMeta 指定作用域的元信息集合
@@ -312,6 +339,7 @@ function buildFlowRecord(scopeMeta, operateCode, operateTitle, to, remark) {
   }
   return flowRecord
 }
+
 /**
  * 获取页面组件引用
  * @param {Object} vm 当前 vue 对象，既 this
@@ -329,6 +357,7 @@ function ref(vm, componentName) {
   }
   return ref
 }
+
 export default {
   getFlow: (flowId) => {
     return getFlow(flowId)
@@ -353,19 +382,7 @@ export default {
    * @param {String} scope 作用域
    */
   getScopeMeta: (routerName, scope) => {
-    let scopeMeta = {}
-    const page = getPage(routerName)
-    if (isNotEmpty(page)) {
-      const flowId = page.flowId
-      const meta = page.meta
-      if (isNotEmpty(meta)) {
-        scopeMeta = meta[scope] || {}
-        scopeMeta['flowId'] = flowId
-        scopeMeta['routerName'] = routerName
-        scopeMeta['scope'] = scope
-      }
-    }
-    return scopeMeta
+    return getScopeMeta(routerName, scope)
   },
   /**
    * 获取页面元属性
@@ -385,4 +402,20 @@ export default {
   ref: (vm, componentName) => {
     return ref(vm, componentName)
   }
+}
+
+/**
+ * 获取当前页面流程控制 Actions
+ * 注意：页面需要实现 getFlowActionData() 接口
+ * @param {Object} vm 当前 vue 对象，既 this
+ * @param {String} scope 作用域 [可空] [默认值为 currentRoute.name]
+ */
+export const getFlowActions = (vm, scope) => {
+  const currentRoute = router.currentRoute
+  const routerName = currentRoute.name
+  if (isEmpty(scope)) {
+    scope = routerName
+  }
+  const scopeMeta = getScopeMeta(routerName, scope)
+  return getMetaEntry(vm, scopeMeta, 'flowActions')
 }

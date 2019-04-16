@@ -13,7 +13,7 @@
 import { isEmpty, isNotEmpty } from '@/utils/validate'
 import { buildFormItemsByDicts } from '@/components/Typography/kit'
 import { adSnapshootList, adSnapshootUpdateById } from '@/api/pit'
-import TyTableDialog from '@/components/Typography/Table/dialog'
+import TyTableDialog from '@/components/Typography/Table/Dialog'
 
 export default {
   name: 'ADSnapshootList',

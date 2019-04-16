@@ -1,10 +1,10 @@
 <template>
   <el-tooltip v-if="COM.tip && COM.tip.length" :content="COM.tip">
     <el-button v-waves v-if="text && text.length" v-bind="props" v-on="events">{{ text }}</el-button>
-    <el-button v-waves v-else v-bind="props" v-on="events" />
+    <el-button v-waves v-else v-bind="props" class="text-empty" v-on="events" />
   </el-tooltip>
   <el-button v-waves v-else-if="text && text.length" v-bind="props" v-on="events">{{ text }}</el-button>
-  <el-button v-waves v-else v-bind="props" v-on="events" />
+  <el-button v-waves v-else v-bind="props" class="text-empty" v-on="events" />
 </template>
 
 <script>
@@ -30,8 +30,12 @@ export default {
       return this.COM.text
     },
     props: function() {
+      let plain = true
+      if (this.COM.props && this.COM.props.type === 'text') {
+        plain = false
+      }
       return {
-        plain: true,
+        plain,
         ...this.COM.props
       }
     },
@@ -41,3 +45,12 @@ export default {
   }
 }
 </script>
+
+<style rel="stylesheet/scss" lang="scss" scoped>
+.text-empty {
+  padding: 10px;
+  .el-button--medium {
+    padding: 10px;
+  }
+}
+</style>

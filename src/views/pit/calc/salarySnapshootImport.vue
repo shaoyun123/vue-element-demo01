@@ -11,7 +11,7 @@
 import moment from 'moment'
 import { isNotEmpty } from '@/utils/validate'
 import { salarySnapshootImport } from '@/api/pit'
-import TyFormBasic from '@/components/Typography/Form/basic'
+import TyFormBasic from '@/components/Typography/Form/Basic'
 import { buildFormItems, buildFormItemsByDicts } from '@/components/Typography/kit'
 
 export default {

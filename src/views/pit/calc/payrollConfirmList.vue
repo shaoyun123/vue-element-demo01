@@ -9,7 +9,7 @@
 <script>
 import { isEmpty } from '@/utils/validate'
 import { payrollList, payrollUpdateById, enterpriseList } from '@/api/pit'
-import TyTableBasic from '@/components/Typography/Table/basic'
+import TyTableBasic from '@/components/Typography/Table/Basic'
 import { buildFlowRecordSimple, getPayrollSearcher, getPayrollTableItems } from './kit'
 import PayrollView from './payrollView'
 import FlowRecordList from './flowRecordList'

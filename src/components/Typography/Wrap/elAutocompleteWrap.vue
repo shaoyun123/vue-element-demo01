@@ -11,7 +11,7 @@
 
 <script>
 import { isEmpty, isNotEmpty } from '@/utils/validate'
-import ElComponentWrap from '@/components/Typography/Wrap/elComponentWrap'
+import ElComponentWrap from '@/components/Typography/Wrap/ElComponentWrap'
 
 export default {
   name: 'ElAutocompleteWrap',

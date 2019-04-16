@@ -1,20 +1,22 @@
 <template>
   <div>
     <ty-table-basic ref="ref" :controller="controller" :searcher="searcher" :table="table" :pagination-method="paginationMethod" />
-    <tax-stair-edit ref="ref-tax-stair-edit" @after-save="refresh" />
+    <tax-type-edit ref="ref-tax-type-edit" @after-save="refresh" />
+    <tax-type-caliber-list ref="ref-tax-type-caliber-list" @after-close="refresh" />
   </div>
 </template>
 
 <script>
 import { isNotEmpty } from '@/utils/validate'
 import { buildFormItemsByDicts } from '@/components/Typography/kit'
-import { taxStairList, taxStairDelete } from '@/api/pit'
+import { taxTypeList, taxTypeDelete } from '@/api/ftt'
 import TyTableBasic from '@/components/Typography/Table/Basic'
-import TaxStairEdit from './taxStairEdit'
+import TaxTypeEdit from './taxTypeEdit'
+import TaxTypeCaliberList from './taxTypeCaliberList'
 
 export default {
-  name: 'TaxStairList',
-  components: { TyTableBasic, TaxStairEdit },
+  name: 'TaxTypeList',
+  components: { TyTableBasic, TaxTypeEdit, TaxTypeCaliberList },
   data() {
     const self = this
     return {
@@ -48,8 +50,14 @@ export default {
                     confirmButtonText: '是',
                     showCancelButton: false
                   }).then(() => {
-                    const TSC_IDS = selectedRows.map(selectedRow => selectedRow.TSC_ID)
-                    taxStairDelete(TSC_IDS).then(response => {
+                    const ratios = selectedRows.map(selectedRow => {
+                      return {
+                        PRC_PAY_SITE: selectedRow.PRC_PAY_SITE,
+                        PRC_EFFECTIVE_DATE: selectedRow.PRC_EFFECTIVE_DATE,
+                        PRC_EXPIRY_DATE: selectedRow.PRC_EXPIRY_DATE
+                      }
+                    })
+                    taxTypeDelete(ratios).then(response => {
                       self.refresh()
                     })
                   }).catch(() => {})
@@ -62,18 +70,14 @@ export default {
       searcher: {
         items: [
           {
-            props: { label: '是否居民', prop: 'TSC_IS_RESIDENT' },
-            items: buildFormItemsByDicts('YN', 'el-radio', 'TSC_IS_RESIDENT')
+            props: { label: '税种名', prop: 'TT_NAME' },
+            items: [
+              { tag: 'el-input', name: 'TT_NAME' }
+            ]
           },
           {
-            props: { label: '所得类型', prop: 'TSC_INCOME_TYPE' },
-            items: [
-              {
-                tag: 'el-select',
-                name: 'TSC_INCOME_TYPE',
-                items: buildFormItemsByDicts('T1X_S3R_C4G_TSC_INCOME_TYPE', 'el-option')
-              }
-            ]
+            props: { label: '状态', prop: 'TT_STATUS' },
+            items: buildFormItemsByDicts('ED', 'el-radio', 'TT_STATUS')
           }
         ]
       },
@@ -81,65 +85,36 @@ export default {
         items: [
           {
             props: {
-              label: '有效期',
-              prop: 'TSC_EFFECTIVE_DATE',
+              label: '税种号',
+              prop: 'TT_ID',
               fixed: 'left',
-              align: 'center',
               width: '100'
             }
           },
           {
             props: {
-              label: '失效期',
-              prop: 'TSC_EXPIRY_DATE',
+              label: '税种名',
+              prop: 'TT_NAME',
               fixed: 'left',
-              align: 'center',
-              width: '100'
+              width: '150'
             }
           },
           {
             props: {
-              label: '是否居民',
-              prop: 'TSC_IS_RESIDENT',
-              fixed: 'left',
+              label: '状态',
+              prop: 'TT_STATUS',
               align: 'center',
-              width: '100',
+              width: '75',
               formatter: function(row, column, cellValue, index) {
-                return self.$store.getters.getDictTitle('YN', cellValue)
+                return self.$store.getters.getDictTitle('ED', cellValue)
               }
             }
           },
           {
             props: {
-              label: '所得类型',
-              prop: 'TSC_INCOME_TYPE',
-              fixed: 'left',
-              width: '150',
-              formatter: function(row, column, cellValue, index) {
-                return self.$store.getters.getDictTitle('T1X_S3R_C4G_TSC_INCOME_TYPE', cellValue)
-              }
-            }
-          },
-          {
-            props: {
-              label: '级数',
-              prop: 'TSC_LEVEL',
-              align: 'center',
-              width: '75'
-            }
-          },
-          {
-            props: {
-              label: '预扣预缴额度',
-              prop: 'TSC_AMOUNT',
-              width: '125'
-            }
-          },
-          {
-            props: {
-              label: '预扣率（%）',
-              prop: 'TSC_RATIO',
-              width: '125'
+              label: '描述',
+              prop: 'TT_DESCR',
+              width: '1000'
             }
           },
           {
@@ -153,24 +128,30 @@ export default {
               align: 'center',
               width: '100',
               formatter: function(row, column, cellValue, index) {
-                const jsxData = {
-                  on: { 'click': () => self.showEdit(row.TSC_ID) }
+                const ejData = {
+                  on: { 'click': () => self.showEdit(row.TT_ID) }
                 }
-                return [<el-button type='text' { ...jsxData }>编辑</el-button>]
+                const cjData = {
+                  on: { 'click': () => self.showTaxTypeCalibers(row.TT_ID) }
+                }
+                return [<el-button type='text' { ...ejData }>编辑</el-button>, <el-button type='text' { ...cjData }>口径</el-button>]
               }
             }
           }
         ]
       },
-      paginationMethod: taxStairList
+      paginationMethod: taxTypeList
     }
   },
   methods: {
     refresh() {
       this.$refs['ref'].doSearch()
     },
-    showEdit(TSC_ID) {
-      this.$refs['ref-tax-stair-edit'].showDialog(TSC_ID)
+    showEdit(TT_ID) {
+      this.$refs['ref-tax-type-edit'].showDialog(TT_ID)
+    },
+    showTaxTypeCalibers(TT_ID) {
+      this.$refs['ref-tax-type-caliber-list'].showDialog(TT_ID)
     }
   }
 }

@@ -11,7 +11,7 @@
 <script>
 import { isEmpty, isNotEmpty } from '@/utils/validate'
 import { salarySnapshootList, salarySnapshootUpdateById, salarySnapshootUpdateByQuery, enterpriseList } from '@/api/pit'
-import TyTableBasic from '@/components/Typography/Table/basic'
+import TyTableBasic from '@/components/Typography/Table/Basic'
 import { buildFlowRecordSimple, getSalarySnapshootId, getSalarySnapshootSearcher, getSalarySnapshootTableItems } from './kit'
 import SalarySnapshootView from './salarySnapshootView'
 import VerifyResultList from './verifyResultList'

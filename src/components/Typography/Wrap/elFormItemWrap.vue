@@ -12,7 +12,7 @@
 <script>
 import { isNotEmpty } from '@/utils/validate'
 import Richtext from '@/components/Tinymce'
-import ElAutocompleteWrap from '@/components/Typography/Wrap/elAutocompleteWrap'
+import ElAutocompleteWrap from '@/components/Typography/Wrap/ElAutocompleteWrap'
 
 export default {
   name: 'ElFormItemWrap',
