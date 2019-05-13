@@ -8,6 +8,7 @@ const tableRouter = {
   redirect: '/table/complex-table',
   name: 'Table',
   meta: {
+    subsystem: 'DEMO',
     title: 'Table',
     icon: 'table',
     whiter: true
@@ -35,13 +36,13 @@ const tableRouter = {
       path: 'tree-table',
       component: () => import('@/views/table/treeTable/treeTable'),
       name: 'TreeTableDemo',
-      meta: { title: 'treeTable', whiter: true }
+      meta: { subsystem: 'DEMO', title: 'treeTable', whiter: true }
     },
     {
       path: 'custom-tree-table',
       component: () => import('@/views/table/treeTable/customTreeTable'),
       name: 'CustomTreeTableDemo',
-      meta: { title: 'customTreeTable', whiter: true }
+      meta: { subsystem: 'DEMO', title: 'customTreeTable', whiter: true }
     },
     {
       path: 'complex-table',

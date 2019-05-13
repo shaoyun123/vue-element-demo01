@@ -1,7 +1,7 @@
 <template>
   <basic-edit
     ref="ref"
-    :dialog-title="dialogTitle"
+    :form-title="formTitle"
     :default-model="defaultModel"
     :get-entity="getEntity"
     :save-entity="saveEntity"
@@ -29,7 +29,7 @@ export default {
   },
   data() {
     return {
-      dialogTitle: '所得税预扣率',
+      formTitle: '所得税预扣率',
       defaultModel: {
         TSC_IS_RESIDENT: 'Y',
         TSC_INCOME_TYPE: '1',
@@ -47,9 +47,9 @@ export default {
       let primaryKey = null
       if (isNotEmpty(PK)) {
         primaryKey = { TSC_ID: PK }
-        this.dialogTitle = '修改所得税预扣率'
+        this.formTitle = '修改所得税预扣率'
       } else {
-        this.dialogTitle = '创建所得税预扣率'
+        this.formTitle = '创建所得税预扣率'
       }
       this.$refs['ref'].showDialog(primaryKey)
     },

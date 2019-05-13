@@ -15,7 +15,11 @@ export function getSearcher(vm, scopeMeta) {
   const { getDicts } = vm.$store.getters
   const routerName = scopeMeta.routerName
   const page = flow.getPage(routerName)
-  const statuses = page['status-from'].P_STATUS
+  const from = page['status-from']
+  const statuses = []
+  from.forEach(status => {
+    statuses.push(status.P_STATUS)
+  })
   const items = []
   items.push({
     props: { label: '期次号', prop: 'P_ISSUE' },

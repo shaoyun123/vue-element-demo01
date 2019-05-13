@@ -15,7 +15,7 @@ export default {
   name: 'BasicView',
   components: { TyFormBasic },
   props: {
-    dialogTitle: {
+    formTitle: {
       type: String,
       default: ''
     },
@@ -46,7 +46,7 @@ export default {
     dialog: function() {
       return {
         props: {
-          title: this.dialogTitle
+          title: this.formTitle
         }
       }
     },

@@ -1,7 +1,7 @@
 <template>
   <basic-view
     ref="ref"
-    :dialog-title="dialogTitle"
+    :form-title="formTitle"
     :get-entity="getEntity"
     :handle-items="handleItems" />
 </template>
@@ -25,7 +25,7 @@ export default {
   },
   data() {
     return {
-      dialogTitle: '薪金明细',
+      formTitle: '薪金明细',
       getEntity: salarySnapshootSingle
     }
   },

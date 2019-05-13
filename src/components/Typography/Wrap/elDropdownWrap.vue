@@ -1,5 +1,5 @@
 <template>
-  <el-dropdown v-waves v-bind="props" v-on="events">
+  <el-dropdown v-bind="props" v-on="events">
     {{ text }}
     <el-dropdown-menu slot="dropdown">
       <el-dropdown-item v-for="(item, i) in items" :key="i" v-bind="item.props">{{ item.text }}</el-dropdown-item>
@@ -8,11 +8,8 @@
 </template>
 
 <script>
-import waves from '@/directive/waves'
-
 export default {
   name: 'ElDropdownWrap',
-  directives: { waves },
   props: {
     COM: {
       type: Object,

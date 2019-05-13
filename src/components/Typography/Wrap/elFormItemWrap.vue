@@ -1,6 +1,6 @@
 <template>
   <component
-    :is="COM.tag"
+    :is="componentIs"
     v-bind="$attrs"
     v-on="$listeners">
     <span v-if="COM.text" v-text="COM.text" />
@@ -16,7 +16,10 @@ import ElAutocompleteWrap from '@/components/Typography/Wrap/ElAutocompleteWrap'
 
 export default {
   name: 'ElFormItemWrap',
-  components: { Richtext, ElAutocompleteWrap },
+  components: {
+    Richtext,
+    ElAutocompleteWrap
+  },
   props: {
     COM: {
       type: Object,
@@ -26,6 +29,14 @@ export default {
     }
   },
   computed: {
+    componentIs: function() {
+      const tag = this.COM.tag
+      if (isNotEmpty(tag)) {
+        return tag
+      } else {
+        return this.COM.component
+      }
+    },
     items: function() {
       return this.COM.items
     }

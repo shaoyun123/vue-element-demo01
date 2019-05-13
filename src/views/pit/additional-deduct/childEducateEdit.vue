@@ -1,7 +1,7 @@
 <template>
   <basic-edit
     ref="ref"
-    :dialog-title="dialogTitle"
+    :form-title="formTitle"
     :default-model="defaultModel"
     :get-entity="getEntity"
     :save-entity="saveEntity"
@@ -23,7 +23,7 @@ export default {
   components: { BasicEdit },
   data() {
     return {
-      dialogTitle: '子女教育',
+      formTitle: '子女教育',
       defaultModel: {
         ADCE_NATIONALITY: '001',
         ADCE_ID_TYPE: '01',
@@ -40,9 +40,9 @@ export default {
       let primaryKey = null
       if (isNotEmpty(PK)) {
         primaryKey = { ADCE_ID: PK }
-        this.dialogTitle = '修改子女教育'
+        this.formTitle = '修改子女教育'
       } else {
-        this.dialogTitle = '创建子女教育'
+        this.formTitle = '创建子女教育'
       }
       this.$refs['ref'].showDialog(primaryKey)
     },

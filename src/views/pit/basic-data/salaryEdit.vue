@@ -1,7 +1,7 @@
 <template>
   <basic-edit
     ref="ref"
-    :dialog-title="dialogTitle"
+    :form-title="formTitle"
     :default-model="defaultModel"
     :get-entity="getEntity"
     :save-entity="saveEntity"
@@ -24,7 +24,7 @@ export default {
   components: { BasicEdit },
   data() {
     return {
-      dialogTitle: '',
+      formTitle: '',
       defaultModel: {
         S_PAY_SITE: ['002', '002001'],
         S_PAY_TYPE: '02',
@@ -265,7 +265,7 @@ export default {
         isNotEmpty(PK.S_TYPE)
       ) {
         primaryKey = PK
-        this.dialogTitle = this.$store.getters.getDictTitle('S4Y_S_TYPE', PK.S_TYPE)
+        this.formTitle = this.$store.getters.getDictTitle('S4Y_S_TYPE', PK.S_TYPE)
       }
       enterpriseList({}).then((response) => {
         this.enterpriseOptions = response.data.items

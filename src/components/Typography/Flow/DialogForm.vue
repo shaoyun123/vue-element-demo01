@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="!flowInitializing">
     <ty-form-basic
       ref="ref"
       :dialog="dialog"
@@ -32,6 +32,12 @@ export default {
   name: 'TyFlowDialogForm',
   components: { TyFormBasic },
   props: {
+    routerName: {
+      type: String,
+      default: function() {
+        return ''
+      }
+    },
     scope: {
       type: String,
       default: function() {
@@ -41,6 +47,7 @@ export default {
   },
   data() {
     return {
+      flowInitializing: true,
       scopeMeta: {},
       components: [],
       model: {},
@@ -50,7 +57,7 @@ export default {
   },
   computed: {
     dialog: function() {
-      const title = flow.getMetaEntry(this, this.scopeMeta, 'dialogTitle')
+      const title = flow.getMetaEntry(this, this.scopeMeta, 'formTitle')
       return {
         props: { title }
       }
@@ -78,12 +85,16 @@ export default {
   watch: {
     '$store.getters.flowInitializing': function(value) {
       if (value === false) {
+        this.flowInitializing = false
         this.init()
       }
     }
   },
   created: function() {
-    this.init()
+    this.flowInitializing = this.$store.getters.flowInitializing
+    if (this.flowInitializing === false) {
+      this.init()
+    }
   },
   methods: {
     ref(componentName) {
@@ -99,8 +110,11 @@ export default {
       // 空实现
     },
     init() {
-      const currentRoute = router.currentRoute
-      const routerName = currentRoute.name
+      let routerName = this.routerName
+      if (isEmpty(routerName)) {
+        const currentRoute = router.currentRoute
+        routerName = currentRoute.name
+      }
       let scope = this.scope
       if (isEmpty(scope)) {
         scope = routerName

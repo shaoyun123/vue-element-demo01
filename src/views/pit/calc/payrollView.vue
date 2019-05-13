@@ -2,7 +2,7 @@
   <div>
     <basic-view
       ref="ref"
-      :dialog-title="dialogTitle"
+      :form-title="formTitle"
       :get-entity="getEntity"
       :handle-items="handleItems"
       :actions="actions" />
@@ -34,7 +34,7 @@ export default {
     const self = this
     return {
       primaryKey: {},
-      dialogTitle: '工资单',
+      formTitle: '工资单',
       getEntity: payrollSingle,
       actions: [
         {

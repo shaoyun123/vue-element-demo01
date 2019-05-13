@@ -1,7 +1,7 @@
 <template>
   <el-dialog :visible.sync="dialogVisible" v-bind="dialogProps" @closed="afterClose" v-on="dialogEvents">
     <div class="flagbar">
-      <ty-button-status :value.sync="refreshFlag" tip="关闭时向父窗口返回刷新指令" size="mini" icon="el-icon-antd-sync" circle />
+      <ty-button-status :value.sync="refreshFlag" tip="关闭时向父窗口返回刷新指令" size="mini" icon="el-icon-antd-sync" />
     </div>
     <ty-table-basic ref="ref" :controller="controller" :searcher="searcher" :table="payloadTable" :pagination-method="paginationMethod" />
   </el-dialog>

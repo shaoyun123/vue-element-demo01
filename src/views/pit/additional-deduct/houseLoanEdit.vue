@@ -1,7 +1,7 @@
 <template>
   <basic-edit
     ref="ref"
-    :dialog-title="dialogTitle"
+    :form-title="formTitle"
     :default-model="defaultModel"
     :get-entity="getEntity"
     :save-entity="saveEntity"
@@ -22,7 +22,7 @@ export default {
   components: { BasicEdit },
   data() {
     return {
-      dialogTitle: '住房贷款利息',
+      formTitle: '住房贷款利息',
       defaultModel: {
         ADHL_IS_BORROWER: 'Y',
         ADHL_CERTIFICATE_TYPE: '1',
@@ -38,9 +38,9 @@ export default {
       let primaryKey = null
       if (isNotEmpty(PK)) {
         primaryKey = { ADHL_ID: PK }
-        this.dialogTitle = '修改住房贷款利息'
+        this.formTitle = '修改住房贷款利息'
       } else {
-        this.dialogTitle = '创建住房贷款利息'
+        this.formTitle = '创建住房贷款利息'
       }
       this.$refs['ref'].showDialog(primaryKey)
     },

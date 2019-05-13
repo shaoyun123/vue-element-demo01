@@ -1,39 +1,47 @@
 <template>
   <el-container>
-    <el-aside class="aside">
-      <div class="controller">
-        <ty-button-controller :controller="treeController" @input="handleInput($event)" />
-      </div>
+    <el-aside>
+      <el-tree-basic ref="ref-category" :controller="categoryController" :tree="payloadCategoryTree" class="category" />
     </el-aside>
-    <el-table-basic :controller="controller" :searcher="searcher" :table="table" :pagination-method="paginationMethod" />
+    <el-table-basic ref="ref-table" :controller="controller" :searcher="payloadSearcher" :table="table" :pagination-method="paginationMethod" />
   </el-container>
 </template>
 
 <script>
-import TyButtonController from '@/components/Typography/Button/Controller'
+import ElTreeBasic from '@/components/Typography/Tree/Basic'
 import ElTableBasic from '@/components/Typography/Table/Basic'
 
 export default {
   name: 'TyTableCategory',
-  components: { TyButtonController, ElTableBasic },
+  components: { ElTreeBasic, ElTableBasic },
   props: {
+    categoryController: {
+      type: Object,
+      default: function() {
+        return {}
+      }
+    },
+    categoryTree: {
+      type: Object,
+      default: function() {
+        return {}
+      }
+    },
+    linkageMethod: {
+      type: Function,
+      default: function(data, node) {
+        return data
+      }
+    },
     controller: {
       type: Object,
       default: function() {
-        /*
-        action 基于 ComponentObjectModel 扩展
-          selectedRowVisible: 是否选中数据行时显示按钮 [false（默认） | true]
-        */
         return {}
       }
     },
     searcher: {
       type: Object,
       default: function() {
-        /*
-        searcher 基于 ComponentObjectModel 扩展
-          extraParams: 额外参数，每次查询默认附加这些参数，extraParams 的变化将触发数据加载
-        */
         return {}
       }
     },
@@ -49,65 +57,48 @@ export default {
     }
   },
   data() {
+    const extraParams = this.searcher.extraParams || {}
     return {
-      queryString: '123'
+      defaultExtraParams: extraParams,
+      linkageValue: extraParams
     }
   },
   computed: {
-    treeController: function() {
+    payloadCategoryTree: function() {
       const self = this
-      const items = []
-      items.push({
-        tag: 'el-popover-wrap',
-        float: 'right',
-        'slot': {
-          tag: 'el-input',
-          props: { value: self.queryString },
-          items: [
-            {
-              tag: 'el-button',
-              props: { slot: 'append', class: 'el-icon-antd-search' },
-              events: {
-                click: function() {
-                  alert(self.queryString)
-                }
-              }
-            }
-          ]
-        },
-        'slot-reference': {
-          props: {
-            icon: 'el-icon-antd-search',
-            type: 'primary'
-          }
-        }
-      })
       return {
-        items,
+        menu: self.categoryTree.menu,
+        props: self.categoryTree.props,
         events: {
-          'input11': function(value) {
-            alert(value)
-          }
+          ...self.categoryTree.events,
+          'current-change': self.changeCategory
         }
       }
+    },
+    payloadSearcher: function() {
+      return Object.assign({}, this.searcher, { extraParams: this.linkageValue })
     }
   },
   methods: {
-    handleInput(value) {
-      this.queryString = value
+    refresh(node) {
+      this.refCategory().reloadNode(node)
+      this.linkageValue = this.defaultExtraParams
+    },
+    changeCategory(data, node) {
+      this.linkageValue = this.linkageMethod(data, node)
+    },
+    refCategory() {
+      return this.$refs['ref-category']
+    },
+    refTable() {
+      return this.$refs['ref-table']
     }
   }
 }
 </script>
 
 <style scoped>
-.aside {
-  padding-top: 20px;
-  padding-bottom: 20px;
-  padding-left: 20px;
-}
-
-.controller {
-  margin-bottom: 10px;
+.category {
+  padding-right: 0px;
 }
 </style>

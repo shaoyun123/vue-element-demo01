@@ -9,7 +9,8 @@
       routerName: '路由名', // 与路由定义中的名称保持一致 [唯一]
       title: '页面名称',
       descr: '页面描述', // [可空]
-      'status-from': { field1: [], field2: [] }, // [可空]
+      'status-from': [{ field1: value, field2: value }], // [可空]
+      'dict-mapping': { field1: 'dictName1', field2: { value: title }, // [可空]
       meta: { // 页面元信息
         // 作用域，作用域命名遵循以下约定
         // 主页面（组件）取 routerName，子页面（组件）取 componentName
@@ -36,20 +37,31 @@
               descr: '操作描述', // [可空]
               icon: '按钮图标', // [可空]
               type: '按钮类型', // [可空]
-              showDescr: false, // 是否以 tip 形式显示 descr [默认值为 false]
               'all-in': false, // 是否支持“全部”处理模式，此模式只在 list 类模板中有效 [默认值为 false]
-              'status-to': { field1: value, field2: value },
+              'status-flow': [
+                {
+                  'page-to': 'page.routerName',
+                  'status-to': { field1: value, field2: value },
+                  // 用于处理前台操作分支 [可空]
+                  // 值为对象时：所有相同字段的值在其数组范围内则通过此条数据
+                  // 值为函数时：将 flowActionData 或者 querier 传入
+                  'status-filter': { field1: [value], field2: [value1, value2] } | function(data)
+                }
+              ],
               remark: false, // 是否需要填写备注信息 [默认值为 false]，remark 支持 Boolean 型或一个 formItem 数组，定义为一个数组时可以支持更复杂的备注信息
               click: function(data, flowRecord, allin) // 按钮点击执行方法
             }
           ],
+          categoryController: return Object, // 分类页控制区、表单控制区
+          categoryTree: return Object, // 分类树
+          linkageMethod: return Function(data, node), // 分类页联动方法
           controller: return Object, // 列表页控制区、表单控制区
           searcher: return Object, // 列表页搜索表单
           table: return Object, // 列表页列表
           paginationMethod: return Function(querier), // 列表页列表获取远端数据方法
           dialog: return Object, // 对话框
-          dialogTitle: return String, // 对话框标题，对 dialog 的快速构建
           afterClose: return Function(data) // 对话框关闭动方法，在关闭后调用
+          formTitle: return String, // 表单标题
           form: return Object, // 表单页表单
           defaultModel: return Object, // 表单页表单默认 model，对 form 的快速构建
           handleModel: return Function(operate, model), // 表单页表单捕获 model，对 form 的快速构建
@@ -77,7 +89,9 @@ import { getDataType } from '@/utils'
 import { parallel } from '@/utils/request'
 import { isEmpty, isNotEmpty } from '@/utils/validate'
 import { showMessage, showConfirm, showPrompt } from '@/utils/element'
+import manager from '@/flow/flow-manager'
 import pitFlows from '@/flow/pit'
+import fttFlows from '@/flow/ftt'
 
 const flows = []
 const flowStorer = {} // flowId 为 key
@@ -86,13 +100,14 @@ function push(container, sub) {
   if (getDataType(sub) === 'promise') {
     container.push(sub)
   } else {
-    container.push(new Promise(() => sub))
+    container.push(Promise.resolve({ sub }))
   }
 }
 function init() {
   const subs = []
   // 引入子 flow 开始
   push(subs, pitFlows)
+  push(subs, fttFlows)
   // 引入子 flow 结束
   parallel(subs).then(responses => {
     if (isNotEmpty(responses)) {
@@ -101,6 +116,9 @@ function init() {
       })
     }
   }).then(() => {
+    // 放入工作流相关的 flow 开始
+    flows.push(...manager.flows())
+    // 放入工作流相关的 flow 结束
     if (isNotEmpty(flows)) {
       flows.forEach(flow => {
         const flowId = flow.id
@@ -190,20 +208,22 @@ function getMetaEntryDefaultValue(vm, entryName) {
     defaultValue = []
   } else if (entryName === 'flowActions') {
     defaultValue = []
+  } else if (entryName === 'linkageMethod') {
+    defaultValue = (data, node) => {
+      return data
+    }
   } else if (entryName === 'paginationMethod') {
     defaultValue = (querier) => {
-      return new Promise(() => {
-        return {
-          data: { items: [], total: 0 }
-        }
+      return Promise.resolve({
+        data: { items: [], total: 0 }
       })
     }
   } else if (entryName === 'dialog') {
     defaultValue = {
       props: { title: '对话框' }
     }
-  } else if (entryName === 'dialogTitle') {
-    defaultValue = '对话框'
+  } else if (entryName === 'formTitle') {
+    defaultValue = '表单'
   } else if (entryName === 'afterClose') {
     defaultValue = (data) => {
       vm.$emit('after-close', data)
@@ -218,10 +238,8 @@ function getMetaEntryDefaultValue(vm, entryName) {
     }
   } else if (entryName === 'getMethod') {
     defaultValue = (primaryKey) => {
-      return new Promise(() => {
-        return {
-          data: {}
-        }
+      return Promise.resolve({
+        data: {}
       })
     }
   } else if (entryName === 'saveMethod') {
@@ -241,30 +259,26 @@ function getMetaEntryDefaultValue(vm, entryName) {
 /**
  * 构建流程按钮
  * @param {Object} vm 当前 vue 对象，既 this
- * @param {String} entryName 元属性名称
+ * @param {Object} scopeMeta 指定作用域的元信息集合
  * @param {Array} flowActions 流程控制 action
  */
 function buildFlowActions(vm, scopeMeta, flowActions) {
   const buttons = []
   const templateName = vm.getTemplateName()
   flowActions.forEach((action) => {
-    const code = action.code
     const title = action.title
     const descr = action.descr
     const icon = action.icon
     const type = action.type
-    const showDescr = action.showDescr
     let allin = action['all-in']
-    const to = action['status-to']
     const remark = action.remark
-    const click = action.click
-    if (templateName === 'EditBasic') {
-      allin = undefined
-    }
     const button = { float: 'right', text: title }
     const props = {}
     const events = {}
-    if (isNotEmpty(descr) && showDescr === true) {
+    if (templateName === 'EditBasic' || templateName === 'EditPlane') {
+      allin = undefined
+    }
+    if (isNotEmpty(descr)) {
       button.tip = descr
     }
     if (allin !== true) {
@@ -280,17 +294,15 @@ function buildFlowActions(vm, scopeMeta, flowActions) {
       console.log('remark:array')
     } else if (remark === true) {
       events.click = function() {
-        const data = vm.getFlowActionData()
-        if (isNotEmpty(data)) {
+        const datas = vm.getFlowActionData()
+        if (isNotEmpty(datas)) {
           showPrompt({ content: `请输入${title}原因`, title }).then(({ value }) => {
-            const flowRecord = buildFlowRecord(scopeMeta, code, title, to, value)
-            click(data, flowRecord, false)
+            clickFlowAction(vm, scopeMeta, action, datas, false, value)
           }).catch(() => {})
         } else if (allin === true) {
           showPrompt({ content: `请输入${title}原因`, title: `全部${title}` }).then(({ value }) => {
-            const flowRecord = buildFlowRecord(scopeMeta, code, title, to, value)
             const querier = ref(vm).getQuerier()
-            click(querier, flowRecord, true)
+            clickFlowAction(vm, scopeMeta, action, querier, true, value)
           }).catch(() => {})
         } else {
           showMessage({ content: '未获取到待流转数据 ！', type: 'warning' })
@@ -298,17 +310,15 @@ function buildFlowActions(vm, scopeMeta, flowActions) {
       }
     } else {
       events.click = function() {
-        const data = vm.getFlowActionData()
-        if (isNotEmpty(data)) {
+        const datas = vm.getFlowActionData()
+        if (isNotEmpty(datas)) {
           showConfirm({ content: `是否${title}数据 ？`, type: 'warning' }).then(() => {
-            const flowRecord = buildFlowRecord(scopeMeta, code, title, to, null)
-            click(data, flowRecord, false)
+            clickFlowAction(vm, scopeMeta, action, datas, false, null)
           }).catch(() => {})
         } else if (allin === true) {
           showConfirm({ content: `是否${title}全部数据 ？`, type: 'warning' }).then(() => {
-            const flowRecord = buildFlowRecord(scopeMeta, code, title, to, null)
             const querier = ref(vm).getQuerier()
-            click(querier, flowRecord, true)
+            clickFlowAction(vm, scopeMeta, action, querier, true, null)
           }).catch(() => {})
         } else {
           showMessage({ content: '未获取到待流转数据 ！', type: 'warning' })
@@ -323,17 +333,104 @@ function buildFlowActions(vm, scopeMeta, flowActions) {
 }
 
 /**
+ * 构建触发 FlowAction 函数主体
+ * @param {Object} vm 当前 vue 对象，既 this
+ * @param {Object} scopeMeta 指定作用域的元信息集合
+ * @param {Object} action 流程控制 action
+ * @param {Object | Array} data 数据
+ * @param {Boolean} allin 执行全部处理
+ * @param {String | Object} remark 备注信息
+ */
+function clickFlowAction(vm, scopeMeta, action, data, allin, remark) {
+  const { getDictTitle } = vm.$store.getters
+  const statusFlow = action['status-flow']
+  if (isNotEmpty(statusFlow)) {
+    const routerName = scopeMeta.routerName
+    const page = getPage(routerName)
+    const dictMapping = page['dict-mapping'] || {}
+    const code = action.code
+    const title = action.title
+    const click = action.click
+    statusFlow.forEach(sf => {
+      const pageTo = sf['page-to']
+      const statusTo = sf['status-to']
+      const statusFilter = sf['status-filter']
+      let processableData = null
+      if (isNotEmpty(statusFilter)) {
+        if (getDataType(statusFilter) === 'function') {
+          processableData = statusFilter(data)
+        } else {
+          if (allin === true) {
+            processableData = Object.assign({}, data, statusFilter)
+          } else {
+            processableData = []
+            const filterResult = {}
+            const fields = Object.keys(statusFilter)
+            data.forEach(d => {
+              let addable = true
+              for (let i = 0; i < fields.length; i++) {
+                const field = fields[i]
+                const checker = statusFilter[field]
+                const value = d[field]
+                if (!checker.includes(value)) {
+                  addable = false
+                  const dict = dictMapping[field]
+                  let dictTitle = ''
+                  if (getDataType(dict) === 'string') {
+                    dictTitle = getDictTitle(dict, value)
+                  } else {
+                    dictTitle = dict[value]
+                  }
+                  let message = value
+                  if (isNotEmpty(dictTitle) && dictTitle !== value) {
+                    message = `${dictTitle} [${value}]`
+                  }
+                  filterResult[message] = (filterResult[message] || 0) + 1
+                  return
+                }
+              }
+              if (addable === true) {
+                processableData.push(d)
+              }
+            })
+            if (isNotEmpty(filterResult)) {
+              let filterMesage = ''
+              const messages = Object.keys(filterResult)
+              messages.forEach((message, i) => {
+                const count = filterResult[message]
+                if (i > 0) {
+                  filterMesage += '<br />'
+                }
+                filterMesage += `有 ${count} 条 ${message} 数据不能执行 ${title} 操作，系统自动剔除`
+              })
+              showMessage({ content: filterMesage, type: 'warning' })
+            }
+          }
+        }
+      } else {
+        processableData = data
+      }
+      const flowRecord = buildFlowRecord(scopeMeta, code, title, pageTo, statusTo, remark)
+      click(processableData, flowRecord, allin)
+    })
+  } else {
+    showMessage({ content: '未定义状态流转信息 ！', type: 'warning' })
+  }
+}
+
+/**
  * 构建流程流转记录
  * @param {Object} scopeMeta 指定作用域的元信息集合
  * @param {String} operateCode 操作码
  * @param {String} operateTitle 操作标题
- * @param {Object} to 流转到
+ * @param {Object} pageTo 页面流转到
+ * @param {Object} statusTo 状态流转到
  * @param {Object} remark 流转备注
- * @return { flowId, routerName, scope, operateCode, operateTitle, to, remark }
+ * @return { flowId, routerName, scope, operateCode, operateTitle, 'page-to', 'status-to', remark }
  */
-function buildFlowRecord(scopeMeta, operateCode, operateTitle, to, remark) {
+function buildFlowRecord(scopeMeta, operateCode, operateTitle, pageTo, statusTo, remark) {
   const { flowId, routerName, scope } = scopeMeta
-  const flowRecord = { flowId, routerName, scope, operateCode, operateTitle, to }
+  const flowRecord = { flowId, routerName, scope, operateCode, operateTitle, 'page-to': pageTo, 'status-to': statusTo }
   if (isNotEmpty(remark)) {
     flowRecord.remark = remark
   }

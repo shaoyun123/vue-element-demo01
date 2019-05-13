@@ -104,7 +104,7 @@ function deleteSalarySnapshoot(vm) {
 function updateSalarySnapshootById(vm, selectedRows, flowRecord) {
   let count = 0
   const pks = []
-  const { routerName, operateCode, to, remark } = flowRecord
+  const { routerName, operateCode, 'status-to': statusTo, remark } = flowRecord
   selectedRows.forEach(selectedRow => {
     const SS_STATUS = selectedRow.SS_STATUS
     const SS_VERIFY_STATUS = selectedRow.SS_VERIFY_STATUS
@@ -112,9 +112,9 @@ function updateSalarySnapshootById(vm, selectedRows, flowRecord) {
       (routerName === 'PIT-SalaryGather' && (SS_VERIFY_STATUS === '02' || SS_VERIFY_STATUS === '03')) ||
       routerName === 'PIT-SalaryConfirm'
     ) {
-      const FLOW_RECORD = buildFlowRecord(vm, '01', operateCode, remark, SS_STATUS, to.SS_STATUS)
+      const FLOW_RECORD = buildFlowRecord(vm, '01', operateCode, remark, SS_STATUS, statusTo.SS_STATUS)
       const pk = sskit.getPrimaryKey(selectedRow)
-      Object.assign(pk, to, { FLOW_RECORD })
+      Object.assign(pk, statusTo, { FLOW_RECORD })
       pks.push(pk)
     } else {
       count++
@@ -129,9 +129,9 @@ function updateSalarySnapshootById(vm, selectedRows, flowRecord) {
 }
 
 function updateSalarySnapshootByQuery(vm, querier, flowRecord) {
-  const { operateCode, to, remark } = flowRecord
-  const FLOW_RECORD = buildFlowRecord(vm, '01', operateCode, remark, '', to.SS_STATUS)
-  salarySnapshootUpdateByQuery(querier, Object.assign({}, to, { FLOW_RECORD })).then(response => {
+  const { operateCode, 'status-to': statusTo, remark } = flowRecord
+  const FLOW_RECORD = buildFlowRecord(vm, '01', operateCode, remark, '', statusTo.SS_STATUS)
+  salarySnapshootUpdateByQuery(querier, Object.assign({}, statusTo, { FLOW_RECORD })).then(response => {
     const count = response.data
     if (count !== 0) {
       showMessage({ content: `有 ${count} 条数据未校验或校验预警，无法执行提交，系统已自动剔除`, type: 'warning' })
@@ -143,7 +143,7 @@ function updateSalarySnapshootByQuery(vm, querier, flowRecord) {
 function updatePayrollById(vm, selectedRows, flowRecord) {
   let count = 0
   const pks = []
-  const { routerName, operateCode, to, remark } = flowRecord
+  const { routerName, operateCode, 'status-to': statusTo, remark } = flowRecord
   selectedRows.forEach(selectedRow => {
     const P_STATUS = selectedRow.P_STATUS
     if (
@@ -152,9 +152,9 @@ function updatePayrollById(vm, selectedRows, flowRecord) {
       routerName === 'PIT-PayrollSubmit' ||
       (routerName === 'PIT-PayrollFeedback' && P_STATUS === '08')
     ) {
-      const FLOW_RECORD = buildFlowRecord(vm, '02', operateCode, remark, P_STATUS, to.P_STATUS)
+      const FLOW_RECORD = buildFlowRecord(vm, '02', operateCode, remark, P_STATUS, statusTo.P_STATUS)
       const pk = pkit.getPrimaryKey(selectedRow)
-      Object.assign(pk, to, { FLOW_RECORD })
+      Object.assign(pk, statusTo, { FLOW_RECORD })
       pks.push(pk)
     } else {
       count++
@@ -173,9 +173,9 @@ function updatePayrollById(vm, selectedRows, flowRecord) {
 }
 
 function updatePayrollByQuery(vm, querier, flowRecord) {
-  const { routerName, operateCode, to, remark } = flowRecord
-  const FLOW_RECORD = buildFlowRecord(vm, '02', operateCode, remark, '', to.P_STATUS)
-  payrollUpdateByQuery(querier, Object.assign({}, to, { FLOW_RECORD })).then(response => {
+  const { routerName, operateCode, 'status-to': statusTo, remark } = flowRecord
+  const FLOW_RECORD = buildFlowRecord(vm, '02', operateCode, remark, '', statusTo.P_STATUS)
+  payrollUpdateByQuery(querier, Object.assign({}, statusTo, { FLOW_RECORD })).then(response => {
     const count = response.data
     if (count !== 0) {
       if (routerName === 'PIT-PayrollConfirm') {
@@ -291,7 +291,15 @@ const SM_SSL2t = () => {
       const flowActions = []
       if (routerName === 'PIT-SalaryGather') {
         flowActions.push({
-          code: '01', title: '提交', icon: 'el-icon-antd-verticalleft', type: 'success', 'all-in': true, 'status-to': { SS_STATUS: '04' },
+          code: '01', title: '提交', icon: 'el-icon-antd-verticalleft', type: 'success', 'all-in': true,
+          'status-flow': [
+            {
+              'page-to': 'PIT-SalaryConfirm', 'status-to': { SS_STATUS: '04' }, 'status-filter': { SS_STATUS: ['01', '02'] }
+            },
+            {
+              'page-to': 'PIT-SalaryConfirm', 'status-to': { SS_STATUS: '05' }, 'status-filter': { SS_STATUS: ['03'] }
+            }
+          ],
           click: function(data, flowRecord, allin) {
             if (allin === true) {
               updateSalarySnapshootByQuery(vm, data, flowRecord)
@@ -302,7 +310,15 @@ const SM_SSL2t = () => {
         })
       } else if (routerName === 'PIT-SalaryConfirm') {
         flowActions.push({
-          code: '03', title: '确认', icon: 'el-icon-antd-verticalleft', type: 'success', 'all-in': true, 'status-to': { SS_STATUS: '06' },
+          code: '03', title: '确认', icon: 'el-icon-antd-verticalleft', type: 'success', 'all-in': true,
+          'status-flow': [
+            {
+              'page-to': 'PIT-PayrollConfirm', 'status-to': { SS_STATUS: '06', P_STATUS: '01' }, 'status-filter': { SS_STATUS: ['04'] }
+            },
+            {
+              'page-to': 'PIT-PayrollConfirm', 'status-to': { SS_STATUS: '06', P_STATUS: '02' }, 'status-filter': { SS_STATUS: ['05'] }
+            }
+          ],
           click: function(data, flowRecord, allin) {
             if (allin === true) {
               updateSalarySnapshootByQuery(vm, data, flowRecord)
@@ -312,7 +328,13 @@ const SM_SSL2t = () => {
           }
         })
         flowActions.push({
-          code: '02', title: '打回', icon: 'el-icon-antd-verticalright', type: 'danger', 'status-to': { SS_STATUS: '02' }, remark: true,
+          code: '02', title: '打回', icon: 'el-icon-antd-verticalright', type: 'danger',
+          'status-flow': [
+            {
+              'page-to': 'PIT-SalaryGather', 'status-to': { SS_STATUS: '02' }
+            }
+          ],
+          remark: true,
           click: function(data, flowRecord, allin) {
             updateSalarySnapshootById(vm, data, flowRecord)
           }
@@ -354,7 +376,7 @@ const SM_SSL2t = () => {
 }
 const SM_SSE2t = () => {
   return {
-    dialogTitle: function(vm, scopeMeta) {
+    formTitle: function(vm, scopeMeta) {
       return '薪金采集'
     },
     defaultModel: function(vm, scopeMeta) {
@@ -391,7 +413,7 @@ const SM_SSE2t = () => {
 }
 const SM_SSI4t = () => {
   return {
-    dialogTitle: function(vm, scopeMeta) {
+    formTitle: function(vm, scopeMeta) {
       return '薪金批量采集'
     },
     controller: function(vm, scopeMeta) {
@@ -552,7 +574,7 @@ const SM_SSI4t = () => {
 }
 const SM_SSV2w = () => {
   return {
-    dialogTitle: function(vm, scopeMeta) {
+    formTitle: function(vm, scopeMeta) {
       return '薪金明细'
     },
     handleItems: function(vm, scopeMeta) {
@@ -567,7 +589,7 @@ const SM_SSV2w = () => {
 }
 const SM_VRL2t = (operate) => {
   return {
-    dialogTitle: function(vm, scopeMeta) {
+    formTitle: function(vm, scopeMeta) {
       return '校验结果'
     },
     controller: function(vm, scopeMeta) {
@@ -649,7 +671,7 @@ const SM_VRL2t = (operate) => {
 }
 const SM_ADSL2t = (operate) => {
   return {
-    dialogTitle: function(vm, scopeMeta) {
+    formTitle: function(vm, scopeMeta) {
       return '附加扣除'
     },
     controller: function(vm, scopeMeta) {
@@ -767,7 +789,7 @@ const SM_ADSL2t = (operate) => {
 }
 const SM_FRL2t = () => {
   return {
-    dialogTitle: function(vm, scopeMeta) {
+    formTitle: function(vm, scopeMeta) {
       return '流转记录'
     },
     searcher: function(vm, scopeMeta) {
@@ -856,27 +878,53 @@ const SM_PL2t = () => {
       const flowActions = []
       if (routerName === 'PIT-PayrollConfirm') {
         flowActions.push({
-          code: '04', title: '质疑', icon: 'el-icon-antd-unlike', type: 'danger', 'status-to': { P_STATUS: '04' }, remark: true,
+          code: '04', title: '质疑', icon: 'el-icon-antd-unlike', type: 'danger',
+          'status-flow': [
+            {
+              'page-to': 'PIT-PayrollDoubt', 'status-to': { P_STATUS: '04' }, 'status-filter': { P_STATUS: ['01', '02'] }
+            }
+          ],
+          remark: true,
           click: function(data, flowRecord, allin) {
             updatePayrollById(vm, data, flowRecord)
           }
         })
       } else if (routerName === 'PIT-PayrollDoubt') {
         flowActions.push({
-          code: '06', title: '不调整', icon: 'el-icon-antd-stop', type: 'success', 'status-to': { P_STATUS: '06' }, remark: true,
+          code: '06', title: '不调整', icon: 'el-icon-antd-stop', type: 'success',
+          'status-flow': [
+            {
+              'page-to': 'PIT-PayrollSubmit', 'status-to': { P_STATUS: '06' }
+            }
+          ],
+          remark: true,
           click: function(data, flowRecord, allin) {
             updatePayrollById(vm, data, flowRecord)
           }
         })
         flowActions.push({
-          code: '05', title: '调整', icon: 'el-icon-antd-control', type: 'danger', 'status-to': { P_STATUS: '05' }, remark: true,
+          code: '05', title: '调整', icon: 'el-icon-antd-control', type: 'danger',
+          'status-flow': [
+            {
+              'page-to': 'PIT-PayrollConfirm', 'status-to': { P_STATUS: '05' }
+            },
+            {
+              'page-to': 'PIT-SalaryGather', 'status-to': { SS_STATUS: '03' }
+            }
+          ],
+          remark: true,
           click: function(data, flowRecord, allin) {
             updatePayrollById(vm, data, flowRecord)
           }
         })
       } else if (routerName === 'PIT-PayrollSubmit') {
         flowActions.push({
-          code: '01', title: '提交', icon: 'el-icon-antd-verticalleft', type: 'success', 'all-in': true, 'status-to': { P_STATUS: '08' },
+          code: '01', title: '提交', icon: 'el-icon-antd-verticalleft', type: 'success', 'all-in': true,
+          'status-flow': [
+            {
+              'page-to': 'PIT-PayrollFeedback', 'status-to': { P_STATUS: '08' }
+            }
+          ],
           click: function(data, flowRecord, allin) {
             if (allin === true) {
               updatePayrollByQuery(vm, data, flowRecord)
@@ -886,14 +934,28 @@ const SM_PL2t = () => {
           }
         })
         flowActions.push({
-          code: '02', title: '打回', icon: 'el-icon-antd-verticalright', type: 'danger', 'status-to': { P_STATUS: '03' }, remark: true,
+          code: '02', title: '打回', icon: 'el-icon-antd-verticalright', type: 'danger',
+          'status-flow': [
+            {
+              'page-to': 'PIT-PayrollConfirm', 'status-to': { P_STATUS: '03' }
+            },
+            {
+              'page-to': 'PIT-SalaryGather', 'status-to': { SS_STATUS: '02' }
+            }
+          ],
+          remark: true,
           click: function(data, flowRecord, allin) {
             updatePayrollById(vm, data, flowRecord)
           }
         })
       } else if (routerName === 'PIT-PayrollFeedback') {
         flowActions.push({
-          code: '07', title: '已发放', icon: 'el-icon-antd-carryout', type: 'success', 'all-in': true, 'status-to': { P_STATUS: '09' },
+          code: '07', title: '已发放', icon: 'el-icon-antd-carryout', type: 'success', 'all-in': true,
+          'status-flow': [
+            {
+              'status-to': { P_STATUS: '09' }, 'status-filter': { P_STATUS: ['08'] }
+            }
+          ],
           click: function(data, flowRecord, allin) {
             if (allin === true) {
               updatePayrollByQuery(vm, data, flowRecord)
@@ -945,7 +1007,7 @@ const SM_PV2w = () => {
         }
       ]
     },
-    dialogTitle: function(vm, scopeMeta) {
+    formTitle: function(vm, scopeMeta) {
       return '工资单'
     },
     controller: function(vm, scopeMeta) {
@@ -984,7 +1046,7 @@ const SM_PV2w = () => {
 }
 const SM_PE4t = () => {
   return {
-    dialogTitle: function(vm, scopeMeta) {
+    formTitle: function(vm, scopeMeta) {
       return '导出发放单'
     },
     controller: function(vm, scopeMeta) {
@@ -1064,7 +1126,8 @@ export default parallel([
           routerName: 'PIT-SalaryGather',
           title: '薪酬信息采集',
           descr: '薪酬信息采集',
-          'status-from': { SS_STATUS: ['01', '02', '03'] },
+          'status-from': [{ SS_STATUS: '01' }, { SS_STATUS: '02' }, { SS_STATUS: '03' }],
+          'dict-mapping': { SS_STATUS: 'S4Y_S7T_SS_STATUS' },
           meta: {
             'PIT-SalaryGather': SM_SSL2t(),
             'SalarySnapshootEdit': SM_SSE2t(),
@@ -1078,7 +1141,8 @@ export default parallel([
           routerName: 'PIT-SalaryConfirm',
           title: '薪酬信息确认',
           descr: '薪酬信息确认',
-          'status-from': { SS_STATUS: ['04', '05'] },
+          'status-from': [{ SS_STATUS: '04' }, { SS_STATUS: '05' }],
+          'dict-mapping': { SS_STATUS: 'S4Y_S7T_SS_STATUS', P_STATUS: 'P5L_P_STATUS' },
           meta: {
             'PIT-SalaryConfirm': SM_SSL2t(),
             'SalarySnapshootView': SM_SSV2w(),
@@ -1091,28 +1155,32 @@ export default parallel([
           routerName: 'PIT-PayrollConfirm',
           title: '确认工资单',
           descr: '确认工资单',
-          'status-from': { P_STATUS: ['01', '02', '03', '04', '05'] },
+          'status-from': [{ P_STATUS: '01' }, { P_STATUS: '02' }, { P_STATUS: '03' }, { P_STATUS: '04' }, { P_STATUS: '05' }],
+          'dict-mapping': { P_STATUS: 'P5L_P_STATUS' },
           meta: M_P5l('PIT-PayrollConfirm')
         },
         {
           routerName: 'PIT-PayrollDoubt',
           title: '工资单质疑处理',
           descr: '工资单质疑处理',
-          'status-from': { P_STATUS: ['04'] },
+          'status-from': [{ P_STATUS: '04' }],
+          'dict-mapping': { P_STATUS: 'P5L_P_STATUS', SS_STATUS: 'S4Y_S7T_SS_STATUS' },
           meta: M_P5l('PIT-PayrollDoubt')
         },
         {
           routerName: 'PIT-PayrollSubmit',
           title: '提交工资单',
           descr: '提交工资单',
-          'status-from': { P_STATUS: ['06', '07'] },
+          'status-from': [{ P_STATUS: '06' }, { P_STATUS: '07' }],
+          'dict-mapping': { P_STATUS: 'P5L_P_STATUS', SS_STATUS: 'S4Y_S7T_SS_STATUS' },
           meta: M_P5l('PIT-PayrollSubmit')
         },
         {
           routerName: 'PIT-PayrollFeedback',
           title: '工资单发放反馈',
           descr: '工资单发放反馈',
-          'status-from': { P_STATUS: ['08', '09'] },
+          'status-from': [{ P_STATUS: '08' }, { P_STATUS: '09' }],
+          'dict-mapping': { P_STATUS: 'P5L_P_STATUS' },
           meta: M_P5l('PIT-PayrollFeedback')
         }
       ]

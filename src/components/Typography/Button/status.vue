@@ -1,13 +1,13 @@
 <template>
-  <el-tooltip v-if="tip && tip.length" :content="tip">
-    <el-button v-bind="$attrs" :type="type" v-on="$listeners" @click="toggle" />
-  </el-tooltip>
-  <el-button v-else v-bind="$attrs" :type="type" v-on="$listeners" @click="toggle" />
+  <el-button-wrap :c-o-m="COM" />
 </template>
 
 <script>
+import ElButtonWrap from '@/components/Typography/Wrap/ElButtonWrap'
+
 export default {
   name: 'TyButtonStatus',
+  components: { ElButtonWrap },
   props: {
     value: {
       type: Boolean,
@@ -29,6 +29,21 @@ export default {
   data() {
     return {
       type: this.value ? this.selected : this.unselected
+    }
+  },
+  computed: {
+    COM: function() {
+      return {
+        tip: this.tip,
+        props: {
+          plain: false,
+          ...this.$attrs,
+          type: this.type
+        },
+        events: {
+          click: this.toggle
+        }
+      }
     }
   },
   methods: {

@@ -1,7 +1,7 @@
 <template>
   <basic-edit
     ref="ref"
-    :dialog-title="dialogTitle"
+    :form-title="formTitle"
     :default-model="defaultModel"
     :get-entity="getEntity"
     :save-entity="saveEntity"
@@ -22,7 +22,7 @@ export default {
   components: { BasicEdit },
   data() {
     return {
-      dialogTitle: '缴纳比例',
+      formTitle: '缴纳比例',
       defaultModel: {
         PRC_PAY_SITE: ['001', '001001']
       },
@@ -40,9 +40,9 @@ export default {
         isNotEmpty(PK.PRC_EXPIRY_DATE)
       ) {
         primaryKey = PK
-        this.dialogTitle = '修改缴纳比例'
+        this.formTitle = '修改缴纳比例'
       } else {
-        this.dialogTitle = '创建缴纳比例'
+        this.formTitle = '创建缴纳比例'
       }
       this.$refs['ref'].showDialog(primaryKey)
     },

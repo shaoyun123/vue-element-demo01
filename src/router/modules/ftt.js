@@ -7,7 +7,8 @@ const fttRouters = [
     meta: { subsystem: 'FTT_BASIC', breadcrumb: false, whiter: true },
     children: [{
       path: 'tax-type/list',
-      component: () => import('@/views/ftt/basic-data/taxTypeList'),
+      component: () => import('@/components/Typography/Flow/ListCategory'),
+      // component: () => import('@/views/ftt/basic-data/taxTypeList'),
       name: 'FTT-TaxType',
       meta: {
         subsystem: 'FTT_BASIC',

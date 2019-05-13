@@ -1,38 +1,29 @@
 <template>
-  <el-popover v-model="visible" v-bind="popover.props" v-on="popover.events">
-    <el-form-wrap ref="ref" :c-o-m="form" :reset-to="form.resetTo" :loading="loading" @input="handleFormInput($event)" />
-    <ty-button-controller v-if="payloadController.items.length" :controller="payloadController" />
-    <el-button-wrap slot="reference" :c-o-m="reference" />
-  </el-popover>
+  <el-main>
+    <el-card :header="form.title" shadow="never">
+      <el-scrollbar :style="scrollbarStyle" class="scroll-container">
+        <el-form-wrap ref="ref" :c-o-m="form" :reset-to="form.resetTo" :loading="loading" @input="handleFormInput($event)" />
+      </el-scrollbar>
+      <ty-button-controller v-if="payloadController.items.length" :controller="payloadController" />
+    </el-card>
+  </el-main>
 </template>
 
 <script>
 import { isNotEmpty } from '@/utils/validate'
 import ElFormWrap from '@/components/Typography/Wrap/ElFormWrap'
 import TyButtonController from '@/components/Typography/Button/Controller'
-import ElButtonWrap from '@/components/Typography/Wrap/ElButtonWrap'
 
 export default {
-  name: 'TyFormSimple',
-  components: { ElFormWrap, TyButtonController, ElButtonWrap },
+  name: 'TyFormPlane',
+  components: { ElFormWrap, TyButtonController },
   props: {
-    reference: {
-      type: Object,
-      default: function() {
-        return {}
-      }
-    },
-    popover: {
-      type: Object,
-      default: function() {
-        return {}
-      }
-    },
     form: {
       type: Object,
       default: function() {
         /*
         form 基于 ComponentObjectModel 扩展
+          title: 表单标题
           resetTo: 将表单表单重置到指定 model
         */
         return {}
@@ -54,9 +45,7 @@ export default {
     }
   },
   data() {
-    return {
-      visible: false
-    }
+    return {}
   },
   computed: {
     payloadController: function() {
@@ -81,16 +70,14 @@ export default {
         ...self.controller,
         items
       }
+    },
+    scrollbarStyle: function() {
+      // [topbar 50] + [tagbar 33 + 1] + [mainpadding 40] + [header 55] + [bodypadding 60] + [controller 59]
+      const height = this.$store.getters.deviceSize.height - 288 + 'px'
+      return { height }
     }
   },
   methods: {
-    showPopover() {
-      this.visible = true
-      this.clearValidate()
-    },
-    hidePopover() {
-      this.visible = false
-    },
     handleFormInput(model) {
       this.$emit('input', model)
     },
@@ -138,3 +125,17 @@ export default {
   }
 }
 </script>
+
+<style rel="stylesheet/scss" lang="scss" scoped>
+.scroll-container {
+  padding-bottom: 2px;
+  /deep/ {
+    .el-scrollbar__wrap {
+      overflow-x: hidden;
+    }
+    .el-scrollbar__view {
+      overflow-x: hidden;
+    }
+  }
+}
+</style>

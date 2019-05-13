@@ -1,8 +1,7 @@
 <template>
   <div v-if="!flowInitializing">
-    <ty-form-basic
+    <ty-form-plane
       ref="ref"
-      :dialog="dialog"
       :form="form"
       :loading="loading"
       :controller="controller"
@@ -22,15 +21,16 @@ import router from '@/router'
 import flow from '@/flow'
 import { getDataType } from '@/utils'
 import { isEmpty, isNotEmpty } from '@/utils/validate'
-import TyFormBasic from '@/components/Typography/Form/Basic'
+import { showMessage } from '@/utils/element'
+import TyFormPlane from '@/components/Typography/Form/Plane'
 
 /**
  * Flow 页面模板
  * 基础的编辑数据模板
  */
 export default {
-  name: 'TyFlowEditBasic',
-  components: { TyFormBasic },
+  name: 'TyFlowEditPlane',
+  components: { TyFormPlane },
   props: {
     routerName: {
       type: String,
@@ -42,6 +42,12 @@ export default {
       type: String,
       default: function() {
         return ''
+      }
+    },
+    primaryKey: {
+      type: Object,
+      default: function() {
+        return {}
       }
     }
   },
@@ -60,14 +66,12 @@ export default {
     }
   },
   computed: {
-    dialog: function() {
+    form: function() {
+      const primaryKey = this.primaryKey
+      this.initForm(primaryKey)
       const title = flow.getMetaEntry(this, this.scopeMeta, 'formTitle')
       return {
-        props: { title }
-      }
-    },
-    form: function() {
-      return {
+        title,
         resetTo: this.resetTo,
         props: { model: this.model },
         items: this.items
@@ -157,7 +161,14 @@ export default {
       this.scopeMeta = scopeMeta
       this.components = flow.getMetaEntry(this, this.scopeMeta, 'components')
     },
-    showDialog(primaryKey) {
+    initForm(primaryKey) {
+      // 首先从 props 传参中获取 primaryKey，未找到则从路由传参中获取 primaryKey
+      if (isEmpty(primaryKey)) {
+        primaryKey = this.$route.query && this.$route.query.primaryKey
+      }
+      if (isEmpty(primaryKey)) {
+        primaryKey = this.$route.params && this.$route.params.primaryKey
+      }
       if (isNotEmpty(primaryKey)) {
         this.operate = 'edit'
         this.adding = false
@@ -167,7 +178,6 @@ export default {
         this.adding = true
         this.editing = false
       }
-      this.ref().showDialog()
       this.loading = true
       if (this.adding) {
         this.model = this.defaultModel
@@ -190,9 +200,6 @@ export default {
         })
       }
     },
-    hideDialog() {
-      this.ref().hideDialog()
-    },
     save() {
       this.ref().validateForm().then(valid => {
         if (valid) {
@@ -210,7 +217,7 @@ export default {
               model = response.data
               this.model = model
               this.resetTo = model
-              this.ref().hideDialog()
+              showMessage({ content: '数据保存成功' })
               if (isNotEmpty(this.afterSave)) {
                 this.afterSave(this.operate, model)
               }

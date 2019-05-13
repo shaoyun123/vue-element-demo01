@@ -8,8 +8,9 @@ function filterDynamicSubsystem(subsystems) {
   subsystems.forEach(subsystem => {
     const t_subsystem = { ...subsystem }
     const id = t_subsystem.id
+    const whiter = t_subsystem.whiter
     let bool = false
-    if (checkPermission('subsystem', id)) {
+    if (whiter || checkPermission('subsystem', id)) {
       bool = true
     }
     if (bool) {

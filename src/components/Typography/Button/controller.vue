@@ -2,9 +2,11 @@
   <el-card v-bind="props">
     <el-container>
       <el-container>
+        <slot name="left" />
         <component v-for="(action, i) in actionPool.leftActions" :key="'cl' + i" :is="action.tag" :c-o-m="action" @input="handleInput($event)" />
       </el-container>
       <component v-for="(action, i) in actionPool.rightActions" :key="'cr' + i" :is="action.tag" :c-o-m="action" @input="handleInput($event)" />
+      <slot name="right" />
     </el-container>
   </el-card>
 </template>
@@ -13,12 +15,11 @@
 import { isNotEmpty } from '@/utils/validate'
 import ElButtonWrap from '@/components/Typography/Wrap/ElButtonWrap'
 import ElDropdownWrap from '@/components/Typography/Wrap/ElDropdownWrap'
-import ElPopoverWrap from '@/components/Typography/Wrap/ElPopoverWrap'
 import TyDivider from '@/components/Typography/Divider'
 
 export default {
   name: 'TyTableController',
-  components: { ElButtonWrap, ElDropdownWrap, ElPopoverWrap, TyDivider },
+  components: { ElButtonWrap, ElDropdownWrap, TyDivider },
   props: {
     controller: {
       type: Object,

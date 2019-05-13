@@ -18,6 +18,7 @@ export function showMessage({ content, title = '消息', type = 'info', force = 
   if (isNotEmpty(message)) {
     if (force) {
       MessageBox.alert(message, title, {
+        dangerouslyUseHTMLString: true,
         type,
         showConfirmButton: false,
         closeOnClickModal: true,

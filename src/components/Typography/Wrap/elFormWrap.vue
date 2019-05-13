@@ -27,6 +27,12 @@
                 <el-button type="text" icon="el-icon-antd-question-circle" />
               </el-tooltip>
             </template>
+            <component
+              v-if="item.component"
+              :ref="'ref-' + item.component.name"
+              :is="item.component.component"
+              v-bind="item.component.props"
+              v-on="item.component.events" />
             <el-form-item-wrap
               v-for="(entity, l) in item.items"
               :key="getKey(entity, l)"
@@ -60,6 +66,12 @@ export default {
           span: 24，指定列占用栅格数，未指定则启用响应式配置
           tip: '提示内容'，为 label 添加提示信息
           linkage: [true | false] 是否为联动组件，为了减少重复渲染，不会实时的将 model 变化 @input 父组件，但是某些组件的值变更会导致 items 变化，这些组件便称为联动组件
+          component { 增加对自定义组件的引入
+            name: '', // 组件名称，可以根据名称获取组件 ref [page.scope.唯一]
+            component: () => import(`@/.../name`), // 组件
+            props: {}, // 绑定参数
+            events: {} // 绑定事件
+          }
         组 item：{
           tag: 'el-new-group'
           title: 标题
@@ -299,11 +311,32 @@ export default {
     getModel() {
       return { ...this.model }
     },
+    clearValidate() {
+      const ref = this.ref()
+      if (isNotEmpty(ref)) {
+        ref.clearValidate()
+      }
+    },
+    validateForm() {
+      this.clearValidate()
+      const ref = this.ref()
+      if (isNotEmpty(ref)) {
+        return ref.validate()
+      } else {
+        return false
+      }
+    },
+    clearForm() {
+      const ref = this.ref()
+      if (isNotEmpty(ref)) {
+        ref.resetFields()
+      }
+    },
     resetForm() {
       if (isNotEmpty(this.resetTo)) {
         this.$emit('input', this.resetTo)
       } else {
-        this.$refs.ref.resetFields()
+        this.clearForm()
       }
     },
     ref() {

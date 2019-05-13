@@ -83,7 +83,11 @@ export function getSearcher(vm, scopeMeta, data) {
   const { getDicts } = vm.$store.getters
   const routerName = scopeMeta.routerName
   const page = flow.getPage(routerName)
-  const statuses = page['status-from'].SS_STATUS
+  const from = page['status-from']
+  const statuses = []
+  from.forEach(status => {
+    statuses.push(status.SS_STATUS)
+  })
   const { enterpriseOptions } = data
   const items = []
   if (isNotEmpty(enterpriseOptions)) {

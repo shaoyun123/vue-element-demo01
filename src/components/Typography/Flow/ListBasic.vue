@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="!flowInitializing">
     <ty-table-basic
       ref="ref"
       :controller="controller"
@@ -30,6 +30,12 @@ export default {
   name: 'TyFlowListBasic',
   components: { TyTableBasic },
   props: {
+    routerName: {
+      type: String,
+      default: function() {
+        return ''
+      }
+    },
     scope: {
       type: String,
       default: function() {
@@ -39,6 +45,7 @@ export default {
   },
   data() {
     return {
+      flowInitializing: true,
       scopeMeta: {},
       components: []
     }
@@ -60,12 +67,16 @@ export default {
   watch: {
     '$store.getters.flowInitializing': function(value) {
       if (value === false) {
+        this.flowInitializing = false
         this.init()
       }
     }
   },
   created() {
-    this.init()
+    this.flowInitializing = this.$store.getters.flowInitializing
+    if (this.flowInitializing === false) {
+      this.init()
+    }
   },
   methods: {
     ref(componentName) {
@@ -81,8 +92,11 @@ export default {
       this.ref().doSearch()
     },
     init() {
-      const currentRoute = router.currentRoute
-      const routerName = currentRoute.name
+      let routerName = this.routerName
+      if (isEmpty(routerName)) {
+        const currentRoute = router.currentRoute
+        routerName = currentRoute.name
+      }
       let scope = this.scope
       if (isEmpty(scope)) {
         scope = routerName

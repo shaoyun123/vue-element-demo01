@@ -1,11 +1,9 @@
 <template>
-  <el-dialog :visible.sync="dialogVisible" v-bind="dialogProps" v-on="dialogEvents">
-    <el-scrollbar :style="scrollbarStyle" wrap-class="el-scrollbar-wrap" view-class="el-scrollbar-view">
-      <el-form-wrap ref="ref-form" :c-o-m="form" :reset-to="form.resetTo" :loading="loading" @input="handleFormInput($event)" />
+  <el-dialog :visible.sync="visible" v-bind="dialogProps" v-on="dialogEvents">
+    <el-scrollbar :style="scrollbarStyle" class="scroll-container">
+      <el-form-wrap ref="ref" :c-o-m="form" :reset-to="form.resetTo" :loading="loading" @input="handleFormInput($event)" />
     </el-scrollbar>
-    <div slot="footer">
-      <ty-button-controller v-if="payloadController.items.length" :controller="payloadController" />
-    </div>
+    <ty-button-controller v-if="payloadController.items.length" :controller="payloadController" />
   </el-dialog>
 </template>
 
@@ -51,7 +49,7 @@ export default {
   },
   data() {
     return {
-      dialogVisible: false
+      visible: false
     }
   },
   computed: {
@@ -69,7 +67,9 @@ export default {
     payloadController: function() {
       const self = this
       const items = []
-      items.push(...self.controller.items)
+      if (isNotEmpty(self.controller.items)) {
+        items.push(...self.controller.items)
+      }
       let showReset = self.controller.showReset
       if (showReset === undefined) {
         showReset = true
@@ -78,12 +78,8 @@ export default {
         items.push({
           float: 'right',
           text: '重  置',
-          props: {
-            icon: 'el-icon-antd-undo'
-          },
-          events: {
-            click: self.resetForm
-          }
+          props: { icon: 'el-icon-antd-undo' },
+          events: { click: self.resetForm }
         })
       }
       return {
@@ -92,49 +88,48 @@ export default {
       }
     },
     scrollbarStyle: function() {
-      let height = 'auto'
-      height = this.$store.getters.deviceSize.height - 368 + 'px' // [top 100] + [header 54] + [bodypadding 60] + [controller 54] + [bottom 100]
+      // [top 100] + [header 54] + [bodypadding 60] + [controller 54] + [bottom 100]
+      const height = this.$store.getters.deviceSize.height - 368 + 'px'
       return { height }
     }
   },
   methods: {
     showDialog() {
-      this.dialogVisible = true
+      this.visible = true
       this.clearValidate()
     },
     hideDialog() {
-      this.dialogVisible = false
+      this.visible = false
     },
     handleFormInput(model) {
       this.$emit('input', model)
     },
     getModel() {
       let model = {}
-      const ref = this.$refs['ref-form']
+      const ref = this.ref()
       if (isNotEmpty(ref)) {
         model = ref.getModel()
       }
       return model
     },
-    clearForm() {
-      const refForm = this.$refs['ref-form']
-      if (isNotEmpty(refForm)) {
-        refForm.ref().resetFields()
-      }
-    },
     clearValidate() {
-      const refForm = this.$refs['ref-form']
-      if (isNotEmpty(refForm)) {
-        refForm.ref().clearValidate()
+      const ref = this.ref()
+      if (isNotEmpty(ref)) {
+        ref.clearValidate()
       }
     },
     validateForm() {
-      this.clearValidate()
-      const refForm = this.$refs['ref-form']
-      if (isNotEmpty(refForm)) {
-        return refForm.ref().validate()
+      const ref = this.ref()
+      if (isNotEmpty(ref)) {
+        return ref.validateForm()
       } else {
         return false
+      }
+    },
+    clearForm() {
+      const ref = this.ref()
+      if (isNotEmpty(ref)) {
+        ref.clearForm()
       }
     },
     resetForm() {
@@ -144,18 +139,26 @@ export default {
         confirmButtonText: '是',
         showCancelButton: false
       }).then(() => {
-        this.$refs['ref-form'].resetForm()
+        this.ref().resetForm()
       }).catch(() => {})
+    },
+    ref() {
+      return this.$refs.ref
     }
   }
 }
 </script>
 
-<style>
-.el-scrollbar-wrap {
-  overflow-x: hidden;
-}
-.el-scrollbar-view {
-  overflow-x: hidden;
+<style rel="stylesheet/scss" lang="scss" scoped>
+.scroll-container {
+  padding-bottom: 2px;
+  /deep/ {
+    .el-scrollbar__wrap {
+      overflow-x: hidden;
+    }
+    .el-scrollbar__view {
+      overflow-x: hidden;
+    }
+  }
 }
 </style>

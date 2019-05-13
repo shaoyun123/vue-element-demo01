@@ -48,7 +48,11 @@ export default {
     },
     paginationMethod: {
       type: Function,
-      default: function() {}
+      default: function() {
+        return Promise.resolve({
+          data: { items: [], total: 0 }
+        })
+      }
     },
     paginationConfig: {
       type: Object,
@@ -78,7 +82,7 @@ export default {
       if (isNotEmpty(self.controller.items)) {
         self.controller.items.forEach((item, index) => {
           if (item.selectedRowVisible) {
-            if (self.selectedRowVisible()) {
+            if (isNotEmpty(self.selectedRows)) {
               items.push(item)
             }
           } else {
@@ -124,13 +128,8 @@ export default {
           {
             float: 'right',
             text: '查  询',
-            props: {
-              icon: 'el-icon-antd-search',
-              type: 'primary'
-            },
-            events: {
-              click: self.doSearch
-            }
+            props: { icon: 'el-icon-antd-search', type: 'primary' },
+            events: { click: self.doSearch }
           }
         ]
       }
@@ -215,19 +214,16 @@ export default {
       this.loading = true
       this.initQuerier()
       this.paginationMethod(this.querier).then(response => {
-        this.results = response.data[this.paginationConfig.itemsField]
-        this.total = response.data[this.paginationConfig.totalField]
+        if (isNotEmpty(response) && isNotEmpty(response.data)) {
+          const data = response.data
+          this.results = data[this.paginationConfig.itemsField]
+          this.total = data[this.paginationConfig.totalField]
+        }
         this.loading = false
       })
     },
     selectionChange(selection) {
       this.selectedRows = selection
-    },
-    selectedRowVisible() {
-      if (this.selectedRows.length) {
-        return true
-      }
-      return false
     },
     handleDialogInput(model) {
       this.querier = model

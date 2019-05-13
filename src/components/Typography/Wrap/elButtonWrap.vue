@@ -1,18 +1,16 @@
 <template>
-  <el-tooltip v-if="COM.tip && COM.tip.length" :content="COM.tip">
-    <el-button v-waves v-if="text && text.length" v-bind="props" v-on="events">{{ text }}</el-button>
-    <el-button v-waves v-else v-bind="props" class="text-empty" v-on="events" />
+  <el-tooltip v-if="COM.tip && COM.tip.length">
+    <div slot="content"><span v-html="COM.tip" /></div>
+    <el-button v-if="text && text.length" v-bind="props" v-on="events">{{ text }}</el-button>
+    <el-button v-else v-bind="props" class="text-empty" v-on="events" />
   </el-tooltip>
-  <el-button v-waves v-else-if="text && text.length" v-bind="props" v-on="events">{{ text }}</el-button>
-  <el-button v-waves v-else v-bind="props" class="text-empty" v-on="events" />
+  <el-button v-else-if="text && text.length" v-bind="props" v-on="events">{{ text }}</el-button>
+  <el-button v-else v-bind="props" class="text-empty" v-on="events" />
 </template>
 
 <script>
-import waves from '@/directive/waves'
-
 export default {
   name: 'ElButtonWrap',
-  directives: { waves },
   props: {
     COM: {
       type: Object,

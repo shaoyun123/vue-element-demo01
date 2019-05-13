@@ -1,7 +1,7 @@
 <template>
   <basic-edit
     ref="ref"
-    :dialog-title="dialogTitle"
+    :form-title="formTitle"
     :default-model="defaultModel"
     :get-entity="getEntity"
     :save-entity="saveEntity"
@@ -24,7 +24,7 @@ export default {
   data() {
     const self = this
     return {
-      dialogTitle: '口径',
+      formTitle: '口径',
       defaultModel: {
         TTC_DISTRICT: ['001', '001001'],
         TTC_BASISES: [],
@@ -59,9 +59,9 @@ export default {
       let primaryKey = null
       if (isNotEmpty(PK)) {
         primaryKey = { TTC_ID: PK }
-        this.dialogTitle = '修改口径'
+        this.formTitle = '修改口径'
       } else {
-        this.dialogTitle = '创建口径'
+        this.formTitle = '创建口径'
       }
       this.$refs['ref'].showDialog(primaryKey)
     },

@@ -101,9 +101,10 @@ if (bool) {
 }
 
 const getTaxTypeList = config => {
-  const { TT_NAME, TT_STATUS, page = 1, limit = 20 } = JSON.parse(config.body)
+  const { TT_ID, TT_NAME, TT_STATUS, page = 1, limit = 20 } = JSON.parse(config.body)
   const mockList = taxTypeList.filter(item => {
     if (!item) return false
+    if (TT_ID && TT_ID.length && item.TT_ID !== TT_ID) return false
     if (TT_NAME && TT_NAME.length && item.TT_NAME.indexOf(TT_NAME) < 0) return false
     if (TT_STATUS && TT_STATUS.length && item.TT_STATUS !== TT_STATUS) return false
     return true

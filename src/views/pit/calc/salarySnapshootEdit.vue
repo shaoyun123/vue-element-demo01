@@ -1,7 +1,7 @@
 <template>
   <basic-edit
     ref="ref"
-    :dialog-title="dialogTitle"
+    :form-title="formTitle"
     :default-model="defaultModel"
     :get-entity="getEntity"
     :save-entity="saveEntity"
@@ -32,7 +32,7 @@ export default {
   },
   data() {
     return {
-      dialogTitle: '薪金采集',
+      formTitle: '薪金采集',
       defaultModel: {
         SS_SALARY_LOADED: false,
         SS_FREQ: 'M',

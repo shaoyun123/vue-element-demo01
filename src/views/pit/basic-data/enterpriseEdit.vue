@@ -1,7 +1,7 @@
 <template>
   <basic-edit
     ref="ref"
-    :dialog-title="dialogTitle"
+    :form-title="formTitle"
     :default-model="defaultModel"
     :get-entity="getEntity"
     :save-entity="saveEntity"
@@ -22,7 +22,7 @@ export default {
   components: { BasicEdit },
   data() {
     return {
-      dialogTitle: '企业信息',
+      formTitle: '企业信息',
       defaultModel: {
         E_TYPE: '01'
       },
@@ -35,9 +35,9 @@ export default {
       let primaryKey = null
       if (isNotEmpty(PK)) {
         primaryKey = { E_ID: PK }
-        this.dialogTitle = '修改企业信息'
+        this.formTitle = '修改企业信息'
       } else {
-        this.dialogTitle = '创建企业信息'
+        this.formTitle = '创建企业信息'
       }
       this.$refs['ref'].showDialog(primaryKey)
     },

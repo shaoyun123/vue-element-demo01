@@ -1,7 +1,7 @@
 <template>
   <basic-edit
     ref="ref"
-    :dialog-title="dialogTitle"
+    :form-title="formTitle"
     :default-model="defaultModel"
     :get-entity="getEntity"
     :save-entity="saveEntity"
@@ -23,7 +23,7 @@ export default {
   components: { BasicEdit },
   data() {
     return {
-      dialogTitle: '住房租金',
+      formTitle: '住房租金',
       defaultModel: {
         ADHR_WORK_SITE: ['001', '001001'],
         ADHR_LESSOR_TYPE: '1'
@@ -37,9 +37,9 @@ export default {
       let primaryKey = null
       if (isNotEmpty(PK)) {
         primaryKey = { ADHR_ID: PK }
-        this.dialogTitle = '修改住房租金'
+        this.formTitle = '修改住房租金'
       } else {
-        this.dialogTitle = '创建住房租金'
+        this.formTitle = '创建住房租金'
       }
       this.$refs['ref'].showDialog(primaryKey)
     },

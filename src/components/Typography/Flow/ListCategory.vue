@@ -1,13 +1,14 @@
 <template>
   <div v-if="!flowInitializing">
-    <ty-table-dialog
+    <ty-table-category
       ref="ref"
-      :dialog="dialog"
+      :category-controller="categoryController"
+      :category-tree="categoryTree"
+      :linkage-method="linkageMethod"
       :controller="controller"
       :searcher="searcher"
       :table="table"
-      :pagination-method="paginationMethod"
-      @after-close="afterClose" />
+      :pagination-method="paginationMethod" />
     <component
       v-for="item in components"
       :key="'sc_' + item.name"
@@ -22,15 +23,15 @@
 import router from '@/router'
 import flow from '@/flow'
 import { isEmpty } from '@/utils/validate'
-import TyTableDialog from '@/components/Typography/Table/Dialog'
+import TyTableCategory from '@/components/Typography/Table/Category'
 
 /**
  * Flow 页面模板
- * 列表对话框模板
+ * 带分类树的数据列表模板
  */
 export default {
-  name: 'TyFlowDialogList',
-  components: { TyTableDialog },
+  name: 'TyFlowListCategory',
+  components: { TyTableCategory },
   props: {
     routerName: {
       type: String,
@@ -49,32 +50,30 @@ export default {
     return {
       flowInitializing: true,
       scopeMeta: {},
-      components: [],
-      extraParams: {}
+      components: []
     }
   },
   computed: {
-    dialog: function() {
-      const title = flow.getMetaEntry(this, this.scopeMeta, 'formTitle')
-      return {
-        props: { title }
-      }
+    categoryController: function() {
+      return flow.getMetaEntry(this, this.scopeMeta, 'categoryController')
+    },
+    categoryTree: function() {
+      return flow.getMetaEntry(this, this.scopeMeta, 'categoryTree')
+    },
+    linkageMethod: function() {
+      return flow.getMetaEntry(this, this.scopeMeta, 'linkageMethod')
     },
     controller: function() {
       return flow.getMetaEntry(this, this.scopeMeta, 'controller')
     },
     searcher: function() {
-      const searcher = flow.getMetaEntry(this, this.scopeMeta, 'searcher')
-      return Object.assign({}, searcher, { extraParams: this.extraParams })
+      return flow.getMetaEntry(this, this.scopeMeta, 'searcher')
     },
     table: function() {
       return flow.getMetaEntry(this, this.scopeMeta, 'table')
     },
     paginationMethod: function() {
       return flow.getMetaEntry(this, this.scopeMeta, 'paginationMethod')
-    },
-    afterClose: function() {
-      return flow.getMetaEntry(this, this.scopeMeta, 'afterClose')
     }
   },
   watch: {
@@ -85,7 +84,7 @@ export default {
       }
     }
   },
-  created: function() {
+  created() {
     this.flowInitializing = this.$store.getters.flowInitializing
     if (this.flowInitializing === false) {
       this.init()
@@ -96,13 +95,13 @@ export default {
       return flow.ref(this, componentName)
     },
     getTemplateName() {
-      return 'DialogList'
+      return 'ListCategory'
     },
     getFlowActionData() {
-      return this.ref().ref().selectedRows
+      return this.ref().refTable().selectedRows
     },
     refresh() {
-      this.ref().doSearch()
+      this.ref().refresh()
     },
     init() {
       let routerName = this.routerName
@@ -117,16 +116,6 @@ export default {
       const scopeMeta = flow.getScopeMeta(routerName, scope)
       this.scopeMeta = scopeMeta
       this.components = flow.getMetaEntry(this, this.scopeMeta, 'components')
-    },
-    showDialog(primaryKey) {
-      this.ref().showDialog()
-      if (JSON.stringify(primaryKey) !== JSON.stringify(this.extraParams)) {
-        this.extraParams = primaryKey
-        this.ref().clearSearcher()
-      }
-    },
-    hideDialog() {
-      this.ref().hideDialog()
     }
   }
 }

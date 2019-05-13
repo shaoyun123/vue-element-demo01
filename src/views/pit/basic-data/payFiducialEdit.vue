@@ -1,7 +1,7 @@
 <template>
   <basic-edit
     ref="ref"
-    :dialog-title="dialogTitle"
+    :form-title="formTitle"
     :default-model="defaultModel"
     :get-entity="getEntity"
     :save-entity="saveEntity"
@@ -21,7 +21,7 @@ export default {
   components: { BasicEdit },
   data() {
     return {
-      dialogTitle: '缴纳基数',
+      formTitle: '缴纳基数',
       defaultModel: {
         PFC_PAY_SITE: ['001', '001001'],
         PFC_WAGE_AVERAGE: 0,
@@ -53,9 +53,9 @@ export default {
         isNotEmpty(PK.PFC_YEAR)
       ) {
         primaryKey = PK
-        this.dialogTitle = '修改缴纳基数'
+        this.formTitle = '修改缴纳基数'
       } else {
-        this.dialogTitle = '创建缴纳基数'
+        this.formTitle = '创建缴纳基数'
       }
       this.$refs['ref'].showDialog(primaryKey)
     },

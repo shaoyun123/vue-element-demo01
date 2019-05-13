@@ -1,11 +1,13 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Layout from '@/views/layout/Layout'
+import { getDataType } from '@/utils'
 import { isEmpty, isNotEmpty } from '@/utils/validate'
 
 Vue.use(Router)
 
 /* Router Modules */
+import flowRouters from './modules/flow'
 import pitRouters from './modules/pit'
 import fttRouters from './modules/ftt'
 import demoRouters from './modules/demo'
@@ -14,6 +16,7 @@ import demoRouters from './modules/demo'
  * id
  * name
  * icon
+ * whiter
  * children
  */
 export const dynamicSubsystems = [
@@ -27,7 +30,9 @@ export const dynamicSubsystems = [
       { id: 'FTT_VAT', name: '增值税', icon: 'el-icon-antd-container' },
       { id: 'FTT_CIT', name: '企业所得税', icon: 'el-icon-antd-bank' }
     ]
-  }
+  },
+  { id: 'SYS', name: '系统管理', icon: 'el-icon-antd-sliders', whiter: true },
+  { id: 'DEMO', name: 'Demo', icon: 'el-icon-antd-desktop', whiter: true }
 ]
 
 /** note: Submenu only appear when children.length>=1
@@ -97,8 +102,16 @@ export const constantRouters = [
   }
 ]
 
+const routerInstance = new Router({
+  // mode: 'history', // require service support
+  scrollBehavior: () => ({ y: 0 }),
+  routes: constantRouters
+})
+export default routerInstance
+
 export const dynamicRouters = (function() {
   const routers = []
+  routers.push(...flowRouters)
   routers.push(...pitRouters)
   routers.push(...fttRouters)
   routers.push(...demoRouters)
@@ -127,6 +140,7 @@ const routerInfoMap = {}
 function buildRouterInfo(parentPath, routers) {
   if (isNotEmpty(routers)) {
     routers.forEach(router => {
+      const name = router.name
       const path = router.path
       const children = router.children
       let fullpath = ''
@@ -135,21 +149,36 @@ function buildRouterInfo(parentPath, routers) {
       } else {
         fullpath = `${parentPath}/${path}`
       }
+      router.fullpath = fullpath
+      if (isNotEmpty(name)) {
+        routerInfoMap[name] = router
+      }
       routerInfoMap[fullpath] = router
       buildRouterInfo(fullpath, children)
     })
   }
 }
-export const getRouterInfo = (fullpath) => {
+// to fullpath | routerName
+export const getRouterInfo = (to) => {
   if (isEmpty(routerInfoMap)) {
     buildRouterInfo('', constantRouters)
     buildRouterInfo('', dynamicRouters)
   }
-  return routerInfoMap[fullpath]
+  return routerInfoMap[to]
 }
 
-export default new Router({
-  // mode: 'history', // require service support
-  scrollBehavior: () => ({ y: 0 }),
-  routes: constantRouters
-})
+// to fullpath | routerName | RouterInfo
+export const skipTo = (to) => {
+  let routerInfo = null
+  if (getDataType(to) === 'string') {
+    routerInfo = getRouterInfo(to)
+  } else {
+    routerInfo = to
+  }
+  if (isNotEmpty(routerInfo)) {
+    const fullpath = routerInfo.fullpath
+    if (isNotEmpty(fullpath)) {
+      routerInstance.push({ path: fullpath })
+    }
+  }
+}
