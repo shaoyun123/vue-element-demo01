@@ -168,7 +168,7 @@ export const getRouterInfo = (to) => {
 }
 
 // to fullpath | routerName | RouterInfo
-export const skipTo = (to) => {
+export const redirectTo = (to) => {
   let routerInfo = null
   if (getDataType(to) === 'string') {
     routerInfo = getRouterInfo(to)

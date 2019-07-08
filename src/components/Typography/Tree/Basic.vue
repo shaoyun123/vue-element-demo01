@@ -5,7 +5,7 @@
         <template slot="right">
           <ty-form-simple
             ref="ref-searcher"
-            :reference="searcher.reference"
+            :reference="payloadSearcher.reference"
             :form="searcher.form"
             :controller="searcher.controller" />
           <ty-divider />
@@ -52,30 +52,25 @@ export default {
   data() {
     const self = this
     return {
+      queryString: '',
       searcher: {
-        reference: {
-          tip: '搜索器',
-          props: { icon: 'el-icon-antd-search', type: 'primary' }
-        },
         form: {
           props: {
             model: { queryString: '' }
           },
           items: [
             {
-              span: 24, props: { prop: 'queryString' },
+              span: 24,
+              props: {
+                prop: 'queryString',
+                style: { 'margin-bottom': '0px' }
+              },
               items: [
                 {
                   tag: 'el-input', name: 'queryString',
                   items: [
                     {
-                      tag: 'el-button', props: { slot: 'append', class: 'el-icon-antd-search' },
-                      events: {
-                        click: function() {
-                          const model = self.$refs['ref-searcher'].getModel()
-                          self.ref().ref().filter(model.queryString)
-                        }
-                      }
+                      tag: 'el-button', props: { slot: 'append', class: 'el-icon-antd-search' }, events: { click: self.filterNode }
                     }
                   ]
                 }
@@ -121,6 +116,24 @@ export default {
       return {
         ...self.controller,
         items
+      }
+    },
+    payloadSearcher: function() {
+      /*
+      检查是否有搜索条件
+      检查到搜索条件后对按钮进行样式处理，提醒用户
+      */
+      let tip = '搜索器'
+      let type = 'primary'
+      if (isNotEmpty(this.queryString)) {
+        tip = '点击查看已使用的搜索条件'
+        type = 'success'
+      }
+      return {
+        reference: {
+          tip,
+          props: { icon: 'el-icon-antd-search', type }
+        }
       }
     },
     payloadTree: function() {
@@ -176,6 +189,11 @@ export default {
         title = label
       }
       return title.indexOf(value) !== -1
+    },
+    filterNode() {
+      const { queryString } = this.$refs['ref-searcher'].getModel()
+      this.queryString = queryString
+      this.ref().ref().filter(queryString)
     },
     check(data, checked) {
       this.checkedNodes = checked.checkedNodes

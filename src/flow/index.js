@@ -88,6 +88,7 @@ import store from '@/store'
 import { getDataType } from '@/utils'
 import { parallel } from '@/utils/request'
 import { isEmpty, isNotEmpty } from '@/utils/validate'
+// import { asyncScript } from '@/utils/asyncFile'
 import { showMessage, showConfirm, showPrompt } from '@/utils/element'
 import manager from '@/flow/flow-manager'
 import pitFlows from '@/flow/pit'
@@ -96,20 +97,33 @@ import fttFlows from '@/flow/ftt'
 const flows = []
 const flowStorer = {} // flowId 为 key
 const pageStorer = {} // routerName 为 key
-function push(container, sub) {
-  if (getDataType(sub) === 'promise') {
-    container.push(sub)
+function push(container, moduleFlows) {
+  if (getDataType(moduleFlows) === 'promise') {
+    container.push(moduleFlows)
   } else {
-    container.push(Promise.resolve({ sub }))
+    container.push(Promise.resolve(moduleFlows))
   }
 }
 function init() {
-  const subs = []
-  // 引入子 flow 开始
-  push(subs, pitFlows)
-  push(subs, fttFlows)
-  // 引入子 flow 结束
-  parallel(subs).then(responses => {
+  const container = []
+  // 引入 flow 开始
+  push(container, pitFlows)
+  push(container, fttFlows)
+  // 引入 flow 结束
+  // 远程引入 flow 开始
+  /*
+  远程 flow 可以在 [dev | prod].env.js 中为 REMOTE_FLOW_LODER 指定一个 URL
+  URL 返回一个完整的 js 文件，要求 js 文件对外暴露 REMOTE_FLOWS 方法，返回 flow 数组
+  const remoteFlowLoder = process.env.REMOTE_FLOW_LODER
+  if (isNotEmpty(remoteFlowLoder)) {
+    push(container, asyncScript({ url: remoteFlowLoder }).then(() => {
+      /* eslint-disable /
+      return REMOTE_FLOWS()
+    }))
+  }
+  */
+  // 远程引入 flow 结束
+  parallel(container).then(responses => {
     if (isNotEmpty(responses)) {
       responses.forEach(data => {
         flows.push(...data)

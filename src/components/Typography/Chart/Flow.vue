@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { skipTo } from '@/router'
+import { redirectTo } from '@/router'
 import echarts from 'echarts'
 require('echarts/theme/macarons') // echarts theme
 import flowKit from '@/flow'
@@ -285,7 +285,7 @@ export default {
       this.chart = echarts.init(this.$el, 'macarons')
       this.setOptions(this.chartData)
       this.chart.on('click', function(params) {
-        skipTo(params.value)
+        redirectTo(params.value)
       })
     }
   }

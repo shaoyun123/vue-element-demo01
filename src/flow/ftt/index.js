@@ -1,5 +1,4 @@
 import moment from 'moment'
-import { parallel } from '@/utils/request'
 import { isNotEmpty } from '@/utils/validate'
 import { showConfirm } from '@/utils/element'
 import { buildTableActions, buildFormItemsByDicts } from '@/components/Typography/kit'
@@ -425,26 +424,22 @@ const SM_TTCE2t = () => {
   }
 }
 
-export default parallel([
-]).then((responses) => {
-}).then(() => {
-  return [
-    {
-      id: 'flow_ftt_text',
-      title: '全税种测试流程',
-      descr: '全税种测试流程',
-      pages: [
-        {
-          routerName: 'FTT-TaxType',
-          title: '税种管理',
-          descr: '税种管理',
-          meta: {
-            'FTT-TaxType': SM_TTL2t(),
-            'TaxTypeEdit': SM_TTE2t(),
-            'TaxTypeCaliberEdit': SM_TTCE2t()
-          }
+export default [
+  {
+    id: 'flow_ftt_text',
+    title: '全税种测试流程',
+    descr: '全税种测试流程',
+    pages: [
+      {
+        routerName: 'FTT-TaxType',
+        title: '税种管理',
+        descr: '税种管理',
+        meta: {
+          'FTT-TaxType': SM_TTL2t(),
+          'TaxTypeEdit': SM_TTE2t(),
+          'TaxTypeCaliberEdit': SM_TTCE2t()
         }
-      ]
-    }
-  ]
-})
+      }
+    ]
+  }
+]

@@ -91,12 +91,24 @@ export default {
         })
       }
       if (isNotEmpty(self.searcher.items)) {
+        /*
+        检查是否有搜索条件
+        检查到搜索条件后对按钮进行样式处理，提醒用户
+        * model 中默认有 page、limit 2 个属性，可以根据属性数量进行判断
+        */
+        let tip = ''
+        let type = 'primary'
+        if (Object.keys(this.model).length > 2) {
+          tip = '点击查看已使用的搜索条件'
+          type = 'success'
+        }
         items.push({
+          tip,
           float: 'right',
           text: '搜索器',
           props: {
             icon: 'el-icon-antd-search',
-            type: 'primary'
+            type
           },
           events: {
             click: self.showSearcher
