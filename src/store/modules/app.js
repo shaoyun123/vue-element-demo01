@@ -11,8 +11,8 @@ const app = {
       opened: Cookies.get('sidebarStatus') ? !!+Cookies.get('sidebarStatus') : true,
       withoutAnimation: false
     },
-    language: Cookies.get('language') || 'en',
-    size: Cookies.get('size') || 'mini' // small
+    language: Cookies.get('language') || 'zh',
+    size: Cookies.get('size') || 'medium' // small
   },
   mutations: {
     TOGGLE_DEVICE: (state, device) => {
