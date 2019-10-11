@@ -9,7 +9,7 @@
         </div>
       </div>
       <el-row v-for="(row, j) in group.rows" :key="'row_' + j" :gutter="18">
-        <div v-if="row.showFeature" v-bind="buildRowTitleProps(row)">
+        <div v-if="row.showFeature" v-bind="buildRowTitleProps(group, row)">
           <i class="el-icon-antd-detail" />
           {{ row.title }}
           <span v-if="row.actions && row.actions.length" class="row-action">
@@ -199,19 +199,19 @@ export default {
     },
     buildGroupProps: function(group) {
       const props = { shadow: 'never' }
-      const showFeature = group.showFeature
+      const showGroupFeature = group.showFeature
       const classes = []
-      if (showFeature) {
+      if (showGroupFeature) {
         classes.push('form-group')
       }
       props.class = classes
       return props
     },
-    buildRowTitleProps: function(row) {
+    buildRowTitleProps: function(group, row) {
       const props = {}
-      const showFeature = row.showFeature
+      const showGroupFeature = group.showFeature
       const classes = ['row-title']
-      if (!showFeature) {
+      if (!showGroupFeature) {
         classes.push('row-title-pl')
       }
       props.class = classes
