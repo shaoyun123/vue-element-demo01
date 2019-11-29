@@ -101,21 +101,23 @@ const SM_TTL2t = () => {
       }
     },
     searcher: function(vm, scopeMeta) {
-      const { getDistricts } = vm.$store.getters
-      return {
-        extraParams: { TTC_TAX_TYPE_ID: '_empty_' },
-        items: [
-          {
-            props: { label: '地区', prop: 'TTC_DISTRICT' },
-            items: [
-              {
-                tag: 'el-cascader',
-                name: 'TTC_DISTRICT',
-                props: { options: getDistricts }
-              }
-            ]
-          }
-        ]
+      return (model) => {
+        const { getDistricts } = vm.$store.getters
+        return {
+          extraParams: { TTC_TAX_TYPE_ID: '_empty_' },
+          items: [
+            {
+              props: { label: '地区', prop: 'TTC_DISTRICT' },
+              items: [
+                {
+                  tag: 'el-cascader',
+                  name: 'TTC_DISTRICT',
+                  props: { options: getDistricts }
+                }
+              ]
+            }
+          ]
+        }
       }
     },
     table: function(vm, scopeMeta) {

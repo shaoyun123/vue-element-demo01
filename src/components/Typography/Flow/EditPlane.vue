@@ -5,7 +5,7 @@
       :form="form"
       :loading="loading"
       :controller="controller"
-      @input="handleDialogInput($event)" />
+      @input="handleInput($event)" />
     <component
       v-for="item in components"
       :key="'sc_' + item.name"
@@ -49,6 +49,12 @@ export default {
       default: function() {
         return {}
       }
+    },
+    extraParams: {
+      type: Object,
+      default: function() {
+        return {}
+      }
     }
   },
   data() {
@@ -67,8 +73,6 @@ export default {
   },
   computed: {
     form: function() {
-      const primaryKey = this.primaryKey
-      this.initForm(primaryKey)
       const title = flow.getMetaEntry(this, this.scopeMeta, 'formTitle')
       return {
         title,
@@ -125,6 +129,7 @@ export default {
       if (value === false) {
         this.flowInitializing = false
         this.init()
+        this.initForm()
       }
     }
   },
@@ -132,6 +137,7 @@ export default {
     this.flowInitializing = this.$store.getters.flowInitializing
     if (this.flowInitializing === false) {
       this.init()
+      this.initForm()
     }
   },
   methods: {
@@ -139,7 +145,7 @@ export default {
       return flow.ref(this, componentName)
     },
     getTemplateName() {
-      return 'EditBasic'
+      return 'EditPlane'
     },
     getFlowActionData() {
       return [this.getModel()]
@@ -161,13 +167,21 @@ export default {
       this.scopeMeta = scopeMeta
       this.components = flow.getMetaEntry(this, this.scopeMeta, 'components')
     },
-    initForm(primaryKey) {
-      // 首先从 props 传参中获取 primaryKey，未找到则从路由传参中获取 primaryKey
+    initForm() {
+      // 首先从 props 传参中获取，未找到则从路由传参中获取
+      let primaryKey = this.primaryKey
       if (isEmpty(primaryKey)) {
         primaryKey = this.$route.query && this.$route.query.primaryKey
       }
       if (isEmpty(primaryKey)) {
         primaryKey = this.$route.params && this.$route.params.primaryKey
+      }
+      let extraParams = this.extraParams
+      if (isEmpty(extraParams)) {
+        extraParams = this.$route.query && this.$route.query.extraParams
+      }
+      if (isEmpty(extraParams)) {
+        extraParams = this.$route.params && this.$route.params.extraParams
       }
       if (isNotEmpty(primaryKey)) {
         this.operate = 'edit'
@@ -178,23 +192,22 @@ export default {
         this.adding = true
         this.editing = false
       }
-      this.loading = true
       if (this.adding) {
-        this.model = this.defaultModel
-        this.resetTo = this.defaultModel
+        this.loading = true
+        this.model = Object.assign({}, this.defaultModel, extraParams)
+        this.resetTo = this.model
         this.items = this.handleItems(this.operate, this.model)
         this.loading = false
       } else if (this.editing) {
+        this.loading = true
         this.getMethod(primaryKey).then(response => {
           const model = response.data
           if (isNotEmpty(model)) {
             this.model = model
-            this.resetTo = model
           } else {
-            const defaultModel = Object.assign({}, this.defaultModel, primaryKey)
-            this.model = defaultModel
-            this.resetTo = defaultModel
+            this.model = Object.assign({}, this.defaultModel, primaryKey, extraParams)
           }
+          this.resetTo = this.model
           this.items = this.handleItems(this.operate, this.model)
           this.loading = false
         })
@@ -229,7 +242,7 @@ export default {
     getModel() {
       return this.ref().getModel()
     },
-    handleDialogInput(model) {
+    handleInput(model) {
       const self = this
       const result = self.handleModel(self.operate, model)
       if (getDataType(result) === 'promise') {

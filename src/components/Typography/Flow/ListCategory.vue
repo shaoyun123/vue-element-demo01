@@ -8,7 +8,8 @@
       :controller="controller"
       :searcher="searcher"
       :table="table"
-      :pagination-method="paginationMethod" />
+      :pagination-method="paginationMethod"
+      @input="handleSearcherInput($event)" />
     <component
       v-for="item in components"
       :key="'sc_' + item.name"
@@ -50,7 +51,8 @@ export default {
     return {
       flowInitializing: true,
       scopeMeta: {},
-      components: []
+      components: [],
+      model: {}
     }
   },
   computed: {
@@ -67,13 +69,19 @@ export default {
       return flow.getMetaEntry(this, this.scopeMeta, 'controller')
     },
     searcher: function() {
-      return flow.getMetaEntry(this, this.scopeMeta, 'searcher')
+      const searcher = flow.getMetaEntry(this, this.scopeMeta, 'searcher')(this.model)
+      return Object.assign({}, searcher, {
+        props: { model: this.model }
+      })
     },
     table: function() {
       return flow.getMetaEntry(this, this.scopeMeta, 'table')
     },
     paginationMethod: function() {
       return flow.getMetaEntry(this, this.scopeMeta, 'paginationMethod')
+    },
+    paginationConfig: function() {
+      return flow.getMetaEntry(this, this.scopeMeta, 'paginationConfig')
     }
   },
   watch: {
@@ -116,6 +124,9 @@ export default {
       const scopeMeta = flow.getScopeMeta(routerName, scope)
       this.scopeMeta = scopeMeta
       this.components = flow.getMetaEntry(this, this.scopeMeta, 'components')
+    },
+    handleSearcherInput(model) {
+      this.model = model
     }
   }
 }

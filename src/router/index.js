@@ -10,6 +10,7 @@ Vue.use(Router)
 import flowRouters from './modules/flow'
 import pitRouters from './modules/pit'
 import fttRouters from './modules/ftt'
+import sbsRouters from './modules/sbs'
 import demoRouters from './modules/demo'
 
 /**
@@ -31,6 +32,7 @@ export const dynamicSubsystems = [
       { id: 'FTT_CIT', name: '企业所得税', icon: 'el-icon-antd-bank' }
     ]
   },
+  { id: 'SBS', name: '市舶司', icon: 'el-icon-antd-audit' },
   { id: 'SYS', name: '系统管理', icon: 'el-icon-antd-sliders', whiter: true },
   { id: 'DEMO', name: 'Demo', icon: 'el-icon-antd-desktop', whiter: true }
 ]
@@ -114,6 +116,7 @@ export const dynamicRouters = (function() {
   routers.push(...flowRouters)
   routers.push(...pitRouters)
   routers.push(...fttRouters)
+  routers.push(...sbsRouters)
   routers.push(...demoRouters)
   return routers
 })()

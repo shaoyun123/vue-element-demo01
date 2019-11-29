@@ -127,7 +127,28 @@ const getDictList = config => {
     { type: 'P5L_P_STATUS', value: '06', title: '不调整' },
     { type: 'P5L_P_STATUS', value: '07', title: '已确认' },
     { type: 'P5L_P_STATUS', value: '08', title: '待发放' },
-    { type: 'P5L_P_STATUS', value: '09', title: '已发放' }
+    { type: 'P5L_P_STATUS', value: '09', title: '已发放' },
+    { type: 'c6r_status', value: 'ENABLED', title: '启用' },
+    { type: 'c6r_status', value: 'DISABLE', title: '停用' },
+    { type: 's4r_status', value: 'ONLINE', title: '在线' },
+    { type: 's4r_status', value: 'MAINTAIN', title: '维护' },
+    { type: 's4r_status', value: 'OFFLINE', title: '离线' },
+    { type: 's12e_status', value: 'ENABLED', title: '启用' },
+    { type: 's12e_status', value: 'DISABLE', title: '停用' },
+    { type: 'p5e_valuationMode', value: 'UNIT', title: '单价' },
+    { type: 'p5e_valuationMode', value: 'PACKAGE', title: '打包价' },
+    { type: 'c5g_dimension', value: 'VALID', title: '有效的访问' },
+    { type: 'c5g_dimension', value: 'INVALID', title: '无效的访问' },
+    { type: 'c12s_freq', value: 'Y', title: '年' },
+    { type: 'c12s_freq', value: 'M', title: '月' },
+    { type: 'c12s_freq', value: 'D', title: '日' },
+    { type: 'a5e_perspective', value: 'GLOBAL', title: '全局' },
+    { type: 'a5e_perspective', value: 'SERVER', title: '服务' },
+    { type: 'a5e_perspective', value: 'CUSTOMER', title: '客户' },
+    { type: 'c15g_status', value: 'SUCCESS', title: '成功' },
+    { type: 'c15g_status', value: 'PART', title: '部分完成' },
+    { type: 'c15g_status', value: 'FAIL', title: '失败' },
+    { type: 'c15g_status', value: 'NONE', title: '缺失' }
   ]
 }
 

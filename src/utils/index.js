@@ -20,6 +20,13 @@ export function getDataType(obj) {
   return dataType[Object.prototype.toString.call(obj)]
 }
 
+export function getFuncName(func) {
+  if (getDataType(func) === 'function') {
+    return /function\s*(\w*)/ig.exec(func.toString())[1]
+  }
+  return null
+}
+
 /**
  * Created by jiachenpan on 16/11/18.
  */

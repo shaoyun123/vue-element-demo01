@@ -1,15 +1,16 @@
 <template>
   <el-main>
     <div class="controller">
-      <ty-button-controller :controller="payloadController" />
+      <ty-button-controller v-if="payloadController.items && payloadController.items.length" :controller="payloadController" />
       <ty-form-basic ref="ref-searcher" :dialog="payloadDialog" :form="payloadForm" :controller="payloadFormController" @input="handleDialogInput($event)" />
     </div>
-    <el-table-wrap :c-o-m="payloadTable" :loading="loading" />
+    <el-table-wrap ref="ref" :c-o-m="payloadTable" :loading="loading" />
     <pagination v-show="total > 0" :total="total" :page.sync="querier.page" :limit.sync="querier.limit" @pagination="getResults" />
   </el-main>
 </template>
 
 <script>
+import { getFuncName } from '@/utils'
 import { isEmpty, isNotEmpty } from '@/utils/validate'
 import ElTableWrap from '@/components/Typography/Wrap/ElTableWrap'
 import TyButtonController from '@/components/Typography/Button/Controller'
@@ -148,10 +149,22 @@ export default {
     },
     payloadTable: function() {
       const self = this
+      let height = self.$store.getters.deviceSize.height
+      height -= 50 // [topbar 50]
+      height -= 34 // [tagbar 33 + 1]
+      height -= 40 // [mainpadding 40]
+      if (isNotEmpty(self.payloadController.items)) {
+        height -= 64 // [searcher 54 + 10]
+      }
+      const paginationMethodName = getFuncName(this.paginationMethod)
+      if (isNotEmpty(paginationMethodName) && paginationMethodName !== 'defaultValue') {
+        // defaultValue 为 flow 中指定的默认值
+        height -= 62 // [pagination 30 + 32]
+      }
+      height -= 25 // [容差 25]
       return {
         props: {
-          // [topbar 50] + [tagbar 33 + 1] + [mainpadding 40] + [searcher 54 + 10] + [pagination 30 + 32] + [容差 25]
-          height: self.$store.getters.deviceSize.height - 275,
+          height,
           ...self.table.props,
           data: self.results
         },
@@ -238,7 +251,8 @@ export default {
       this.selectedRows = selection
     },
     handleDialogInput(model) {
-      this.querier = model
+      this.model = model
+      this.$emit('input', model)
     }
   }
 }

@@ -1,12 +1,11 @@
 <template>
   <div v-if="!flowInitializing">
-    <ty-form-basic
+    <ty-form-plane
       ref="ref"
-      :dialog="dialog"
       :form="form"
       :loading="loading"
       :controller="controller"
-      @input="handleDialogInput($event)" />
+      @input="handleInput($event)" />
     <component
       v-for="item in components"
       :key="'sc_' + item.name"
@@ -22,15 +21,15 @@ import router from '@/router'
 import flow from '@/flow'
 import { getDataType } from '@/utils'
 import { isEmpty, isNotEmpty } from '@/utils/validate'
-import TyFormBasic from '@/components/Typography/Form/Basic'
+import TyFormPlane from '@/components/Typography/Form/Plane'
 
 /**
  * Flow 页面模板
  * 基础的查看数据模板
  */
 export default {
-  name: 'TyFlowViewBasic',
-  components: { TyFormBasic },
+  name: 'TyFlowEditPlane',
+  components: { TyFormPlane },
   props: {
     routerName: {
       type: String,
@@ -43,6 +42,18 @@ export default {
       default: function() {
         return ''
       }
+    },
+    primaryKey: {
+      type: Object,
+      default: function() {
+        return {}
+      }
+    },
+    extraParams: {
+      type: Object,
+      default: function() {
+        return {}
+      }
     }
   },
   data() {
@@ -51,20 +62,16 @@ export default {
       scopeMeta: {},
       components: [],
       operate: 'view',
-      items: [],
       model: {},
+      items: [],
       loading: false
     }
   },
   computed: {
-    dialog: function() {
+    form: function() {
       const title = flow.getMetaEntry(this, this.scopeMeta, 'formTitle')
       return {
-        props: { title }
-      }
-    },
-    form: function() {
-      return {
+        title,
         props: { model: this.model },
         items: this.items
       }
@@ -95,6 +102,7 @@ export default {
       if (value === false) {
         this.flowInitializing = false
         this.init()
+        this.initForm()
       }
     }
   },
@@ -102,6 +110,7 @@ export default {
     this.flowInitializing = this.$store.getters.flowInitializing
     if (this.flowInitializing === false) {
       this.init()
+      this.initForm()
     }
   },
   methods: {
@@ -109,7 +118,7 @@ export default {
       return flow.ref(this, componentName)
     },
     getTemplateName() {
-      return 'ViewBasic'
+      return 'ViewPlane'
     },
     getFlowActionData() {
       return [this.getModel()]
@@ -131,8 +140,22 @@ export default {
       this.scopeMeta = scopeMeta
       this.components = flow.getMetaEntry(this, this.scopeMeta, 'components')
     },
-    showDialog(primaryKey, extraParams) {
-      this.ref().showDialog()
+    initForm() {
+      // 首先从 props 传参中获取，未找到则从路由传参中获取
+      let primaryKey = this.primaryKey
+      if (isEmpty(primaryKey)) {
+        primaryKey = this.$route.query && this.$route.query.primaryKey
+      }
+      if (isEmpty(primaryKey)) {
+        primaryKey = this.$route.params && this.$route.params.primaryKey
+      }
+      let extraParams = this.extraParams
+      if (isEmpty(extraParams)) {
+        extraParams = this.$route.query && this.$route.query.extraParams
+      }
+      if (isEmpty(extraParams)) {
+        extraParams = this.$route.params && this.$route.params.extraParams
+      }
       if (isNotEmpty(primaryKey)) {
         this.loading = true
         this.getMethod(primaryKey).then(response => {
@@ -147,18 +170,15 @@ export default {
         })
       } else {
         this.loading = true
-        this.model = primaryKey
+        this.model = Object.assign({}, primaryKey, extraParams)
         this.items = this.handleItems(this.operate, this.model)
         this.loading = false
       }
     },
-    hideDialog() {
-      this.ref().hideDialog()
-    },
     getModel() {
       return this.ref().getModel()
     },
-    handleDialogInput(model) {
+    handleInput(model) {
       const self = this
       const result = self.handleModel(self.operate, model)
       if (getDataType(result) === 'promise') {

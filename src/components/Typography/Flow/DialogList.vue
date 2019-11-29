@@ -7,6 +7,7 @@
       :searcher="searcher"
       :table="table"
       :pagination-method="paginationMethod"
+      @input="handleSearcherInput($event)"
       @after-close="afterClose" />
     <component
       v-for="item in components"
@@ -50,7 +51,8 @@ export default {
       flowInitializing: true,
       scopeMeta: {},
       components: [],
-      extraParams: {}
+      extraParams: {},
+      model: {}
     }
   },
   computed: {
@@ -64,14 +66,19 @@ export default {
       return flow.getMetaEntry(this, this.scopeMeta, 'controller')
     },
     searcher: function() {
-      const searcher = flow.getMetaEntry(this, this.scopeMeta, 'searcher')
-      return Object.assign({}, searcher, { extraParams: this.extraParams })
+      const searcher = flow.getMetaEntry(this, this.scopeMeta, 'searcher')(this.model)
+      return Object.assign({}, searcher, { extraParams: this.extraParams }, {
+        props: { model: this.model }
+      })
     },
     table: function() {
       return flow.getMetaEntry(this, this.scopeMeta, 'table')
     },
     paginationMethod: function() {
       return flow.getMetaEntry(this, this.scopeMeta, 'paginationMethod')
+    },
+    paginationConfig: function() {
+      return flow.getMetaEntry(this, this.scopeMeta, 'paginationConfig')
     },
     afterClose: function() {
       return flow.getMetaEntry(this, this.scopeMeta, 'afterClose')
@@ -118,15 +125,18 @@ export default {
       this.scopeMeta = scopeMeta
       this.components = flow.getMetaEntry(this, this.scopeMeta, 'components')
     },
-    showDialog(primaryKey) {
+    showDialog(extraParams) {
       this.ref().showDialog()
-      if (JSON.stringify(primaryKey) !== JSON.stringify(this.extraParams)) {
-        this.extraParams = primaryKey
+      if (JSON.stringify(extraParams) !== JSON.stringify(this.extraParams)) {
+        this.extraParams = extraParams
         this.ref().clearSearcher()
       }
     },
     hideDialog() {
       this.ref().hideDialog()
+    },
+    handleSearcherInput(model) {
+      this.model = model
     }
   }
 }

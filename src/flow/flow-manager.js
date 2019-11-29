@@ -114,21 +114,23 @@ const SM_FlowManager = () => {
       }
     },
     searcher: function(vm, scopeMeta) {
-      return {
-        items: [
-          {
-            props: { label: '路由名', prop: 'routerName' },
-            items: [
-              { tag: 'el-input', name: 'routerName' }
-            ]
-          },
-          {
-            props: { label: '标题', prop: 'title' },
-            items: [
-              { tag: 'el-input', name: 'title' }
-            ]
-          }
-        ]
+      return (model) => {
+        return {
+          items: [
+            {
+              props: { label: '路由名', prop: 'routerName' },
+              items: [
+                { tag: 'el-input', name: 'routerName' }
+              ]
+            },
+            {
+              props: { label: '标题', prop: 'title' },
+              items: [
+                { tag: 'el-input', name: 'title' }
+              ]
+            }
+          ]
+        }
       }
     },
     table: function(vm, scopeMeta) {

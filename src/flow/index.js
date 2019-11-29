@@ -56,9 +56,10 @@
           categoryTree: return Object, // 分类树
           linkageMethod: return Function(data, node), // 分类页联动方法
           controller: return Object, // 列表页控制区、表单控制区
-          searcher: return Object, // 列表页搜索表单
+          searcher: return Function(model), // 列表页搜索表单
           table: return Object, // 列表页列表
           paginationMethod: return Function(querier), // 列表页列表获取远端数据方法
+          paginationConfig: return Object, // 指定列表分页对象字段名
           dialog: return Object, // 对话框
           afterClose: return Function(data) // 对话框关闭动方法，在关闭后调用
           formTitle: return String, // 表单标题
@@ -93,6 +94,7 @@ import { showMessage, showConfirm, showPrompt } from '@/utils/element'
 import manager from '@/flow/flow-manager'
 import pitFlows from '@/flow/pit'
 import fttFlows from '@/flow/ftt'
+import sbsFlows from '@/flow/sbs'
 
 const flows = []
 const flowStorer = {} // flowId 为 key
@@ -109,6 +111,7 @@ function init() {
   // 引入 flow 开始
   push(container, pitFlows)
   push(container, fttFlows)
+  push(container, sbsFlows)
   // 引入 flow 结束
   // 远程引入 flow 开始
   /*
@@ -226,11 +229,19 @@ function getMetaEntryDefaultValue(vm, entryName) {
     defaultValue = (data, node) => {
       return data
     }
+  } else if (entryName === 'searcher') {
+    defaultValue = (model) => {
+      return {}
+    }
   } else if (entryName === 'paginationMethod') {
     defaultValue = (querier) => {
       return Promise.resolve({
         data: { items: [], total: 0 }
       })
+    }
+  } else if (entryName === 'paginationConfig') {
+    defaultValue = (querier) => {
+      return { itemsField: 'items', totalField: 'total' }
     }
   } else if (entryName === 'dialog') {
     defaultValue = {

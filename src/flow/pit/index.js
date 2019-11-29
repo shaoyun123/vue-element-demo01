@@ -364,7 +364,9 @@ const SM_SSL2t = () => {
       return { items }
     },
     searcher: function(vm, scopeMeta) {
-      return sskit.getSearcher(vm, scopeMeta, { enterpriseOptions })
+      return (model) => {
+        return sskit.getSearcher(vm, scopeMeta, { enterpriseOptions })
+      }
     },
     table: function(vm, scopeMeta) {
       return sskit.getTable(vm, scopeMeta)
@@ -398,7 +400,7 @@ const SM_SSE2t = () => {
     saveMethod: function(vm, scopeMeta) {
       return salarySnapshootSave
     },
-    beforeSave(vm, scopeMeta) {
+    beforeSave: function(vm, scopeMeta) {
       return (operate, model) => {
         const SS_SALARY_LOADED = model.SS_SALARY_LOADED
         if (operate === 'add' && !SS_SALARY_LOADED) {
@@ -612,15 +614,17 @@ const SM_VRL2t = (operate) => {
       return { items }
     },
     searcher: function(vm, scopeMeta) {
-      return {
-        items: [
-          {
-            props: { label: '校验状态', prop: 'VR_STATUS' },
-            items: [
-              { tag: 'el-select', name: 'VR_STATUS', items: buildFormItemsByDicts('V4Y_R4T_VR_STATUS', 'el-option') }
-            ]
-          }
-        ]
+      return (model) => {
+        return {
+          items: [
+            {
+              props: { label: '校验状态', prop: 'VR_STATUS' },
+              items: [
+                { tag: 'el-select', name: 'VR_STATUS', items: buildFormItemsByDicts('V4Y_R4T_VR_STATUS', 'el-option') }
+              ]
+            }
+          ]
+        }
       }
     },
     table: function(vm, scopeMeta) {
@@ -707,21 +711,23 @@ const SM_ADSL2t = (operate) => {
       return { items }
     },
     searcher: function(vm, scopeMeta) {
-      return {
-        items: [
-          {
-            props: { label: '类型', prop: 'ADS_TYPE' },
-            items: [
-              { tag: 'el-select', name: 'ADS_TYPE', items: buildFormItemsByDicts('A8L_D4T_S7T_ADS_TYPE', 'el-option') }
-            ]
-          },
-          {
-            props: { label: '校验状态', prop: 'ADS_VERIFY_STATUS' },
-            items: [
-              { tag: 'el-select', name: 'ADS_VERIFY_STATUS', items: buildFormItemsByDicts('A8L_D4T_S7T_ADS_VERIFY_STATUS', 'el-option') }
-            ]
-          }
-        ]
+      return (model) => {
+        return {
+          items: [
+            {
+              props: { label: '类型', prop: 'ADS_TYPE' },
+              items: [
+                { tag: 'el-select', name: 'ADS_TYPE', items: buildFormItemsByDicts('A8L_D4T_S7T_ADS_TYPE', 'el-option') }
+              ]
+            },
+            {
+              props: { label: '校验状态', prop: 'ADS_VERIFY_STATUS' },
+              items: [
+                { tag: 'el-select', name: 'ADS_VERIFY_STATUS', items: buildFormItemsByDicts('A8L_D4T_S7T_ADS_VERIFY_STATUS', 'el-option') }
+              ]
+            }
+          ]
+        }
       }
     },
     table: function(vm, scopeMeta) {
@@ -793,15 +799,17 @@ const SM_FRL2t = () => {
       return '流转记录'
     },
     searcher: function(vm, scopeMeta) {
-      return {
-        items: [
-          {
-            props: { label: '校验状态', prop: 'VR_STATUS' },
-            items: [
-              { tag: 'el-select', name: 'VR_STATUS', items: buildFormItemsByDicts('V4Y_R4T_VR_STATUS', 'el-option') }
-            ]
-          }
-        ]
+      return (model) => {
+        return {
+          items: [
+            {
+              props: { label: '校验状态', prop: 'VR_STATUS' },
+              items: [
+                { tag: 'el-select', name: 'VR_STATUS', items: buildFormItemsByDicts('V4Y_R4T_VR_STATUS', 'el-option') }
+              ]
+            }
+          ]
+        }
       }
     },
     table: function(vm, scopeMeta) {
@@ -983,7 +991,9 @@ const SM_PL2t = () => {
       return { items }
     },
     searcher: function(vm, scopeMeta) {
-      return pkit.getSearcher(vm, scopeMeta)
+      return (model) => {
+        return pkit.getSearcher(vm, scopeMeta)
+      }
     },
     table: function(vm, scopeMeta) {
       return pkit.getTable(vm, scopeMeta)

@@ -157,7 +157,7 @@ export default {
       this.scopeMeta = scopeMeta
       this.components = flow.getMetaEntry(this, this.scopeMeta, 'components')
     },
-    showDialog(primaryKey) {
+    showDialog(primaryKey, extraParams) {
       if (isNotEmpty(primaryKey)) {
         this.operate = 'edit'
         this.adding = false
@@ -168,23 +168,22 @@ export default {
         this.editing = false
       }
       this.ref().showDialog()
-      this.loading = true
       if (this.adding) {
-        this.model = this.defaultModel
-        this.resetTo = this.defaultModel
+        this.loading = true
+        this.model = Object.assign({}, this.defaultModel, extraParams)
+        this.resetTo = this.model
         this.items = this.handleItems(this.operate, this.model)
         this.loading = false
       } else if (this.editing) {
+        this.loading = true
         this.getMethod(primaryKey).then(response => {
           const model = response.data
           if (isNotEmpty(model)) {
             this.model = model
-            this.resetTo = model
           } else {
-            const defaultModel = Object.assign({}, this.defaultModel, primaryKey)
-            this.model = defaultModel
-            this.resetTo = defaultModel
+            this.model = Object.assign({}, this.defaultModel, primaryKey, extraParams)
           }
+          this.resetTo = this.model
           this.items = this.handleItems(this.operate, this.model)
           this.loading = false
         })

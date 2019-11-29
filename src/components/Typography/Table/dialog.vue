@@ -3,11 +3,19 @@
     <div class="flagbar">
       <ty-button-status :value.sync="refreshFlag" tip="关闭时向父窗口返回刷新指令" size="mini" icon="el-icon-antd-sync" />
     </div>
-    <ty-table-basic ref="ref" :controller="controller" :searcher="searcher" :table="payloadTable" :pagination-method="paginationMethod" />
+    <ty-table-basic
+      ref="ref"
+      :controller="controller"
+      :searcher="searcher"
+      :table="payloadTable"
+      :pagination-method="paginationMethod"
+      :pagination-config="paginationConfig"
+      @input="handleSearcherInput($event)" />
   </el-dialog>
 </template>
 
 <script>
+import { getFuncName } from '@/utils'
 import { isNotEmpty } from '@/utils/validate'
 import TyTableBasic from '@/components/Typography/Table/Basic'
 import TyButtonStatus from '@/components/Typography/Button/Status'
@@ -50,7 +58,20 @@ export default {
     },
     paginationMethod: {
       type: Function,
-      default: function() {}
+      default: function() {
+        return Promise.resolve({
+          data: { items: [], total: 0 }
+        })
+      }
+    },
+    paginationConfig: {
+      type: Object,
+      default: function() {
+        return {
+          itemsField: 'items',
+          totalField: 'total'
+        }
+      }
     }
   },
   data() {
@@ -70,10 +91,23 @@ export default {
       return this.dialog.events
     },
     payloadTable: function() {
+      let height = this.$store.getters.deviceSize.height
+      height -= 54 // [header 54]
+      height -= 28 // [flagbar 28]
+      height -= 60 // [bodypadding 60]
+      height -= 40 // [mainpadding 40]
+      if (isNotEmpty(this.controller.items) || isNotEmpty(this.searcher.items)) {
+        height -= 64 // [controller / searcher 54 + 10]
+      }
+      const paginationMethodName = getFuncName(this.paginationMethod)
+      if (isNotEmpty(paginationMethodName) && paginationMethodName !== 'defaultValue') {
+        // defaultValue 为 flow 中指定的默认值
+        height -= 62 // [pagination 30 + 32]
+      }
+      height -= 25 // [容差 25]
       return {
         props: {
-          // [header 54] + [flagbar 28] + [bodypadding 60] + [mainpadding 40] + [searcher 54 + 10] + [pagination 30 + 32] + [容差 25]
-          height: this.$store.getters.deviceSize.height - 333,
+          height,
           ...this.table.props,
           data: []
         },
@@ -114,6 +148,9 @@ export default {
     },
     ref() {
       return this.$refs.ref
+    },
+    handleSearcherInput(model) {
+      this.$emit('input', model)
     }
   }
 }

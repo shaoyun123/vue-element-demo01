@@ -3,7 +3,13 @@
     <el-aside>
       <el-tree-basic ref="ref-category" :controller="categoryController" :tree="payloadCategoryTree" class="category" />
     </el-aside>
-    <el-table-basic ref="ref-table" :controller="controller" :searcher="payloadSearcher" :table="table" :pagination-method="paginationMethod" />
+    <el-table-basic
+      ref="ref-table"
+      :controller="controller"
+      :searcher="payloadSearcher"
+      :table="table"
+      :pagination-method="paginationMethod"
+      @input="handleSearcherInput($event)" />
   </el-container>
 </template>
 
@@ -92,6 +98,9 @@ export default {
     },
     refTable() {
       return this.$refs['ref-table']
+    },
+    handleSearcherInput(model) {
+      this.$emit('input', model)
     }
   }
 }

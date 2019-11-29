@@ -1,23 +1,33 @@
 import store from '@/store'
-import { isNotEmpty } from '@/utils/validate'
+import { isEmpty, isNotEmpty } from '@/utils/validate'
 
 /**
  * 获取列表操作列表
  * @param {Object} vm 当前 vue 对象，既 this
- * @param {Array} actions { title, icon, click }
+ * @param {Array} actions { title, icon, type, click }
  */
 export function buildTableActions(vm, actions) {
   const h = vm.$createElement
-  const buttons = []
+  const links = []
   if (isNotEmpty(actions)) {
-    actions.forEach((action) => {
-      buttons.push(h('el-button', {
-        props: { type: 'text', icon: action.icon },
-        on: { 'click': action.click }
+    actions.forEach((action, i) => {
+      if (i > 0) {
+        links.push(h('el-divider', {
+          props: { direction: 'vertical' }
+        }))
+      }
+      const type = action.type || 'primary'
+      let click = action.click
+      if (isEmpty(click)) {
+        click = () => {}
+      }
+      links.push(h('el-link', {
+        props: { type, icon: action.icon, underline: false },
+        on: { click }
       }, action.title))
     })
   }
-  return buttons
+  return links
 }
 
 export function buildFormItems(options, valueField, titleTield, tag, name, config) {

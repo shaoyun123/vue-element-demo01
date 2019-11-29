@@ -7,7 +7,8 @@ const subsystems = [
   { ID: 'FTT', NAME: '全税种' },
   { ID: 'FTT_BASIC', NAME: '基础数据' },
   { ID: 'FTT_VAT', NAME: '增值税' },
-  { ID: 'FTT_CIT', NAME: '企业所得税' }
+  { ID: 'FTT_CIT', NAME: '企业所得税' },
+  { ID: 'SBS', NAME: '市舶司' }
 ]
 const resources = [
   { ID: 'PIT-BasicData', TYPE: 'MENU', SUBSYSTEM_ID: 'PIT' },
@@ -31,7 +32,14 @@ const resources = [
   { ID: 'PIT-PayrollSubmit', TYPE: 'MENU', SUBSYSTEM_ID: 'PIT' },
   { ID: 'PIT-PayrollFeedback', TYPE: 'MENU', SUBSYSTEM_ID: 'PIT' },
   { ID: 'FTT-BasicData', TYPE: 'MENU', SUBSYSTEM_ID: 'FTT_BASIC' },
-  { ID: 'FTT-TaxType', TYPE: 'MENU', SUBSYSTEM_ID: 'FTT_BASIC' }
+  { ID: 'FTT-TaxType', TYPE: 'MENU', SUBSYSTEM_ID: 'FTT_BASIC' },
+  { ID: 'SBS-Server', TYPE: 'MENU', SUBSYSTEM_ID: 'SBS' },
+  { ID: 'SBS-ServicePackageTemplate', TYPE: 'MENU', SUBSYSTEM_ID: 'SBS' },
+  { ID: 'SBS-Customer', TYPE: 'MENU', SUBSYSTEM_ID: 'SBS' },
+  { ID: 'SBS-CallLOG', TYPE: 'MENU', SUBSYSTEM_ID: 'SBS' },
+  { ID: 'SBS-CallStatistics', TYPE: 'MENU', SUBSYSTEM_ID: 'SBS' },
+  { ID: 'SBS-LogDetail', TYPE: 'MENU', SUBSYSTEM_ID: 'SBS' },
+  { ID: 'SBS-Analyze', TYPE: 'MENU', SUBSYSTEM_ID: 'SBS' }
 ]
 
 const users = {

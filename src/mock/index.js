@@ -7,6 +7,7 @@ import './global-data' // 全局数据
 import './login' // 用户认证
 import './pit' // 薪资核算
 import './ftt' // 全税种
+import './sbs' // 市舶司
 import './article'
 import './remoteSearch'
 import './transaction'
