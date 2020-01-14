@@ -1,6 +1,5 @@
 import axios from 'axios'
 import store from '@/store'
-import { getDataType } from '@/utils'
 import { getTokenKey } from '@/utils/auth'
 import { isNotEmpty } from '@/utils/validate'
 import { showMessage, showAlert } from '@/utils/element'
@@ -35,17 +34,29 @@ service.interceptors.request.use(
 // response interceptor
 service.interceptors.response.use(
   response => {
-    const code = response.data
-    if (
-      getDataType(code) === 'number' &&
-      (code === 10001 || code === 10002 || code === 10003)
-    ) {
-      showAlert({ content: tokenMessage[code], title: '登出', type: 'warning' }).then(() => {
-        store.dispatch('silentLogout').then(() => {
-          location.reload() // 重新实例化 vue-router 对象，避免 bug
+    const data = response.data
+    if (isNotEmpty(data)) {
+      const code = data.code
+      if (code === 10001 || code === 10002 || code === 10003) {
+        showAlert({ content: tokenMessage[code], title: '登出', type: 'warning' }).then(() => {
+          store.dispatch('silentLogout').then(() => {
+            location.reload() // 重新实例化 vue-router 对象，避免 bug
+          })
         })
-      })
-      return errorFlag
+        return errorFlag
+      } else if (code === 200) {
+        response.data = data.responseBody
+        return response
+      } else if (code === 251) {
+        showMessage({ content: data.messages, type: 'warning' })
+        response.data = data.responseBody
+        return response
+      } else if (code === 500) {
+        showMessage({ content: data.messages, type: 'error' })
+        return errorFlag
+      } else {
+        return response
+      }
     } else {
       return response
     }

@@ -21,6 +21,7 @@
 import router from '@/router'
 import flow from '@/flow'
 import { getDataType } from '@/utils'
+import { passable } from '@/utils/request'
 import { isEmpty, isNotEmpty } from '@/utils/validate'
 import TyFormBasic from '@/components/Typography/Form/Basic'
 
@@ -80,6 +81,9 @@ export default {
       entry.items = items
       return entry
     },
+    defaultModel: function() {
+      return flow.getMetaEntry(this, this.scopeMeta, 'defaultModel')
+    },
     handleModel: function() {
       return flow.getMetaEntry(this, this.scopeMeta, 'handleModel')
     },
@@ -136,18 +140,20 @@ export default {
       if (isNotEmpty(primaryKey)) {
         this.loading = true
         this.getMethod(primaryKey).then(response => {
-          const model = response.data
-          if (isNotEmpty(model)) {
-            this.model = model
-          } else {
-            this.model = Object.assign({}, primaryKey, extraParams)
+          if (passable(response)) {
+            const model = response.data
+            if (isNotEmpty(model)) {
+              this.model = model
+            } else {
+              this.model = Object.assign({}, this.defaultModel, primaryKey, extraParams)
+            }
+            this.items = this.handleItems(this.operate, this.model)
           }
-          this.items = this.handleItems(this.operate, this.model)
           this.loading = false
         })
       } else {
         this.loading = true
-        this.model = primaryKey
+        this.model = Object.assign({}, this.defaultModel, primaryKey, extraParams)
         this.items = this.handleItems(this.operate, this.model)
         this.loading = false
       }

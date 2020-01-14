@@ -11,6 +11,7 @@
 
 <script>
 import { getFuncName } from '@/utils'
+import { passable } from '@/utils/request'
 import { isEmpty, isNotEmpty } from '@/utils/validate'
 import ElTableWrap from '@/components/Typography/Wrap/ElTableWrap'
 import TyButtonController from '@/components/Typography/Button/Controller'
@@ -239,10 +240,12 @@ export default {
       this.loading = true
       this.initQuerier()
       this.paginationMethod(this.querier).then(response => {
-        if (isNotEmpty(response) && isNotEmpty(response.data)) {
+        if (passable(response)) {
           const data = response.data
-          this.results = data[this.paginationConfig.itemsField]
-          this.total = data[this.paginationConfig.totalField]
+          if (isNotEmpty(data)) {
+            this.results = data[this.paginationConfig.itemsField]
+            this.total = data[this.paginationConfig.totalField]
+          }
         }
         this.loading = false
       })

@@ -201,5 +201,27 @@ const getDistrictList = config => {
   ]
 }
 
+const getValidatorList = config => {
+  return [
+    { clazz: 'com.such.kit.validate.validator.impl.LengthValidator', title: '数据长度校验器', paramDescrs: ['多个参数间以 , 分隔', '参数集长度等于 1 时，输入内容长度必须大于 #[1]', '参数集长度等于 2 时，输入内容长度必须介于 #[1] 到 #[2] 之间'] },
+    { clazz: 'com.such.kit.validate.validator.impl.LengthRangeValidator', title: '数据长度范围校验器', paramDescrs: ['多个参数间以 , 分隔', '输入内容长度只能在范围内取值：#[1], #[2], #[3] ...'] },
+    { clazz: 'com.such.kit.validate.validator.impl.DataRangeValidator', title: '数据取值范围校验器', paramDescrs: ['多个参数间以 , 分隔', '输入内容只能在范围内取值：#[1], #[2], #[3] ...'] },
+    { clazz: 'com.such.kit.validate.validator.impl.MatchValidator', title: '模糊匹配校验器', paramDescrs: ['多个参数间以 , 分隔', '输入内容必须包含 #[1]'] },
+    { clazz: 'com.such.kit.validate.validator.impl.UnmatchValidator', title: '模糊不匹配校验器', paramDescrs: ['多个参数间以 , 分隔', '输入内容必须不包含 #[1]'] },
+    { clazz: 'com.such.kit.validate.validator.impl.EmptyValidator', title: '检查是否为空校验器', paramDescrs: ['多个参数间以 , 分隔', '输入内容非空'] },
+    { clazz: 'com.such.kit.validate.validator.impl.UnemptyValidator', title: '检查是否为非空校验器', paramDescrs: ['多个参数间以 , 分隔', '输入内容为空'] },
+    { clazz: 'com.such.kit.validate.validator.impl.EqValidator', title: '比较是否相等校验器', paramDescrs: ['多个参数间以 , 分隔', '输入内容必须等于 #[1]'] },
+    { clazz: 'com.such.kit.validate.validator.impl.NeValidator', title: '比较是否不相等校验器', paramDescrs: ['多个参数间以 , 分隔', '输入内容必须不等于 #[1]'] },
+    { clazz: 'com.such.kit.validate.validator.impl.LtValidator', title: '比较是否小于校验器', paramDescrs: ['多个参数间以 , 分隔', '输入内容必须为数字且小于 #[1]'] },
+    { clazz: 'com.such.kit.validate.validator.impl.LeValidator', title: '比较是否小于等于校验器', paramDescrs: ['多个参数间以 , 分隔', '输入内容必须为数字且小于等于 #[1]'] },
+    { clazz: 'com.such.kit.validate.validator.impl.GtValidator', title: '比较是否大于校验器', paramDescrs: ['多个参数间以 , 分隔', '输入内容必须为数字且大于 #[1]'] },
+    { clazz: 'com.such.kit.validate.validator.impl.GeValidator', title: '比较是大于等于校验器', paramDescrs: ['多个参数间以 , 分隔', '输入内容必须为数字且大于等于 #[1]'] },
+    { clazz: 'com.such.kit.validate.validator.impl.NumberValidator', title: '数字格式校验器', paramDescrs: ['多个参数间以 , 分隔', '参数集长度等于 0 时，输入内容必须为数字', '参数集长度等于 1 时，输入内容必须为数字，且整数部分长度必须大于 #[1]', '参数集长度等于 2 时，输入内容必须为数字，且整数部分长度必须介于 #[1] 和 #[2] 之间', '参数集长度等于 3 时，输入内容必须为数字，且整数部分长度必须介于 #[1] 和 #[2] 之间，小数部分长度必须等于 #[3]'] },
+    { clazz: 'com.such.kit.validate.validator.impl.DateValidator', title: '日期格式校验器', paramDescrs: ['多个参数间以 , 分隔', '输入内容必须符合日期格式 #[1]'] },
+    { clazz: 'com.such.kit.validate.validator.impl.RegularValidator', title: '正则校验器', paramDescrs: ['多个参数间以 , 分隔', '输入内容与正则表达式 #[1] 不匹配'] }
+  ]
+}
+
 Mock.mock(/\/global-data\/dict\/list/, 'post', getDictList)
 Mock.mock(/\/global-data\/district\/list/, 'post', getDistrictList)
+Mock.mock(/\/global-data\/validator\/list/, 'post', getValidatorList)

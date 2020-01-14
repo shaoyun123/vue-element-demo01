@@ -15,3 +15,11 @@ export function districtList(query) {
     data: query
   })
 }
+
+export function validatorList(query) {
+  return request({
+    url: '/global-data/validator/list',
+    method: 'post',
+    data: query
+  })
+}

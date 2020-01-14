@@ -1,23 +1,34 @@
 <template>
   <div :class="{'hidden':hidden}" class="pagination-container">
-    <el-pagination
-      :background="background"
-      :current-page.sync="currentPage"
-      :page-size.sync="pageSize"
-      :layout="layout"
-      :page-sizes="pageSizes"
-      :total="total"
-      v-bind="$attrs"
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"/>
+    <el-row>
+      <el-col :span="8">
+        <el-button-group>
+          <el-button-wrap :c-o-m="refreshButton" />
+        </el-button-group>
+      </el-col>
+      <el-col :span="16">
+        <el-pagination
+          :background="background"
+          :current-page.sync="currentPage"
+          :page-size.sync="pageSize"
+          :layout="layout"
+          :page-sizes="pageSizes"
+          :total="total"
+          v-bind="$attrs"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange" />
+      </el-col>
+    </el-row>
   </div>
 </template>
 
 <script>
 import { scrollTo } from '@/utils/scrollTo'
+import ElButtonWrap from '@/components/Typography/Wrap/ElButtonWrap'
 
 export default {
   name: 'Pagination',
+  components: { ElButtonWrap },
   props: {
     total: {
       required: true,
@@ -39,7 +50,7 @@ export default {
     },
     layout: {
       type: String,
-      default: 'sizes, prev, pager, next, jumper, ->, total'
+      default: 'slot, ->, total, prev, pager, next, sizes'
     },
     background: {
       type: Boolean,
@@ -52,6 +63,21 @@ export default {
     hidden: {
       type: Boolean,
       default: false
+    }
+  },
+  data() {
+    const self = this
+    return {
+      refreshButton: {
+        tip: '刷新当前页',
+        props: {
+          plain: false,
+          icon: 'el-icon-antd-retweet'
+        },
+        events: {
+          click: self.refresh
+        }
+      }
     }
   },
   computed: {
@@ -81,6 +107,12 @@ export default {
     },
     handleCurrentChange(val) {
       this.$emit('pagination', { page: val, limit: this.pageSize })
+      if (this.autoScroll) {
+        scrollTo(0, 800)
+      }
+    },
+    refresh() {
+      this.$emit('pagination', { page: this.currentPage, limit: this.pageSize })
       if (this.autoScroll) {
         scrollTo(0, 800)
       }

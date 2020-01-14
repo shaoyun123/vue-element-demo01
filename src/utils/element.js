@@ -73,3 +73,12 @@ export function showPrompt({ content, title = '请输入 ...' }) {
     }
   })
 }
+
+export function showLoading(vm) {
+  return vm.$loading({
+    lock: true,
+    text: '请等待 ...',
+    spinner: 'el-icon-loading',
+    background: 'rgba(0, 0, 0, 0.2)'
+  })
+}

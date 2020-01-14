@@ -1,5 +1,5 @@
 import { isEmpty, isNotEmpty } from '@/utils/validate'
-import { dictList, districtList } from '@/api/globalData'
+import { dictList, districtList, validatorList } from '@/api/globalData'
 
 function getDictKey(type, value) {
   return type + '_' + value
@@ -22,7 +22,9 @@ const globalData = {
     dictMapper: {},
     dictStorer: {},
     districtMapper: {},
-    districtStorer: []
+    districtStorer: [],
+    validatorMapper: {},
+    validatorStorer: []
   },
   mutations: {
     INIT_DICTIONARY: (state, payload) => {
@@ -55,12 +57,25 @@ const globalData = {
       state.districtMapper = districtMapper
       state.districtStorer = districtStorer
       console.log('地区初始化完成 ...')
+    },
+    INIT_VALIDATOR: (state, payload) => {
+      const validatorMapper = {}
+      const validatorStorer = payload.data
+      if (isNotEmpty(validatorStorer)) {
+        validatorStorer.forEach(validator => {
+          validatorMapper[validator.clazz] = validator
+        })
+      }
+      state.validatorMapper = validatorMapper
+      state.validatorStorer = validatorStorer
+      console.log('检验器初始化完成 ...')
     }
   },
   actions: {
     async initGlobalData({ dispatch, commit }) {
       await dispatch('initDict')
       await dispatch('initDistrict')
+      await dispatch('initValidator')
       return new Promise((resolve) => {
         resolve()
       })
@@ -70,6 +85,9 @@ const globalData = {
     },
     async initDistrict({ commit }) {
       commit('INIT_REGION', await districtList())
+    },
+    async initValidator({ commit }) {
+      commit('INIT_VALIDATOR', await validatorList())
     }
   }
 }
@@ -100,5 +118,27 @@ export const districtKit = {
       title = value
     }
     return title
+  }
+}
+
+export const validatorKit = {
+  getValidatorTitle: function(state, clazz) {
+    let title = clazz
+    const validator = state.globalData.validatorMapper[clazz]
+    if (isNotEmpty(validator)) {
+      title = validator.title
+    }
+    return title
+  },
+  getValidatorParamDescr: function(state, clazz) {
+    let paramDescr = ''
+    const validator = state.globalData.validatorMapper[clazz]
+    if (isNotEmpty(validator)) {
+      const paramDescrs = validator.paramDescrs
+      if (isNotEmpty(paramDescrs)) {
+        paramDescr = paramDescrs.join('<br />')
+      }
+    }
+    return paramDescr
   }
 }

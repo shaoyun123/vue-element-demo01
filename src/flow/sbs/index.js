@@ -1,8 +1,8 @@
 import moment from 'moment'
-import { parallel } from '@/utils/request'
+import { passable, parallel } from '@/utils/request'
 import { isEmpty, isNotEmpty } from '@/utils/validate'
-import { showMessage, showConfirm } from '@/utils/element'
-import { buildTableActions, buildFormItemsByDicts } from '@/components/Typography/kit'
+import { showMessage, showConfirm, showPrompt, showLoading } from '@/utils/element'
+import { buildTableActions, buildFormItems, buildFormItemsByDicts } from '@/components/Typography/kit'
 import {
   serverThemeList,
   serverThemeSingleById,
@@ -16,12 +16,16 @@ import {
   servicePackageSingleById,
   servicePackageDeleteByIds,
   servicePackageSave,
+  servicePackageMeasure,
   customerList,
   customerSingleById,
   customerDeleteByIds,
   customerSave,
   callLogList,
+  callLogStatistics,
+  callLogStatisticsAll,
   callStatisticsList,
+  callStatisticsByGlobal,
   callStatisticsByServer,
   callStatisticsByCustomer,
   callStatisticsLogList
@@ -234,8 +238,11 @@ function getServerFormItems(vm, scopeMeta, operate, model) {
   items.push({ tag: 'el-new-group', title: '服务通道参数' })
   const serverParams = model.params
   if (isNotEmpty(serverParams)) {
+    const { getValidators, getValidatorParamDescr } = vm.$store.getters
+    const validators = buildFormItems(getValidators, 'clazz', 'title', 'el-option')
     const size = serverParams.length
     serverParams.forEach((serverParam, i) => {
+      const validator = serverParam.validator
       const prefix = `params.${i}.`
       const actions = []
       if (!readonlyForGeneral) {
@@ -269,20 +276,24 @@ function getServerFormItems(vm, scopeMeta, operate, model) {
         },
         items: [
           {
-            tag: 'el-input', name: prefix + 'validator', props: { disabled: readonlyForGeneral }
+            tag: 'el-select', name: prefix + 'validator', linkage: true, props: { clearable: true, disabled: readonlyForGeneral },
+            items: validators
           }
         ]
       })
-      items.push({
-        props: {
-          label: '检验器参数', prop: prefix + 'validatorParamsJson'
-        },
-        items: [
-          {
-            tag: 'el-input', name: prefix + 'validatorParamsJson', props: { disabled: readonlyForGeneral }
-          }
-        ]
-      })
+      if (isNotEmpty(validator)) {
+        items.push({
+          tip: getValidatorParamDescr(validator),
+          props: {
+            label: '检验器参数', prop: prefix + 'validatorParams'
+          },
+          items: [
+            {
+              tag: 'el-input', name: prefix + 'validatorParams', props: { disabled: readonlyForGeneral }
+            }
+          ]
+        })
+      }
     })
   }
   items.push({ tag: 'el-new-group', title: '服务商' })
@@ -386,7 +397,8 @@ const SM_ServerList = () => {
       const components = []
       components.push({
         name: 'ServerThemeEdit', component: () => import(`@/components/Typography/Flow/EditBasic`),
-        props: { scope: 'ServerThemeEdit' }
+        props: { scope: 'ServerThemeEdit' },
+        events: { 'after-save': () => vm.refresh() }
       })
       components.push({
         name: 'ServerEdit', component: () => import(`@/components/Typography/Flow/EditBasic`),
@@ -427,7 +439,9 @@ const SM_ServerList = () => {
           lazy: true,
           load: (node, resolve) => {
             serverThemeList({}).then(response => {
-              resolve(response.data.items)
+              if (passable(response)) {
+                resolve(response.data.items)
+              }
             })
           }
         },
@@ -453,7 +467,17 @@ const SM_ServerList = () => {
     controller: function(vm, scopeMeta) {
       const items = []
       items.push({
-        text: '新增', props: { icon: 'el-icon-antd-plus' }, events: { click: () => vm.ref('ServerEdit').showDialog({}) }
+        text: '新增', props: { icon: 'el-icon-antd-plus' },
+        events: {
+          click: () => {
+            const linkageValue = vm.ref().linkageValue
+            if (isNotEmpty(vm.ref().linkageValue)) {
+              vm.ref('ServerEdit').showDialog({}, linkageValue)
+            } else {
+              showMessage({ content: '请选择服务主题', type: 'warning' })
+            }
+          }
+        }
       })
       items.push({
         selectedRowVisible: true, text: '删除', props: { icon: 'el-icon-antd-delete', type: 'danger' }, events: { click: () => deleteServer(vm) }
@@ -524,7 +548,7 @@ const SM_ServerEdit = () => {
       items.push({
         tip: '添加通道参数', props: { icon: 'el-icon-antd-number' },
         events: {
-          click: () => addFormGroupItem(vm, 'params', { key: '', nullable: 'N', validator: '', validatorParamsJson: '' })
+          click: () => addFormGroupItem(vm, 'params', { key: '', nullable: 'N', validator: '', validatorParams: '' })
         }
       })
       items.push({
@@ -549,9 +573,11 @@ const SM_ServerEdit = () => {
     beforeSave: function(vm, scopeMeta) {
       return (operate, model) => {
         const content = []
+        /*
         if (isEmpty(model.params)) {
           content.push('服务通道参数不能为空')
         }
+        */
         if (isEmpty(model.serviceProviders)) {
           content.push('服务商不能为空')
         }
@@ -659,10 +685,12 @@ function getServicePackageFormItems(vm, scopeMeta, operate, model) {
         events: {
           click: function() {
             serverSingleById({ id: serverId }).then(response => {
-              const server = response.data
-              if (isNotEmpty(server)) {
-                model.serviceProviders = server.serviceProviders
-                vm.handleDialogInput(model)
+              if (passable(response)) {
+                const server = response.data
+                if (isNotEmpty(server)) {
+                  model.serviceProviders = server.serviceProviders
+                  vm.handleDialogInput(model)
+                }
               }
             })
           }
@@ -684,8 +712,9 @@ function getServicePackageFormItems(vm, scopeMeta, operate, model) {
           placeholder: '服务编号 / 标题 ...', 'value-key': 'id', 'trigger-on-focus': false,
           'fetch-suggestions': function(queryString, callback) {
             serverList({ idOrTitle: queryString }).then(response => {
-              const results = response.data.items
-              callback(results)
+              if (passable(response)) {
+                callback(response.data.items)
+              }
             })
           },
           slots: loadServerSlots,
@@ -694,13 +723,6 @@ function getServicePackageFormItems(vm, scopeMeta, operate, model) {
             { tag: 'div', style: 'line-height: 18px; font-size: 12px; color: #b4b4b4; padding-left: 14px', prop: 'title' }
           ],
           disabled: readonlyForPivotal
-        },
-        events: {
-          select: function(server) {
-            model.serverId = server.id
-            model.serviceProviders = server.serviceProviders
-            vm.handleDialogInput(model)
-          }
         }
       }
     ]
@@ -885,7 +907,7 @@ function deleteServicePackage(vm) {
   }
 }
 
-function loadServicePackage(vm, scopeMeta, row, index) {
+function loadServicePackageTemplate(vm, scopeMeta, row, index) {
   vm.$emit('load-template', row)
   vm.hideDialog()
 }
@@ -901,12 +923,20 @@ const SM_ServicePackageList = () => {
           props: { scope: 'ServicePackageTemplateEdit' },
           events: { 'after-save': () => vm.refresh() }
         })
+        components.push({
+          name: 'ServicePackageMeasureView', component: () => import(`@/components/Typography/Flow/ViewBasic`),
+          props: { scope: 'ServicePackageMeasureView' }
+        })
       } else if (routerName === 'SBS-Customer') {
         if (scope === 'ServicePackageList') {
           components.push({
             name: 'ServicePackageEdit', component: () => import(`@/components/Typography/Flow/EditBasic`),
             props: { scope: 'ServicePackageEdit' },
             events: { 'after-save': () => vm.refresh() }
+          })
+          components.push({
+            name: 'ServicePackageMeasureView', component: () => import(`@/components/Typography/Flow/ViewBasic`),
+            props: { scope: 'ServicePackageMeasureView' }
           })
         } else if (scope === 'ServicePackageTemplateSelect') {
           components.push({
@@ -983,6 +1013,14 @@ const SM_ServicePackageList = () => {
               const id = row.id
               const actions = []
               actions.push({ title: '编辑', click: () => vm.ref('ServicePackageTemplateEdit').showDialog({ id }) })
+              actions.push({
+                title: '测算',
+                click: () => {
+                  showPrompt({ content: '请输入服务访问次数', title: '测算' })
+                    .then(({ value }) => vm.ref('ServicePackageMeasureView').showDialog({ id, count: value }))
+                    .catch(() => {})
+                }
+              })
               return buildTableActions(vm, actions)
             }
           }
@@ -996,6 +1034,14 @@ const SM_ServicePackageList = () => {
                 const id = row.id
                 const actions = []
                 actions.push({ title: '编辑', click: () => vm.ref('ServicePackageEdit').showDialog({ id }) })
+                actions.push({
+                  title: '测算',
+                  click: () => {
+                    showPrompt({ content: '请输入服务访问次数', title: '测算' })
+                      .then(({ value }) => vm.ref('ServicePackageMeasureView').showDialog({ id, count: value }))
+                      .catch(() => {})
+                  }
+                })
                 return buildTableActions(vm, actions)
               }
             }
@@ -1007,7 +1053,7 @@ const SM_ServicePackageList = () => {
               formatter: function(row, column, cellValue, index) {
                 const id = row.id
                 const actions = []
-                actions.push({ title: '载入', click: () => loadServicePackage(vm, scopeMeta, row, index) })
+                actions.push({ title: '载入', click: () => loadServicePackageTemplate(vm, scopeMeta, row, index) })
                 actions.push({ title: '查看', click: () => vm.ref('ServicePackageTemplateView').showDialog({ id }) })
                 return buildTableActions(vm, actions)
               }
@@ -1038,12 +1084,19 @@ const SM_ServicePackageEdit = () => {
             name: 'ServicePackageTemplateSelect', component: () => import(`@/components/Typography/Flow/DialogList`),
             props: { scope: 'ServicePackageTemplateSelect' },
             events: {
-              'load-template': (template) => {
-                const model = vm.getModel()
-                model.serverId = template.serverId
-                model.serviceProviders = template.serviceProviders
-                model.payRules = template.payRules
-                vm.handleDialogInput(model)
+              'load-template': ({ id }) => {
+                servicePackageSingleById({ id }).then(response => {
+                  if (passable(response)) {
+                    const template = response.data
+                    if (isNotEmpty(template)) {
+                      const model = vm.getModel()
+                      model.serverId = template.serverId
+                      model.serviceProviders = template.serviceProviders
+                      model.payRules = template.payRules
+                      vm.handleDialogInput(model)
+                    }
+                  }
+                })
               }
             }
           })
@@ -1157,6 +1210,128 @@ const SM_ServicePackageView = () => {
     },
     getMethod: function(vm, scopeMeta) {
       return servicePackageSingleById
+    }
+  }
+}
+
+function getServicePackageMeasureFormItems(vm, scopeMeta, operate, model) {
+  const { getDictTitle } = vm.$store.getters
+  const { status } = model
+  const items = []
+  if (status === 'TRIGGER') {
+    items.push({
+      props: { label: '计次开始日期', prop: 'countStartDate' },
+      items: [
+        {
+          tag: 'el-input', name: 'countStartDate', props: { disabled: true }
+        }
+      ]
+    })
+    items.push({
+      props: { label: '计次结束日期', prop: 'countEndDate' },
+      items: [
+        {
+          tag: 'el-input', name: 'countEndDate', props: { disabled: true }
+        }
+      ]
+    })
+    items.push({ tag: 'el-new-row' })
+    items.push({
+      props: { label: '次数', prop: 'count' },
+      items: [
+        {
+          tag: 'el-input', name: 'count', props: { disabled: true }
+        }
+      ]
+    })
+    items.push({
+      props: { label: '未计费次数', prop: 'surplusCount' },
+      items: [
+        {
+          tag: 'el-input', name: 'surplusCount', props: { disabled: true }
+        }
+      ]
+    })
+    items.push({
+      tip: '单位元',
+      props: { label: '总费用', prop: 'totalPrice' },
+      items: [
+        {
+          tag: 'el-input-number', name: 'totalPrice', props: { precision: 4, disabled: true }
+        }
+      ]
+    })
+    items.push({ tag: 'el-new-group', title: '计费明细' })
+    const billingDetails = model.billingDetails
+    if (isNotEmpty(billingDetails)) {
+      billingDetails.forEach((billingDetail, i) => {
+        const prefix = `billingDetails.${i}.`
+        const { payRule } = billingDetail
+        const valuationModeTitle = getDictTitle('p5e_valuationMode', payRule.valuationMode)
+        items.push({ tag: 'el-new-row', title: `第 ${i + 1} 组` })
+        items.push({
+          tip: '0 表示无限制',
+          props: { label: '计费量', prop: prefix + 'payRule.quantity' },
+          items: [
+            {
+              tag: 'el-input', name: prefix + 'payRule.quantity', props: { disabled: true }
+            }
+          ]
+        })
+        items.push({
+          tip: '单位元',
+          props: { label: valuationModeTitle, prop: prefix + 'payRule.price' },
+          items: [
+            {
+              tag: 'el-input-number', name: prefix + 'payRule.price', props: { precision: 4, disabled: true }
+            }
+          ]
+        })
+        items.push({
+          props: { label: '计数子项', prop: prefix + 'count' },
+          items: [
+            {
+              tag: 'el-input', name: prefix + 'count', props: { disabled: true }
+            }
+          ]
+        })
+        items.push({
+          tip: '单位元',
+          props: { label: '费用子项', prop: prefix + 'totalPrice' },
+          items: [
+            {
+              tag: 'el-input-number', name: prefix + 'totalPrice', props: { precision: 4, disabled: true }
+            }
+          ]
+        })
+      })
+    }
+  } else if (status === 'UNTRIGGER') {
+    items.push({
+      span: 24,
+      props: { label: '未触发说明', prop: 'statusDescr' },
+      items: [
+        {
+          tag: 'el-input', name: 'statusDescr', props: { type: 'textarea', disabled: true }
+        }
+      ]
+    })
+  }
+  return items
+}
+
+const SM_ServicePackageMeasureView = () => {
+  return {
+    formTitle: function(vm, scopeMeta) {
+      return '套餐测算结果'
+    },
+    handleItems: function(vm, scopeMeta) {
+      return (operate, model) => {
+        return getServicePackageMeasureFormItems(vm, scopeMeta, operate, model)
+      }
+    },
+    getMethod: function(vm, scopeMeta) {
+      return servicePackageMeasure
     }
   }
 }
@@ -1281,8 +1456,9 @@ function getCustomerFormItems(vm, scopeMeta, operate, model) {
           placeholder: '上级客户号 / 名称 ...', 'value-key': 'id', 'trigger-on-focus': false,
           'fetch-suggestions': function(queryString, callback) {
             customerList({ idOrName: queryString }).then(response => {
-              const results = response.data.items
-              callback(results)
+              if (passable(response)) {
+                callback(response.data.items)
+              }
             })
           },
           template: [
@@ -1576,6 +1752,14 @@ const SM_CallStatisticsList = () => {
       })
       return components
     },
+    formTitle: function(vm, scopeMeta) {
+      const { routerName } = scopeMeta
+      let title = ''
+      if (routerName === 'SBS-Analyze') {
+        title += '套餐使用分布'
+      }
+      return title
+    },
     searcher: function(vm, scopeMeta) {
       return (model) => {
         const items = getCallStatisticsSearcherItems(vm, scopeMeta, model)
@@ -1774,8 +1958,9 @@ function getAnalyzeFormItems(vm, scopeMeta, operate, model) {
             placeholder: '服务编号 / 标题 ...', 'value-key': 'id', 'trigger-on-focus': false,
             'fetch-suggestions': function(queryString, callback) {
               serverList({ idOrTitle: queryString }).then(response => {
-                const results = response.data.items
-                callback(results)
+                if (passable(response)) {
+                  callback(response.data.items)
+                }
               })
             },
             template: [
@@ -1808,8 +1993,9 @@ function getAnalyzeFormItems(vm, scopeMeta, operate, model) {
             placeholder: '上级客户号 / 名称 ...', 'value-key': 'id', 'trigger-on-focus': false,
             'fetch-suggestions': function(queryString, callback) {
               customerList({ idOrName: queryString }).then(response => {
-                const results = response.data.items
-                callback(results)
+                if (passable(response)) {
+                  callback(response.data.items)
+                }
               })
             },
             template: [
@@ -1835,7 +2021,6 @@ function checkCallStatisticsLog(vm, scopeMeta) {
   vm.ref().validateForm().then(valid => {
     if (valid) {
       const { freq, freqDate } = vm.getModel()
-      console.log(vm.getModel())
       vm.ref('CheckCallStatisticsLog').showDialog({ freq, freqDate })
     }
   })
@@ -1879,7 +2064,7 @@ const SM_AnalyzeRequest = () => {
       return components
     },
     formTitle: function(vm, scopeMeta) {
-      return '分析申请'
+      return '分析测算'
     },
     controller: function(vm, scopeMeta) {
       const items = []
@@ -1953,16 +2138,14 @@ function getCallStatisticsLogTableItems(vm, scopeMeta) {
   })
   items.push({
     props: {
-      label: '预警', prop: 'warn', width: '100',
+      label: '预警', prop: 'warnStatus', width: '100',
       formatter: function(row, column, cellValue, index) {
-        let title = '成功'
         let type = 'success'
         if (cellValue === 'FAIL') {
-          title = '失败'
           type = 'danger'
         }
         return buildTableActions(vm, [
-          { title, icon: 'el-icon-antd-bulb', type }
+          { icon: 'el-icon-antd-bulb', type }
         ])
       }
     }
@@ -1976,10 +2159,55 @@ function getCallStatisticsLogTableItems(vm, scopeMeta) {
   return items
 }
 
+function doCallStatistics(vm, freq, freqDate, status) {
+  let title = '重新统计'
+  if (status === 'NONE') {
+    title = '统计'
+  }
+  showConfirm({ content: `是否${title}访问日志 ？`, type: 'warning' }).then(() => {
+    callLogStatistics(freq, freqDate).then(response => {
+      if (passable(response)) {
+        vm.refresh()
+      }
+    })
+  }).catch(() => {})
+}
+
+function doAllCallStatistics(vm, scopeMeta) {
+  const { freq, freqDate } = vm.extraParams
+  let title = ''
+  if (freq === 'Y') {
+    title += ` ${freqDate} 年度`
+  } else if (freq === 'M') {
+    title += ` ${freqDate} 月度`
+  } else if (freq === 'D') {
+    title += ` ${freqDate} 日`
+  }
+  showConfirm({ content: `是否统计 ${title} 访问日志 ？`, type: 'warning' }).then(() => {
+    const loading = showLoading(vm)
+    callLogStatisticsAll(freq, freqDate).then(response => {
+      loading.close()
+      if (passable(response)) {
+        vm.refresh()
+      }
+    })
+  }).catch(() => {})
+}
+
 const SM_CheckCallStatisticsLog = () => {
   return {
     formTitle: function(vm, scopeMeta) {
       return '访问统计日志'
+    },
+    controller: function(vm, scopeMeta) {
+      const items = []
+      items.push({
+        text: '统计', props: { icon: 'el-icon-antd-dashboard', type: 'primary' },
+        events: {
+          click: () => doAllCallStatistics(vm, scopeMeta)
+        }
+      })
+      return { items }
     },
     table: function(vm, scopeMeta) {
       const items = getCallStatisticsLogTableItems(vm, scopeMeta)
@@ -1987,13 +2215,13 @@ const SM_CheckCallStatisticsLog = () => {
         props: {
           label: '操作', prop: 'action', fixed: 'right', width: '100',
           formatter: function(row, column, cellValue, index) {
+            const { freq, freqDate, status } = row
             let title = '重新统计'
-            const { status } = row
             if (status === 'NONE') {
               title = '统计'
             }
             const actions = []
-            actions.push({ title, click: () => showMessage({ content: '重新统计' }) })
+            actions.push({ title, click: () => doCallStatistics(vm, freq, freqDate, status) })
             return buildTableActions(vm, actions)
           }
         }
@@ -2012,7 +2240,9 @@ const SM_CheckCallStatisticsLog = () => {
             }
             if (isNotEmpty(subFreq)) {
               callStatisticsLogList({ freq: subFreq, freqDate }).then(response => {
-                resolve(response.data.items)
+                if (passable(response)) {
+                  resolve(response.data.items)
+                }
               })
             } else {
               resolve([])
@@ -2033,15 +2263,21 @@ function getPerspectiveSearcherItems(vm, scopeMeta, model) {
   const items = []
   if (routerName === 'SBS-Analyze') {
     if (scope === 'GlobalPerspective') {
-      // -
-    } else if (scope === 'ServerPerspective' || scope === 'CustomerPerspective') {
       items.push({
-        props: { label: '统计维度', prop: 'dimension' },
+        props: { label: '服务编号', prop: 'serverId' },
         items: [
-          { tag: 'el-select', name: 'dimension', items: buildFormItemsByDicts('c5g_dimension', 'el-option') }
+          { tag: 'el-input', name: 'serverId' }
         ]
       })
+    } else if (scope === 'ServerPerspective' || scope === 'CustomerPerspective') {
+      // -
     }
+    items.push({
+      props: { label: '统计维度', prop: 'dimension' },
+      items: [
+        { tag: 'el-select', name: 'dimension', items: buildFormItemsByDicts('c5g_dimension', 'el-option') }
+      ]
+    })
   }
   return items
 }
@@ -2052,7 +2288,26 @@ function getPerspectiveTableItems(vm, scopeMeta) {
   const items = []
   if (routerName === 'SBS-Analyze') {
     if (scope === 'GlobalPerspective') {
-      // -
+      items.push({
+        props: {
+          label: '服务编号', prop: 'serverId', fixed: 'left', width: '125',
+          formatter: function(row, column, cellValue, index) {
+            return buildTableActions(vm, [
+              { title: cellValue, click: () => vm.ref('ServerView').showDialog({ id: cellValue }) }
+            ])
+          }
+        }
+      })
+      items.push({
+        props: {
+          label: '服务套餐', prop: 'packageId', fixed: 'left', width: '325',
+          formatter: function(row, column, cellValue, index) {
+            return buildTableActions(vm, [
+              { title: cellValue, click: () => vm.ref('ServicePackageView').showDialog({ id: cellValue }) }
+            ])
+          }
+        }
+      })
     } else if (scope === 'ServerPerspective') {
       items.push({
         props: {
@@ -2102,6 +2357,70 @@ function getPerspectiveTableItems(vm, scopeMeta) {
     props: { prop: 'fill' }
   })
   return items
+}
+
+const SM_GlobalPerspective = () => {
+  return {
+    components: function(vm, scopeMeta) {
+      const components = []
+      components.push({
+        name: 'ServerView', component: () => import(`@/components/Typography/Flow/ViewBasic`),
+        props: { scope: 'ServerView' }
+      })
+      components.push({
+        name: 'ServicePackageView', component: () => import(`@/components/Typography/Flow/ViewBasic`),
+        props: { scope: 'ServicePackageView' }
+      })
+      components.push({
+        name: 'ServicePackageMeasureView', component: () => import(`@/components/Typography/Flow/ViewBasic`),
+        props: { scope: 'ServicePackageMeasureView' }
+      })
+      components.push({
+        name: 'CallStatisticsByCustomer', component: () => import(`@/components/Typography/Flow/DialogList`),
+        props: { scope: 'CallStatisticsByCustomer' }
+      })
+      return components
+    },
+    formTitle: function(vm, scopeMeta) {
+      let title = ''
+      const { freq, freqDate } = vm.extraParams
+      if (freq === 'Y') {
+        title += ` ${freqDate} 年度`
+      } else if (freq === 'M') {
+        title += ` ${freqDate} 月度`
+      } else if (freq === 'D') {
+        title += ` ${freqDate} 日`
+      }
+      title += '汇总'
+      return title
+    },
+    searcher: function(vm, scopeMeta) {
+      return (model) => {
+        const items = getPerspectiveSearcherItems(vm, scopeMeta, model)
+        return { items }
+      }
+    },
+    table: function(vm, scopeMeta) {
+      const { freq, freqDate } = vm.extraParams
+      const items = getPerspectiveTableItems(vm, scopeMeta)
+      items.push({
+        props: {
+          label: '操作', prop: 'action', fixed: 'right', width: '100',
+          formatter: function(row, column, cellValue, index) {
+            const { packageId, dimension, count } = row
+            const actions = []
+            actions.push({ title: '分布', click: () => vm.ref('CallStatisticsByCustomer').showDialog({ packageId, freq, freqDate, dimension }) })
+            actions.push({ title: '测算', click: () => vm.ref('ServicePackageMeasureView').showDialog({ id: packageId, count }) })
+            return buildTableActions(vm, actions)
+          }
+        }
+      })
+      return { items }
+    },
+    paginationMethod: function(vm, scopeMeta) {
+      return callStatisticsByGlobal
+    }
+  }
 }
 
 const SM_ServerPerspective = () => {
@@ -2193,6 +2512,10 @@ const SM_CustomerPerspective = () => {
         props: { scope: 'ServicePackageView' }
       })
       components.push({
+        name: 'ServicePackageMeasureView', component: () => import(`@/components/Typography/Flow/ViewBasic`),
+        props: { scope: 'ServicePackageMeasureView' }
+      })
+      components.push({
         name: 'CallStatisticsByCustomer', component: () => import(`@/components/Typography/Flow/DialogList`),
         props: { scope: 'CallStatisticsByCustomer' }
       })
@@ -2237,9 +2560,10 @@ const SM_CustomerPerspective = () => {
         props: {
           label: '操作', prop: 'action', fixed: 'right', width: '100',
           formatter: function(row, column, cellValue, index) {
-            const { packageId, dimension } = row
+            const { packageId, dimension, count } = row
             const actions = []
             actions.push({ title: '分布', click: () => vm.ref('CallStatisticsByCustomer').showDialog({ packageId, freq, freqDate, dimension }) })
+            actions.push({ title: '测算', click: () => vm.ref('ServicePackageMeasureView').showDialog({ id: packageId, count }) })
             return buildTableActions(vm, actions)
           }
         }
@@ -2277,7 +2601,8 @@ export default parallel([
           descr: '服务套餐模板',
           meta: {
             'SBS-ServicePackageTemplate': SM_ServicePackageList(),
-            'ServicePackageTemplateEdit': SM_ServicePackageEdit()
+            'ServicePackageTemplateEdit': SM_ServicePackageEdit(),
+            'ServicePackageMeasureView': SM_ServicePackageMeasureView()
           }
         },
         {
@@ -2290,7 +2615,8 @@ export default parallel([
             'ServicePackageList': SM_ServicePackageList(),
             'ServicePackageEdit': SM_ServicePackageEdit(),
             'ServicePackageTemplateSelect': SM_ServicePackageList(),
-            'ServicePackageTemplateView': SM_ServicePackageView()
+            'ServicePackageTemplateView': SM_ServicePackageView(),
+            'ServicePackageMeasureView': SM_ServicePackageMeasureView()
           }
         },
         {
@@ -2322,12 +2648,13 @@ export default parallel([
           meta: {
             'SBS-Analyze': SM_AnalyzeRequest(),
             'CheckCallStatisticsLog': SM_CheckCallStatisticsLog(),
-            'GlobalPerspective': SM_CallLogList(),
+            'GlobalPerspective': SM_GlobalPerspective(),
             'ServerPerspective': SM_ServerPerspective(),
             'CustomerPerspective': SM_CustomerPerspective(),
             'CustomerView': SM_CustomerView(),
             'ServerView': SM_ServerView(),
             'ServicePackageView': SM_ServicePackageView(),
+            'ServicePackageMeasureView': SM_ServicePackageMeasureView(),
             'CallStatisticsByServer': SM_CallStatisticsList(),
             'CallStatisticsByCustomer': SM_CallStatisticsList()
           }

@@ -1,4 +1,4 @@
-import { dictKit, districtKit } from './modules/global-data'
+import { dictKit, districtKit, validatorKit } from './modules/global-data'
 
 const getters = {
   device: state => state.app.device,
@@ -11,8 +11,11 @@ const getters = {
   errorLogs: state => state.errorLog.logs,
   getDictTitle: state => (type, value) => dictKit.getDictTitle(state, type, value),
   getDicts: state => (type) => dictKit.getDicts(state, type),
-  getDistricts: state => state.globalData.districtStorer,
   getDistrictTitle: state => (value) => districtKit.getDistrictTitle(state, value),
+  getDistricts: state => state.globalData.districtStorer,
+  getValidatorTitle: state => (clazz) => validatorKit.getValidatorTitle(state, clazz),
+  getValidatorParamDescr: state => (clazz) => validatorKit.getValidatorParamDescr(state, clazz),
+  getValidators: state => state.globalData.validatorStorer,
   flowInitializing: state => state.flow.initializing,
   token: state => state.user.token,
   id: state => state.user.id,

@@ -10,7 +10,6 @@
       <span />
       <el-dropdown-menu slot="dropdown">
         <el-dropdown-item v-for="(item, i) in menu.items" :key="`mi_${i}`" v-bind="item.props">
-          <i v-if="item.props.icon" :class="item.props.icon" />
           <span>{{ item.text }}</span>
         </el-dropdown-item>
       </el-dropdown-menu>
@@ -89,7 +88,7 @@ export default {
         ref.hide()
         /*
         由于 show、hide 方法未提供回调函数，因此只能通过 setTimeout 进行处理
-        show、hide 方法都属于 JS 内部计算，setTimeout 有一定可靠性
+        show、hide 方法都属于 JS 内部计算，延迟较低，setTimeout 有一定可靠性
         */
         setTimeout(() => {
           ref.show()

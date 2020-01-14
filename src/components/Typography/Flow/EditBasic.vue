@@ -21,6 +21,7 @@
 import router from '@/router'
 import flow from '@/flow'
 import { getDataType } from '@/utils'
+import { passable } from '@/utils/request'
 import { isEmpty, isNotEmpty } from '@/utils/validate'
 import TyFormBasic from '@/components/Typography/Form/Basic'
 
@@ -177,14 +178,16 @@ export default {
       } else if (this.editing) {
         this.loading = true
         this.getMethod(primaryKey).then(response => {
-          const model = response.data
-          if (isNotEmpty(model)) {
-            this.model = model
-          } else {
-            this.model = Object.assign({}, this.defaultModel, primaryKey, extraParams)
+          if (passable(response)) {
+            const model = response.data
+            if (isNotEmpty(model)) {
+              this.model = model
+            } else {
+              this.model = Object.assign({}, this.defaultModel, primaryKey, extraParams)
+            }
+            this.resetTo = this.model
+            this.items = this.handleItems(this.operate, this.model)
           }
-          this.resetTo = this.model
-          this.items = this.handleItems(this.operate, this.model)
           this.loading = false
         })
       }
@@ -206,12 +209,14 @@ export default {
           if (beforeBool) {
             model.operate = this.operate
             this.saveMethod(model).then(response => {
-              model = response.data
-              this.model = model
-              this.resetTo = model
-              this.ref().hideDialog()
-              if (isNotEmpty(this.afterSave)) {
-                this.afterSave(this.operate, model)
+              if (passable(response)) {
+                model = response.data
+                this.model = model
+                this.resetTo = model
+                this.ref().hideDialog()
+                if (isNotEmpty(this.afterSave)) {
+                  this.afterSave(this.operate, model)
+                }
               }
             })
           }

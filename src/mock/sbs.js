@@ -292,10 +292,10 @@ const saveServerTheme = config => {
   return getById(id, serverThemeIndex, serverThemeList)
 }
 
-Mock.mock(/\/sbs\/server-theme\/list.api/, 'post', getServerThemeList)
-Mock.mock(/\/sbs\/server-theme\/single.api/, 'post', getServerThemeById)
-Mock.mock(/\/sbs\/server-theme\/delete.api/, 'post', deleteServerThemeByIds)
-Mock.mock(/\/sbs\/server-theme\/save.api/, 'post', saveServerTheme)
+Mock.mock(/\/-- sbs\/server-theme\/list.api/, 'post', getServerThemeList)
+Mock.mock(/\/-- sbs\/server-theme\/single.api/, 'post', getServerThemeById)
+Mock.mock(/\/-- sbs\/server-theme\/delete.api/, 'post', deleteServerThemeByIds)
+Mock.mock(/\/-- sbs\/server-theme\/save.api/, 'post', saveServerTheme)
 // -
 // -
 // -
@@ -335,10 +335,10 @@ const saveServer = config => {
   return getById(id, serverIndex, serverList)
 }
 
-Mock.mock(/\/sbs\/server\/list.api/, 'post', getServerList)
-Mock.mock(/\/sbs\/server\/single.api/, 'post', getServerById)
-Mock.mock(/\/sbs\/server\/delete.api/, 'post', deleteServerByIds)
-Mock.mock(/\/sbs\/server\/save.api/, 'post', saveServer)
+Mock.mock(/\/-- sbs\/server\/list.api/, 'post', getServerList)
+Mock.mock(/\/-- sbs\/server\/single.api/, 'post', getServerById)
+Mock.mock(/\/-- sbs\/server\/delete.api/, 'post', deleteServerByIds)
+Mock.mock(/\/-- sbs\/server\/save.api/, 'post', saveServer)
 // -
 // -
 // -
@@ -378,10 +378,16 @@ const saveServicePackage = config => {
   return getById(id, servicePackageIndex, servicePackageList)
 }
 
-Mock.mock(/\/sbs\/service-package\/list.api/, 'post', getServicePackageList)
-Mock.mock(/\/sbs\/service-package\/single.api/, 'post', getServicePackageById)
-Mock.mock(/\/sbs\/service-package\/delete.api/, 'post', deleteServicePackageByIds)
-Mock.mock(/\/sbs\/service-package\/save.api/, 'post', saveServicePackage)
+const measureServicePackage = config => {
+  const { count } = JSON.parse(config.body)
+  return count * 25
+}
+
+Mock.mock(/\/-- sbs\/service-package\/list.api/, 'post', getServicePackageList)
+Mock.mock(/\/-- sbs\/service-package\/single.api/, 'post', getServicePackageById)
+Mock.mock(/\/-- sbs\/service-package\/delete.api/, 'post', deleteServicePackageByIds)
+Mock.mock(/\/-- sbs\/service-package\/save.api/, 'post', saveServicePackage)
+Mock.mock(/\/-- sbs\/service-package\/measure.api/, 'post', measureServicePackage)
 // -
 // -
 // -
@@ -424,10 +430,10 @@ const saveCustomer = config => {
   return getById(id, customerIndex, customerList)
 }
 
-Mock.mock(/\/sbs\/customer\/list.api/, 'post', getCustomerList)
-Mock.mock(/\/sbs\/customer\/single.api/, 'post', getCustomerById)
-Mock.mock(/\/sbs\/customer\/delete.api/, 'post', deleteCustomerByIds)
-Mock.mock(/\/sbs\/customer\/save.api/, 'post', saveCustomer)
+Mock.mock(/\/-- sbs\/customer\/list.api/, 'post', getCustomerList)
+Mock.mock(/\/-- sbs\/customer\/single.api/, 'post', getCustomerById)
+Mock.mock(/\/-- sbs\/customer\/delete.api/, 'post', deleteCustomerByIds)
+Mock.mock(/\/-- sbs\/customer\/save.api/, 'post', saveCustomer)
 // -
 // -
 // -
@@ -447,13 +453,7 @@ const getCallLogList = config => {
   return doPagination(mockList, page, limit)
 }
 
-const getCallLogById = config => {
-  const id = config.body
-  return getById(id, callLogIndex, callLogList)
-}
-
-Mock.mock(/\/sbs\/call-log\/list.api/, 'post', getCallLogList)
-Mock.mock(/\/sbs\/call-log\/single.api/, 'post', getCallLogById)
+Mock.mock(/\/-- sbs\/call-log\/list.api/, 'post', getCallLogList)
 // -
 // -
 // -
@@ -472,6 +472,30 @@ const getCallStatisticsList = config => {
     return true
   })
   return doPagination(mockList, page, limit)
+}
+
+const getCallStatisticsGroupByGlobal = config => {
+  const { freq, freqDate, dimension, page = 1, limit = 20 } = JSON.parse(config.body)
+  const mockList = callStatisticsList.filter(item => {
+    if (!item) return false
+    if (freq && freq.length && item.freq !== freq) return false
+    if (freqDate && freqDate.length && item.freqDate !== freqDate) return false
+    if (dimension && dimension.length && item.dimension !== dimension) return false
+    return true
+  })
+  const groups = {}
+  mockList.forEach(mock => {
+    const { serverId, packageId, dimension, count } = mock
+    const groupKey = `${serverId}_${packageId}_${dimension}`
+    let group = groups[groupKey]
+    if (group) {
+      group.count = (group.count + count)
+    } else {
+      group = { serverId, packageId, dimension, count }
+    }
+    groups[groupKey] = group
+  })
+  return doPagination(Object.values(groups), page, limit)
 }
 
 const getCallStatisticsGroupByServer = config => {
@@ -530,15 +554,10 @@ const getCallStatisticsGroupByCustomer = config => {
   return doPagination(Object.values(groups), page, limit)
 }
 
-const getCallStatisticsById = config => {
-  const id = config.body
-  return getById(id, callStatisticsIndex, callStatisticsList)
-}
-
-Mock.mock(/\/sbs\/call-statistics\/list.api/, 'post', getCallStatisticsList)
-Mock.mock(/\/sbs\/call-statistics\/by-server.api/, 'post', getCallStatisticsGroupByServer)
-Mock.mock(/\/sbs\/call-statistics\/by-customer.api/, 'post', getCallStatisticsGroupByCustomer)
-Mock.mock(/\/sbs\/call-statistics\/single.api/, 'post', getCallStatisticsById)
+Mock.mock(/\/-- sbs\/call-statistics\/list.api/, 'post', getCallStatisticsList)
+Mock.mock(/\/-- sbs\/call-statistics\/by-global.api/, 'post', getCallStatisticsGroupByGlobal)
+Mock.mock(/\/-- sbs\/call-statistics\/by-server.api/, 'post', getCallStatisticsGroupByServer)
+Mock.mock(/\/-- sbs\/call-statistics\/by-customer.api/, 'post', getCallStatisticsGroupByCustomer)
 // -
 // -
 // -
@@ -555,10 +574,4 @@ const getCallStatisticsLogList = config => {
   return doPagination(mockList, page, limit)
 }
 
-const getCallStatisticsLogById = config => {
-  const id = config.body
-  return getById(id, callStatisticsLogIndex, callStatisticsLogList)
-}
-
-Mock.mock(/\/sbs\/call-statistics-log\/list.api/, 'post', getCallStatisticsLogList)
-Mock.mock(/\/sbs\/call-statistics-log\/single.api/, 'post', getCallStatisticsLogById)
+Mock.mock(/\/-- sbs\/call-statistics-log\/list.api/, 'post', getCallStatisticsLogList)
