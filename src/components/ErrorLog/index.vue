@@ -2,7 +2,7 @@
   <span v-if="errorLogs.length===0">
     <el-badge :is-dot="true" style="margin-top: -20px;" @click.native="dialogTableVisible=true">
       <el-tooltip content="异常日志" placement="top">
-        <el-button type="danger" plain icon="el-icon-antd-font-size" class="size-button" />
+        <el-button type="danger" plain icon="el-icon-antd-bug" class="size-button" />
       </el-tooltip>
     </el-badge>
     <el-dialog :visible.sync="dialogTableVisible" append-to-body title="异常日志" width="80%">

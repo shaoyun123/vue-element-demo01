@@ -9,7 +9,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 
 import '@/styles/index.scss' // global css
 
-import '@/assets/icon_antd/iconfont.css' // antd icon
+import '@/assets/icons_antd/iconfont.css' // antd icon
 
 import App from './App'
 import router from './router'
